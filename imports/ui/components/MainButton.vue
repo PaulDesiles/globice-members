@@ -14,7 +14,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
   a {
     color: white;
     text-decoration: none;
@@ -22,6 +22,7 @@ export default {
 
   a img {
     width: 150px;
+    height: 150px;
     border-radius: 50%;
     border: 7px solid var(--blue);
     margin: 3px;
