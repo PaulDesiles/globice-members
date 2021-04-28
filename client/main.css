@@ -1,0 +1,30 @@
+:root {
+  --dark-blue: #1F2E53;
+  --blue: #2BA7D9;
+  --blue-hover: #61c2e9;
+  --blue-alpha50: #2ba8d97a;
+}
+
+html, body, .app {
+  height: 100%;
+  margin: 0;
+}
+
+h1 {
+  font-weight: 400;
+  margin: 3px 0;
+}
+
+.roundButton {
+  padding: 8px 15px;
+  background: var(--blue);
+  border: none;
+  border-radius: 20px;
+  color: white;
+
+  font-size: 12pt;
+}
+
+.roundButton:hover {
+  background: var(--blue-hover);
+}
