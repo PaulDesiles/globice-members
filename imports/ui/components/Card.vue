@@ -29,7 +29,6 @@ export default {
   .container {
     width: 100%;
     height: 100%;
-    background: #eee;
     display: grid;
     grid-template: 1fr 300px 1fr / 1fr 500px 1fr;
     color: white;

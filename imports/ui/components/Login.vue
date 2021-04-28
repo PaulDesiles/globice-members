@@ -3,27 +3,40 @@
     <div class="content">
       <h1>Bénévoles et Sorties</h1>
 
-      <form class="login-form" @submit.prevent="handleSubmit">      
-        <input
-            id="username"
-            type="text"
-            placeholder="identifiant"
-            aria-label="identifiant"
-            required
-            v-model="username"
+      <v-form class="login-form" @submit.prevent="handleSubmit">
+
+        <v-text-field
+          label="Identifiant"
+          hide-details="auto"
+          outlined
+          dense
+          dark
+          required
+          v-model="username"
         />
 
-        <input
-            id="password"
-            type="password"
-            placeholder="mot de passe"
-            aria-label="mot de passe"
-            required
-            v-model="password"
+        <v-text-field
+          label="Mot de passe"
+          hide-details="auto"
+          type="password"
+          outlined
+          dense
+          dark
+          required
+          :error-messages="error ? ['mot de passe incorrect'] : []"
+          v-model="password"
         />
 
-        <button class="roundButton" type="submit">valider</button>
-      </form>
+        <v-btn
+          type="submit"
+          color="primary"
+          elevation="5"
+          rounded
+          large
+          :class="invalid() ? 'invalid-button' : 'valid-button'"
+          :loading="loading"
+        >valider</v-btn>
+      </v-form>
     </div>
   </Card>
 </template>
@@ -40,12 +53,32 @@ export default {
   data() {
     return {
       username: "",
-      password: ""
+      password: "",
+      loading: false,
+      error: false
     };
   },
   methods: {
     handleSubmit(event) {
-      Meteor.loginWithPassword(this.username, this.password);
+      if (!this.invalid()) {
+        this.loading = true;
+        Meteor.loginWithPassword(this.username, this.password, this.handleLoginResponse);
+      }
+    },
+    handleLoginResponse(errors) {
+      setTimeout(() => {
+        this.loading = false;
+        if (errors) {
+          console.log(errors);
+          this.error = true;
+        }
+      }, 1000);
+    },
+    dismissError() {
+      this.error = false;
+    },
+    invalid() {
+      return this.error || !this.username || !this.password;
     }
   },
 }
@@ -71,8 +104,10 @@ export default {
     color: white;
   }
 
-  input {
-    font-size: 12pt;
-    padding: 6px 8px;
+  .invalid-button {
+    opacity: 0.7;
+    cursor: default;
+    pointer-events: none;
   }
+
 </style>

@@ -1,13 +1,15 @@
 <template>
-  <div class="app">
-    <template v-if="currentUser">
-      <router-view></router-view>
-    </template>
+  <v-app :style="{background: $vuetify.theme.themes[theme].background}">
+    <v-main>
+        <template v-if="currentUser">
+          <router-view></router-view>
+        </template>
 
-    <template v-else>
-      <Login />
-    </template>
-  </div>
+        <template v-else>
+          <Login />
+        </template>
+    </v-main>
+  </v-app>
 </template>
 
 <script>
@@ -21,6 +23,11 @@ export default {
   },
   methods: {
   },
+  computed:{
+    theme(){
+      return (this.$vuetify.theme.dark) ? 'dark' : 'light'
+    }
+  },
   meteor: {
     currentUser() {
       return Meteor.user();
@@ -30,8 +37,4 @@ export default {
 </script>
 
 <style>
-  .app {
-    font-family: Arial, Helvetica, sans-serif;
-    background: #eee;
-  }
 </style>
