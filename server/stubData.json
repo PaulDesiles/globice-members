@@ -1,0 +1,67 @@
+{
+  "members": [
+    {
+      "infos": {
+        "firstname": "John",
+        "lastname": "Doe",
+        "birthdate": "22/11/1991",
+        "email": "j.d@toto.com",
+        "phone": "0648659832",
+        "address": "3 chemin combava",
+        "postCode": "97411",
+        "city": "Saint-Paul"
+      },
+      "abilities": {
+
+      },
+      "membership": {
+
+      },
+      "trips": {
+
+      }
+    },
+    {
+      "infos": {
+        "firstname": "Michel",
+        "lastname": "Ducoin",
+        "birthdate": "22/11/1991",
+        "email": "michou@toto.com",
+        "phone": "0648659832",
+        "address": "3 chemin combava",
+        "postCode": "97411",
+        "city": "Saint-Paul"
+      },
+      "abilities": {
+
+      },
+      "membership": {
+
+      },
+      "trips": {
+
+      }
+    },
+    {
+      "infos": {
+        "firstname": "Bernard",
+        "lastname": "Dupuis",
+        "birthdate": "22/11/1991",
+        "email": "bernard.d@gmail.com",
+        "phone": "0648659832",
+        "address": "3 chemin combava",
+        "postCode": "97411",
+        "city": "Saint-Paul"
+      },
+      "abilities": {
+
+      },
+      "membership": {
+
+      },
+      "trips": {
+
+      }
+    }
+  ]
+}

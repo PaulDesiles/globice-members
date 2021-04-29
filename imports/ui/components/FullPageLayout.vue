@@ -17,9 +17,8 @@
             <span>{{ backLabel }}</span>
           </router-link>
         </v-row>
-        <v-row>
-          <slot></slot>
-        </v-row>
+
+        <slot></slot>
       </v-col>
     </v-container>
   </v-container>
