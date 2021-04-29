@@ -2,7 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 import { MembersCollection } from '/imports/db/MembersCollection';
 import '/imports/api/membersPublications';
-import stubData from './stubData.json';
+
+import membersSeed from './membersSeed.js';
 
 const SEED_USERNAME = 'meteorite';
 const SEED_PASSWORD = 'password';
@@ -15,8 +16,8 @@ Meteor.startup(() => {
     });
   }
 
-  if (MembersCollection.find().count() === 1) {
+  if (false) {
     MembersCollection.remove({});
-    stubData.members.forEach(m => MembersCollection.insert(m));
+    membersSeed.forEach(m => MembersCollection.insert(m));
   }
 });

@@ -17,34 +17,37 @@
 
 
     <v-row>
-      <v-data-table
-        :headers="headers"
-        :items="members"
-        :disablePagination="true"
-        :hide-default-footer="true"
-        :item-class="i => 'memberRow'"
-        @click:row="itemClick"
-        class="elevation-2"
-      >
+      <v-layout child-flex>
+        <v-data-table
+          :headers="headers"
+          :items="members"
+          :disablePagination="true"
+          :hide-default-footer="true"
+          :item-class="i => 'memberRow'"
+          @click:row="itemClick"
+          class="elevation-2 mt-5"
+        >
 
-        <template v-slot:item.membership="{item}">
-          <template v-if="item.infos.lastname==='Dupuis'">
-            <v-icon color="green darken-2">mdi-checkbox-marked-circle</v-icon>
+          <template v-slot:item.trips.acceptedSumUp="{item}">
+            <span>0/0</span>
           </template>
-          <template v-else>
-            <v-icon color="red darken-2">mdi-alert-circle</v-icon>
+
+          <template v-slot:item.trips.refusedSumUp="{item}">
+            <span>0</span>
           </template>
-        </template>
-      </v-data-table>
-    </v-row>
-    <v-row>
-      <div class="paginationContainer">
-        <v-pagination
-          v-model="currentPage"
-          :length="nbPages"
-          circle
-        />
-      </div>
+
+          <template v-slot:item.membership.date="{item}">
+            <span>{{ formatDate(item.membership.date) }}</span>
+
+            <template v-if="membershipUpToDate(item.membership.date)">
+              <v-icon color="green darken-2">mdi-checkbox-marked-circle</v-icon>
+            </template>
+            <template v-else>
+              <v-icon color="red darken-2">mdi-alert-circle</v-icon>
+            </template>
+          </template>
+        </v-data-table>
+      </v-layout>
     </v-row>
 
   </FullPageLayout>
@@ -65,20 +68,31 @@ export default {
   },
   data() {
     return {
-      currentPage: 1,
-      nbPages: 14,
       search: '',
       headers: [
         { text: 'Nom', value: 'infos.lastname' },
         { text: 'Prénom', value: 'infos.firstname' },
         { text: 'Email', value: 'infos.email' },
-        { text: 'Sorties', value: 'infos.email' },
-        { text: 'Refus', value: 'infos.email' },
-        { text: 'Date d\'adhésion', value: 'membership' },
+        { text: 'Sorties', value: 'trips.acceptedSumUp' },
+        { text: 'Refus', value: 'trips.refusedSumUp' },
+        { text: 'Date d\'adhésion', value: 'membership.date' },
       ]
     };
   },
   methods: {
+    membershipUpToDate(date) {
+      return true;
+    },
+    formatDate(d) {
+      return d.toLocaleDateString(
+        'fr-FR', 
+        {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+        }
+      );
+    },
     itemClick(item) {
       this.$router.push({ path: `/member/${item._id}` });
     }
