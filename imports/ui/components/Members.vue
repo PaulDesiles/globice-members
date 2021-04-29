@@ -62,6 +62,8 @@ const searchFor = (propertyName, searchTerm) => ({
   [`infos.${propertyName}`] : { $regex: searchTerm, $options: "i" }
 });
 
+const pivotMembershipDate = Date.UTC(new Date().getUTCFullYear() - 1, 4, 1,0, 0, 0);
+
 export default {
   components: {
     FullPageLayout
@@ -81,7 +83,7 @@ export default {
   },
   methods: {
     membershipUpToDate(date) {
-      return true;
+      return date > pivotMembershipDate;
     },
     formatDate(d) {
       return d.toLocaleDateString(
