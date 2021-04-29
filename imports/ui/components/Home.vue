@@ -1,19 +1,19 @@
 <template>
-  <Card title="Accueil">
+  <CardLayout title="Accueil">
     <div class="split-row">
       <MainButton target="members" label="Bénévoles" />
       <MainButton target="trips" label="Sorties" />
     </div>
-  </Card>
+  </CardLayout>
 </template>
 
 <script>
-import Card from './Card.vue';
+import CardLayout from './CardLayout.vue';
 import MainButton from './MainButton.vue';
 
 export default {
   components: {
-    Card,
+    CardLayout,
     MainButton
   }
 }

@@ -1,5 +1,5 @@
 <template>
-  <Card>
+  <CardLayout>
     <div class="content">
       <h1>Bénévoles et Sorties</h1>
 
@@ -38,17 +38,17 @@
         >valider</v-btn>
       </v-form>
     </div>
-  </Card>
+  </CardLayout>
 </template>
 
 <script>
 import { Meteor } from 'meteor/meteor';
-import Card from './Card.vue';
+import CardLayout from './CardLayout.vue';
 
 export default {
   name: "Login",
   components: {
-    Card
+    CardLayout
   },
   data() {
     return {
