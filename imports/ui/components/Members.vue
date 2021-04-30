@@ -15,7 +15,6 @@
       />
     </template>
 
-
     <v-row>
       <v-layout child-flex>
         <v-data-table
@@ -26,8 +25,10 @@
           :must-sort="true"
           :options="{ sortBy: ['infos.lastname'] }"
           :item-class="i => 'memberRow'"
+          :loading="!$subReady.members"
+          loading-text="chargement..."
           @click:row="itemClick"
-          class="elevation-2 mt-5"
+          class="elevation-3"
         >
 
           <template v-slot:item.trips.acceptedSumUp="{item}">

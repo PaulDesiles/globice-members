@@ -9,7 +9,7 @@
     </v-app-bar>
     <v-container>
       <v-col>
-        <v-row>
+        <v-row class="mb-5">
           <router-link class="backLink" :to="backTarget">
             <v-icon dense color="primary">
               mdi-arrow-left
