@@ -23,6 +23,8 @@
           :items="members"
           :disablePagination="true"
           :hide-default-footer="true"
+          :must-sort="true"
+          :options="{ sortBy: ['infos.lastname'] }"
           :item-class="i => 'memberRow'"
           @click:row="itemClick"
           class="elevation-2 mt-5"
@@ -77,7 +79,20 @@ export default {
         { text: 'Email', value: 'infos.email' },
         { text: 'Sorties', value: 'trips.acceptedSumUp' },
         { text: 'Refus', value: 'trips.refusedSumUp' },
-        { text: 'Date d\'adhésion', value: 'membership.date' },
+        { 
+          text: 'Date d\'adhésion', 
+          value: 'membership.date', 
+          sort: (a, b) => {
+            const at = a.getTime();
+            const bt = b.getTime();
+            if (at === bt)
+              return 0;
+            else if (at > bt)
+              return 1;
+            else
+              return -1;
+          },
+        },
       ]
     };
   },
@@ -124,6 +139,17 @@ export default {
 </script>
 
 <style>
+  .v-data-table {
+    overflow: hidden; /* to crop header background with a correct border-radius */
+  }
+  .v-data-table-header {
+    background: #efefef;
+  }
+
+  .v-data-table-header th span {
+    color: var(--blue);
+  }
+
   tr.memberRow {
     cursor: pointer;
   }
