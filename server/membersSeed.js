@@ -42,13 +42,13 @@ try {
         "abilities": {
           "boatLicense": cells[30],
           "captain": cells[31],
-          "diving": cells[32],
-          "photo": cells[33],
+          "diving": cells[32].replace('NI', 'Ni'),
+          "photo": cells[33].trim(),
           "comment": ""
         },
         "membership": {
           "date": getDate(cells[9]),
-          "isNewMember": cells[29] === 'une primo-adhésion',
+          "isNewMember": cells[29] === 'une primo-adhésion' ? 'Oui' : 'Non',
           "certificate": cells[12]
         },
         "trips": {

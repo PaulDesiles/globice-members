@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 import { MembersCollection } from '/imports/db/MembersCollection';
 import '/imports/api/membersPublications';
+import '/imports/api/membersMethods';
 
 import membersSeed from './membersSeed.js';
 

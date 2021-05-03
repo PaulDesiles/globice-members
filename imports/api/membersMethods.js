@@ -2,6 +2,25 @@ import { check } from 'meteor/check';
 import { MembersCollection } from '../db/MembersCollection';
 
 Meteor.methods({
+  'members.updateProperties'(memberId, changes) {
+    check(memberId, String);
+    check(changes, Array);
+
+    if (changes.length === 0)
+      throw new Meteor.Error('No values to update');
+
+    // transform array into object
+    let objChanges = {};
+    changes.forEach(x => {
+      objChanges[x.key] = x.value;
+    })
+    objChanges['modificationDate'] = new Date(Date.now());
+
+    MembersCollection.update(memberId, {
+      $set: objChanges,
+    });
+  },
+
   'members.insert'(memberData) {
 
     check(memberData.infos, Object);

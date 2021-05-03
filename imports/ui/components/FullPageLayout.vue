@@ -10,7 +10,7 @@
     <v-container>
       <v-col>
         <v-row class="mb-5">
-          <router-link class="backLink" :to="backTarget">
+          <router-link class="backLink" :to="backTarget" event="" @click.native.prevent="handleBackNavigation()">
             <v-icon dense color="primary">
               mdi-arrow-left
             </v-icon>
@@ -29,7 +29,15 @@
     props: {
       title: String,
       backLabel: String,
-      backTarget: String
+      backTarget: String,
+      preventNavigation: Function
+    },
+    methods: {
+      handleBackNavigation() {
+        if (!this.preventNavigation || !this.preventNavigation()) {
+          this.$router.push(this.backTarget);
+        }
+      }
     }
   };
 </script>
