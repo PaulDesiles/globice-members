@@ -56,10 +56,53 @@
               outlined
               hide-details="auto"
             />
-          </v-col>        
+          </v-col>
         </v-row>
 
+        <h3>Équipage</h3>
+        <ul v-if="crew">
+          <li v-for="c in crew" :key="c._id">
+            {{ c.member.infos.firstname }} {{ c.member.infos.lastname }} - {{ c.assignedRole }}
+          </li>
+        </ul>
+        <p v-else><i>Aucun membre d'équipage enregistré</i></p>
+
+        <v-btn
+          color="primary"
+          elevation="5"
+          rounded
+          @click="editCrew = true"
+        >
+          modifier l'équipage
+        </v-btn>
+
+        <v-row>
+          <v-col>
+            <v-btn
+              type="submit"
+              color="primary"
+              elevation="5"
+              :loading="saving"
+              :disabled="saving || !hasUnsavedChanges"
+              rounded
+            >
+              {{ isNew ? 'créer la sortie' : 'enregister les modifications' }}
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-form>
+
+      <v-dialog
+        v-model="editCrew"
+        persistent
+        max-width="900"
+        min-height="600"
+      >
+        <CrewEditor 
+          :applicants.sync="trip.applicants"
+          @close="editCrew = false"
+        />
+      </v-dialog>
     </template>
 
   </FullPageLayout>
@@ -71,11 +114,13 @@ import { Meteor } from 'meteor/meteor';
 import { TripsCollection } from "../../db/TripsCollection";
 import DateInput from './DateInput.vue';
 import { formatDate } from '../helpers/dateHelper';
+import CrewEditor from './CrewEditor.vue';
 
 export default {
   components: {
     FullPageLayout,
-    DateInput
+    DateInput,
+    CrewEditor
   },
   props: {
     id: String
@@ -85,7 +130,7 @@ export default {
     isNew: false,
     saving: false,
     initialValues: undefined,
-    showDialog: false,
+    editCrew: false,
     choices: {
       captain: [ 'John', 'James'],
       type: [ 'Declic', 'Long Bec'],
@@ -120,6 +165,9 @@ export default {
     },
     hasUnsavedChanges() {
       return this.modifiedProperties.length > 0;
+    },
+    crew() {
+      return this.trip?.applicants?.filter(a => a.assignedRole);
     }
   },
   methods: {
@@ -156,7 +204,8 @@ export default {
         if (!this.newTrip) {
           this.isNew = true;
           this.newTrip = { 
-            date: new Date()
+            date: new Date(),
+            applicants: []
           };
         }
 

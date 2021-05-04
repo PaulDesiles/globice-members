@@ -27,8 +27,8 @@ Meteor.startup(() => {
 
   if (false) {
     TripsCollection.remove({});
-    TripsCollection.insert({ date: new Date(), captain: 'Paul', type: 'Test'});
-    TripsCollection.insert({ date: new Date(), captain: 'Pierre', type: 'Test'});
-    TripsCollection.insert({ date: new Date(), captain: 'Michel', type: 'Test'});
+    TripsCollection.insert({ date: new Date(), captain: 'Paul', crew: [], applicants: []});
+    TripsCollection.insert({ date: new Date(), captain: 'Pierre', crew: [], applicants: []});
+    TripsCollection.insert({ date: new Date(), captain: 'Michel', crew: [], applicants: []});
   }
 });

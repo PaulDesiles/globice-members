@@ -174,8 +174,9 @@
         elevation="5"
         :loading="saving"
         :disabled="saving || !hasUnsavedChanges"
-        rounded>
-        enregistrer
+        rounded
+      >
+        enregistrer les modifications
       </v-btn>
     </v-form>
 
@@ -307,10 +308,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-  h3 {
-    color: var(--blue);
-    margin: 10px 0;
-  }
-</style>

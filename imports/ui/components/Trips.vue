@@ -8,8 +8,8 @@
       <v-col>
         <v-btn
           color="primary"
-          rounded
           elevation="5"
+          rounded
           @click="createTrip"
         >
           créer une sortie

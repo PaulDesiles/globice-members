@@ -61,10 +61,7 @@ import FullPageLayout from './FullPageLayout.vue';
 import { Meteor } from 'meteor/meteor';
 import { MembersCollection } from "../../db/MembersCollection";
 import { sortDates, formatDate } from '../helpers/dateHelper';
-
-const searchFor = (propertyName, searchTerm) => ({
-  [`infos.${propertyName}`] : { $regex: searchTerm, $options: "i" }
-});
+import { getMemberSearchQuery } from '../helpers/mongoHelper';
 
 const pivotMembershipDate = Date.UTC(new Date().getUTCFullYear() - 1, 4, 1,0, 0, 0);
 
@@ -99,19 +96,7 @@ export default {
       'members': []
     },
     members() {
-      let query = { };
-
-      if (this.search) {
-        if (this.search.includes('@')) {
-          query = searchFor("email", this.search);
-        } else {
-          query = { 
-            $or: ["lastname", "firstname", "email"]
-              .map(p => searchFor(p, this.search))
-          };
-        }
-      }
-
+      const query = getMemberSearchQuery(this.search);
       return MembersCollection.find(query).fetch();
     }
   }
