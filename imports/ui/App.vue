@@ -34,7 +34,6 @@ export default {
     '$route' (to, from) {
       const toDepth = to.path.split('/').filter(x => x).length;
       const fromDepth = from.path.split('/').filter(x => x).length;
-      console.log(fromDepth + '>' + toDepth);
 
       if (toDepth < fromDepth) {
         this.transitionName = 'slide-right';

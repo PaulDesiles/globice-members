@@ -31,15 +31,15 @@
           class="elevation-3"
         >
 
-          <template v-slot:item.trips.acceptedSumUp="{item}">
+          <template v-slot:[`item.trips.acceptedSumUp`]="{item}">
             <span>0/0</span>
           </template>
 
-          <template v-slot:item.trips.refusedSumUp="{item}">
+          <template v-slot:[`item.trips.refusedSumUp`]="{item}">
             <span>0</span>
           </template>
 
-          <template v-slot:item.membership.date="{item}">
+          <template v-slot:[`item.membership.date`]="{item}">
             <span>{{ formatDate(item.membership.date) }}</span>
 
             <template v-if="membershipUpToDate(item.membership.date)">
@@ -60,6 +60,7 @@
 import FullPageLayout from './FullPageLayout.vue';
 import { Meteor } from 'meteor/meteor';
 import { MembersCollection } from "../../db/MembersCollection";
+import { sortDates, formatDate } from '../helpers/dateHelper';
 
 const searchFor = (propertyName, searchTerm) => ({
   [`infos.${propertyName}`] : { $regex: searchTerm, $options: "i" }
@@ -80,36 +81,14 @@ export default {
         { text: 'Email', value: 'infos.email' },
         { text: 'Sorties', value: 'trips.acceptedSumUp' },
         { text: 'Refus', value: 'trips.refusedSumUp' },
-        { 
-          text: 'Date d\'adhésion', 
-          value: 'membership.date', 
-          sort: (a, b) => {
-            const at = a.getTime();
-            const bt = b.getTime();
-            if (at === bt)
-              return 0;
-            else if (at > bt)
-              return 1;
-            else
-              return -1;
-          },
-        },
+        { text: 'Date d\'adhésion', value: 'membership.date', sort: sortDates },
       ]
     };
   },
   methods: {
+    formatDate,
     membershipUpToDate(date) {
       return date > pivotMembershipDate;
-    },
-    formatDate(d) {
-      return d.toLocaleDateString(
-        'fr-FR', 
-        {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-        }
-      );
     },
     itemClick(item) {
       this.$router.push({ path: `/member/${item._id}` });

@@ -7,6 +7,7 @@ import Home from './components/Home.vue';
 import Members from './components/Members.vue';
 import Member from './components/Member.vue';
 import Trips from './components/Trips.vue';
+import Trip from './components/Trip.vue';
 
 const routes = [
   {
@@ -29,6 +30,12 @@ const routes = [
     path: "/trips",
     name: 'Trips',
     component: Trips
+  },
+  {
+    path: "/trip/:id",
+    name: 'Trip',
+    component: Trip,
+    props: true
   }
 ];
 

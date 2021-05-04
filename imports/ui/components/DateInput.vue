@@ -10,7 +10,7 @@
     <template v-slot:activator="{ on, attrs }">
       <v-text-field
         :label="label"
-        v-model="formatedBirthDate"
+        v-model="formatedDate"
         outlined
         hide-details="auto"
         readonly
@@ -22,50 +22,51 @@
       ref="picker"
       locale="fr-FR"
       v-model="pickerDate"
-      :max="new Date().toISOString().substr(0, 10)"
-      min="1920-01-01"
+      :max="maxDate"
+      :min="minDate"
       @change="save"
     ></v-date-picker>
   </v-menu>
 </template>
 
 <script>
+import { formatDate } from '../helpers/dateHelper';
+
 export default {
   props: {
     label: String,
     date: Date,
     setDate: Function,
-    startWithYear: Boolean
+    startWithYear: Boolean,
+    allowFuturDates: Boolean,
   },
-  data: () => ({
-    pickerDate: this.date,
-    menu: false,
-  }),
+  data() {
+    var max = new Date();
+    if (this.allowFuturDates)
+      max.setFullYear(max.getFullYear() + 2);
+    
+    return {
+      pickerDate: this.date.toISOString().substr(0, 10),
+      menu: false,
+      maxDate: max.toISOString().substr(0, 10),
+      minDate: '1920-01-01'
+    };
+  },
   watch: {
     menu (val) {
       this.startWithYear && val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
     },
   },
   computed: {
-    formatedBirthDate() {
-      return this.formatDate(this.date) || '';
+    formatedDate() {
+      return formatDate(this.date) || '';
     }
   },
   methods: {
-    save (d) {
+    save(d) {
       this.$refs.menu.save(d);
       this.setDate(new Date(d));
-    },
-    formatDate(d) {
-      return d?.toLocaleDateString(
-        'fr-FR', 
-        {
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-        }
-      );
-    },
+    }
   },
 }
 </script>
