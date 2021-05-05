@@ -279,7 +279,7 @@ export default {
           setTimeout(() => this.saving = false, 500); // extra delay
           
           if (!error)
-            this.initialValues = this.getAllProperties(foundTrip);
+            this.initialValues = this.getAllProperties(this.member);
         }
       );
     }
