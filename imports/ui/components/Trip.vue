@@ -1,5 +1,6 @@
 <template>
   <FullPageLayout
+    ref="layout"
     :title="title"
     backLabel="retour à la liste des sorties"
     backTarget="/trips"
@@ -62,7 +63,7 @@
         <h3>Équipage</h3>
         <ul v-if="crew">
           <li v-for="c in crew" :key="c._id">
-            {{ c.member.infos.firstname }} {{ c.member.infos.lastname }} - {{ c.assignedRole }}
+            {{ c.memberName }} - {{ c.assignedRole }}
           </li>
         </ul>
         <p v-else><i>Aucun membre d'équipage enregistré</i></p>
@@ -83,10 +84,10 @@
               color="primary"
               elevation="5"
               :loading="saving"
-              :disabled="saving || !hasUnsavedChanges"
+              :disabled="saving || !canSave"
               rounded
             >
-              {{ isNew ? 'créer la sortie' : 'enregister les modifications' }}
+              {{ !!newTrip ? 'créer la sortie' : 'enregister les modifications' }}
             </v-btn>
           </v-col>
         </v-row>
@@ -110,11 +111,12 @@
 
 <script>
 import FullPageLayout from './FullPageLayout.vue';
+import DateInput from './DateInput.vue';
+import CrewEditor from './CrewEditor.vue';
 import { Meteor } from 'meteor/meteor';
 import { TripsCollection } from "../../db/TripsCollection";
-import DateInput from './DateInput.vue';
 import { formatDate } from '../helpers/dateHelper';
-import CrewEditor from './CrewEditor.vue';
+import { getDelta } from '../helpers/objectHelper';
 
 export default {
   components: {
@@ -127,7 +129,6 @@ export default {
   },
   data: () => ({
     newTrip: undefined,
-    isNew: false,
     saving: false,
     initialValues: undefined,
     editCrew: false,
@@ -140,11 +141,15 @@ export default {
   }),
   computed: {
     title() {
-      let title = "Sortie";
-      if (this.trip?.date)
-        title += ` du ${formatDate(this.trip.date)}`;
+      if (this.newTrip)
+        return 'Nouvelle Sortie';
+      else if (this.trip?.date)
+        return `Sortie du ${formatDate(this.trip.date)}`;
 
-      return title;
+      return 'Sortie';
+    },
+    crew() {
+      return this.trip?.applicants?.filter(a => a.assignedRole);
     },
     modifiedProperties() {
       if (!this.trip || !this.initialValues)
@@ -152,22 +157,20 @@ export default {
 
       let newValues = this.getAllProperties(this.trip);
 
-      return Object.keys(newValues).filter(k => {
-        let newValue = newValues[k];
-        let oldValue = this.initialValues[k]
-
-        if (newValue && oldValue && typeof newValue.getTime === 'function') // Date comparison
-          return newValue.getTime() !== oldValue.getTime();
-        
-        return newValue !== oldValue; // Standard types comparison
-      })
-      .map(k => ({key: k, value: newValues[k]}));
+      return getDelta(newValues, this.initialValues)
+        .map(k => ({key: k, value: newValues[k]}));
     },
     hasUnsavedChanges() {
       return this.modifiedProperties.length > 0;
     },
-    crew() {
-      return this.trip?.applicants?.filter(a => a.assignedRole);
+    canSave() {
+      return this.hasUnsavedChanges &&
+        !!this.trip.date &&
+        !!this.trip.captain &&
+        !!this.trip.type &&
+        !!this.trip.port &&
+        !!this.trip.renter &&
+        this.crew?.length > 0;
     }
   },
   methods: {
@@ -182,14 +185,19 @@ export default {
         return;
 
       this.saving = true;
-      Meteor.call('trips.updateProperties', 
-        this.trip._id, 
-        changes,
-        (error, result) => {
-          this.$refs.layout.onSaveEnd(error);
-          setTimeout(() => this.saving = false, 500); // extra delay
-        }
-      );
+
+      const callback = (error, result) => {
+        this.$refs.layout.onSaveEnd(error);
+        setTimeout(() => this.saving = false, 500); // extra delay
+        
+        if (!error)
+          this.initialValues = this.getAllProperties(foundTrip);
+      };
+
+      if (!!this.newTrip)
+        Meteor.call('trips.create', changes, callback);
+      else
+        Meteor.call('trips.update', this.trip._id, changes, callback);
     }
   },
   meteor: {
@@ -200,19 +208,21 @@ export default {
       if (!this.id)
         return undefined;
 
+      let foundTrip;
+
       if (this.id === 'new') {
         if (!this.newTrip) {
-          this.isNew = true;
           this.newTrip = { 
             date: new Date(),
             applicants: []
           };
         }
 
-        return this.newTrip;
+        foundTrip = this.newTrip;
       }
-
-      let foundTrip = TripsCollection.findOne(this.id);
+      else {
+        foundTrip = TripsCollection.findOne(this.id);
+      }
 
       // initialValues will allow to detect form modifications
       if (foundTrip && !this.initialValues) {

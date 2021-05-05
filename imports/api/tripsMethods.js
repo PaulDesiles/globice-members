@@ -1,23 +1,51 @@
 import { check } from 'meteor/check';
 import { TripsCollection } from '../db/TripsCollection';
+import { 
+  ensureContainsUpdates, 
+  ensureUserConnected,
+  addCreationDate,
+  addModificationDate,
+  arrayToObject 
+} from './commonMethods';
 
+function checkTrip(t) {
+  check(t.date, Date);
+  check(t.captain, String);
+  check(t.port, String);
+  check(t.type, String);
+  check(t.renter, String);
+  check(t.applicants, Array);
+}
 
 Meteor.methods({
-  'trips.insert'(tripData) {
-    check(tripData.date, Date);
-    check(tripData.captain, String);
-    check(tripData.port, String);
-    check(tripData.type, String);
-    check(tripData.renter, String);
-//    check(tripData.state, String);
+  'trips.create'(data) {
+    check(data, Array);
 
-    if (!this.userId) {
-      throw new Meteor.Error('Not authorized.');
-    }
+    ensureUserConnected(this.userId);
+    ensureContainsUpdates(data);
 
-    TripsCollection.insert({
-      creationDate: new Date,
-      ...tripData
+    addCreationDate(data);
+
+    var dataObj = arrayToObject(data);
+    checkTrip(dataObj);
+
+    TripsCollection.insert(dataObj);
+  },
+
+  'trips.update'(tripId, data) {
+    check(tripId, String);
+    check(data, Array);
+
+    ensureUserConnected(this.userId);
+    ensureContainsUpdates(data);
+
+    addModificationDate(data);
+
+    var dataObj = arrayToObject(data);
+    checkTrip(dataObj);
+
+    TripsCollection.update(memberId, {
+      $set: arrayToObject(dataObj),
     });
   }
 });

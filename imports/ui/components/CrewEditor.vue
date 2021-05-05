@@ -70,11 +70,11 @@
           <tbody>
             <tr
               v-for="applicant in editableApplicants"
-              :key="applicant.member._id"
+              :key="applicant.memberId"
             >
               <td>
                 <span :class="!!applicant.assignedRole ? 'selected-member' : 'unselected-member'">
-                  {{ applicant.member.infos.firstname }} {{ applicant.member.infos.lastname }}
+                  {{ applicant.memberName }}
                 </span>
               </td>
               <td>0/0</td>
@@ -153,7 +153,8 @@ export default {
   methods: {
     addApplicant() {
       this.editableApplicants.push({ 
-        member: this.selectedMember,
+        memberId: this.selectedMember._id,
+        memberName: `${this.selectedMember.infos.firstname} ${this.selectedMember.infos.lastname}`,
         desiredRole: this.selectedRole,
         assignedRole: undefined
       });

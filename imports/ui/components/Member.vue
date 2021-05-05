@@ -192,9 +192,10 @@
 
 <script>
 import FullPageLayout from './FullPageLayout.vue';
+import DateInput from './DateInput.vue';
 import { Meteor } from 'meteor/meteor';
 import { MembersCollection } from "../../db/MembersCollection";
-import DateInput from './DateInput.vue';
+import { getDelta } from '../helpers/objectHelper';
 
 export default {
   components: {
@@ -246,16 +247,8 @@ export default {
 
       let newValues = this.getAllProperties(this.member);
 
-      return Object.keys(newValues).filter(k => {
-        let newValue = newValues[k];
-        let oldValue = this.initialValues[k]
-
-        if (newValue && oldValue && typeof newValue.getTime === 'function') // Date comparison
-          return newValue.getTime() !== oldValue.getTime();
-        
-        return newValue !== oldValue; // Standard types comparison
-      })
-      .map(k => ({key: k, value: newValues[k]}));
+      return getDelta(newValues, this.initialValues)
+        .map(k => ({key: k, value: newValues[k]}));
     },
     hasUnsavedChanges() {
       return this.modifiedProperties.length > 0;
@@ -278,12 +271,15 @@ export default {
         return;
 
       this.saving = true;
-      Meteor.call('members.updateProperties', 
+      Meteor.call('members.update', 
         this.member._id, 
         changes,
         (error) => {
           this.$refs.layout.onSaveEnd(error);
           setTimeout(() => this.saving = false, 500); // extra delay
+          
+          if (!error)
+            this.initialValues = this.getAllProperties(foundTrip);
         }
       );
     }
