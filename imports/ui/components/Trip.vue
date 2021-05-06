@@ -265,7 +265,7 @@ export default {
     },
     handleSubmit(event) {
       // Set crew as onboard by default
-      if (!!this.newTrip && this.crew) {
+      if (this.newTrip && this.crew) {
         this.crew.forEach(c => {
           c.onboard = true;
           c.credited = true;
@@ -279,18 +279,15 @@ export default {
       this.saving = true;
 
       const callback = (error, result) => {
-        this.$refs.layout.onSaveEnd(error);
+        this.$refs.layout.onSaveEnd(error, !!this.newTrip);
         setTimeout(() => this.saving = false, 500); // extra delay
         
-        if (!error) {
-          if (!!this.newTrip)
-            this.$router.push('/trips');
-          
+        if (!error) {          
           this.initialValues = this.getAllProperties(this.trip);
         }
       };
 
-      if (!!this.newTrip)
+      if (this.newTrip)
         Meteor.call('trips.create', changes, callback);
       else
         Meteor.call('trips.update', this.trip._id, changes, callback);
@@ -304,28 +301,27 @@ export default {
       if (!this.id)
         return undefined;
 
-      let foundTrip;
-
       if (this.id === 'new') {
         if (!this.newTrip) {
           this.newTrip = { 
             date: new Date(),
             applicants: []
           };
+
+          this.initialValues = [];
         }
 
-        foundTrip = this.newTrip;
+        return this.newTrip;
       }
       else {
         foundTrip = TripsCollection.findOne(this.id);
-      }
 
-      // initialValues will allow to detect form modifications
-      if (foundTrip && !this.initialValues) {
-        this.initialValues = this.getAllProperties(foundTrip);
-      }
+        if (foundTrip && !this.initialValues) {
+          this.initialValues = this.getAllProperties(foundTrip);
+        }
 
-      return foundTrip;
+        return foundTrip;
+      }
     }
   }
 }

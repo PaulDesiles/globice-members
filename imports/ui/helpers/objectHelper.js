@@ -20,5 +20,7 @@ function areEqual(a, b) {
 }
 
 export function getDelta(newValues, oldValues) {
-  return Object.keys(newValues).filter(k => !areEqual(newValues[k], oldValues[k]));
+  return Object.keys(newValues)
+    .filter(k => !k.startsWith('_'))
+    .filter(k => !areEqual(newValues[k], oldValues[k]));
 }

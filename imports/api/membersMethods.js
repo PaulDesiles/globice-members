@@ -30,8 +30,10 @@ Meteor.methods({
 
     addModificationDate(data);
 
+    var dataObj = arrayToObject(data);
+
     MembersCollection.update(memberId, {
-      $set: arrayToObject(data),
+      $set: dataObj,
     });
   },
 });

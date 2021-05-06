@@ -42,10 +42,9 @@ Meteor.methods({
     addModificationDate(data);
 
     var dataObj = arrayToObject(data);
-    checkTrip(dataObj);
 
-    TripsCollection.update(memberId, {
-      $set: arrayToObject(dataObj),
+    TripsCollection.update(tripId, {
+      $set: dataObj,
     });
   }
 });

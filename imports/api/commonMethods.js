@@ -13,14 +13,14 @@ export function ensureContainsUpdates(changes) {
 
 export function addCreationDate(changes) {
   changes.push({
-    key: 'creationDate',
+    key: '_creationDate',
     value: new Date(Date.now())
   });
 }
 
 export function addModificationDate(changes) {
   changes.push({
-    key: 'modificationDate',
+    key: '_modificationDate',
     value: new Date(Date.now())
   });
 }

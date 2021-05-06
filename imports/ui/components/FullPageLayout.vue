@@ -106,11 +106,14 @@
 
         return true;
       },
-      onSaveEnd(error) {
+      onSaveEnd(error, creation) {
         if (error)
           console.log(error);
 
         this.$refs.flyout.open(!!error, error ? "Une erreur est survenue" : "Modification enregistrées !");
+
+        if (creation)
+          setTimeout(() => this.goBack(true), 500);
       }
     }
   };
