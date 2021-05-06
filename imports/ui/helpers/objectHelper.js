@@ -1,3 +1,25 @@
+function getRelevantKeys(obj) {
+  return Object.keys(obj)
+    .filter(k => !k.startsWith('_'));
+}
+
+
+export function getAllProperties(obj, nested) {
+  let properties = {};
+
+  if (obj) {
+    if (nested) {
+      getRelevantKeys(obj).forEach(rootKey => {
+        Object.keys(obj[rootKey]).forEach(key => properties[`${rootKey}.${key}`] = obj[rootKey][key]);
+      });
+    } else {
+      getRelevantKeys(obj).forEach(key => properties[key] = obj[key]);
+    }
+  }
+
+  return properties;
+}
+
 
 function areEqual(a, b) {
   if (a && b) {
@@ -20,7 +42,6 @@ function areEqual(a, b) {
 }
 
 export function getDelta(newValues, oldValues) {
-  return Object.keys(newValues)
-    .filter(k => !k.startsWith('_'))
+  return getRelevantKeys(newValues)
     .filter(k => !areEqual(newValues[k], oldValues[k]));
 }

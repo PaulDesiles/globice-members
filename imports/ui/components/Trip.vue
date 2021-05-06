@@ -180,7 +180,7 @@
               :disabled="saving || !canSave"
               rounded
             >
-              {{ !!newTrip ? 'créer la sortie' : 'enregister les modifications' }}
+              {{ !!newTrip ? 'créer la sortie' : 'enregistrer les modifications' }}
             </v-btn>
           </v-col>
         </v-row>
@@ -197,7 +197,7 @@ import CrewEditor from './CrewEditor.vue';
 import { Meteor } from 'meteor/meteor';
 import { TripsCollection } from "../../db/TripsCollection";
 import { formatDate } from '../helpers/dateHelper';
-import { getDelta } from '../helpers/objectHelper';
+import { getAllProperties, getDelta } from '../helpers/objectHelper';
 
 export default {
   components: {
@@ -239,7 +239,7 @@ export default {
       if (!this.trip || !this.initialValues)
         return [];
 
-      let newValues = this.getAllProperties(this.trip);
+      let newValues = getAllProperties(this.trip);
 
       return getDelta(newValues, this.initialValues)
         .map(k => ({key: k, value: newValues[k]}));
@@ -258,11 +258,6 @@ export default {
     }
   },
   methods: {
-    getAllProperties(m) {
-        let properties = {};
-        Object.keys(m).forEach(key => properties[key] = m[key]);
-        return properties;
-    },
     handleSubmit(event) {
       // Set crew as onboard by default
       if (this.newTrip && this.crew) {
@@ -283,7 +278,7 @@ export default {
         setTimeout(() => this.saving = false, 500); // extra delay
         
         if (!error) {          
-          this.initialValues = this.getAllProperties(this.trip);
+          this.initialValues = getAllProperties(this.trip);
         }
       };
 
@@ -317,7 +312,7 @@ export default {
         foundTrip = TripsCollection.findOne(this.id);
 
         if (foundTrip && !this.initialValues) {
-          this.initialValues = this.getAllProperties(foundTrip);
+          this.initialValues = getAllProperties(foundTrip);
         }
 
         return foundTrip;

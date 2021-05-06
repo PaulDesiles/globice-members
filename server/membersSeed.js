@@ -56,8 +56,8 @@ try {
           "confirmedTrips": [],
           "refusedTrips": []
         },
-        "creationDate": new Date(),
-        "schemaVersion": "1"
+        "_creationDate": new Date(),
+        "_schemaVersion": "1"
       };
     });
 

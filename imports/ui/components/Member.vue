@@ -173,19 +173,12 @@
         color="primary"
         elevation="5"
         :loading="saving"
-        :disabled="saving || !hasUnsavedChanges"
+        :disabled="saving || !canSave"
         rounded
       >
-        enregistrer les modifications
+        {{ !!newMember ? 'ajouter le bénévole' : 'enregistrer les modifications' }}
       </v-btn>
     </v-form>
-
-
-    <ul>
-      <li v-for="p in modifiedProperties" :key="p.key">
-        {{p.key}} : {{p.value}}
-      </li>
-    </ul>
   </template>
   </FullPageLayout>
 </template>
@@ -195,7 +188,7 @@ import FullPageLayout from './FullPageLayout.vue';
 import DateInput from './DateInput.vue';
 import { Meteor } from 'meteor/meteor';
 import { MembersCollection } from "../../db/MembersCollection";
-import { getDelta } from '../helpers/objectHelper';
+import { getAllProperties, getDelta } from '../helpers/objectHelper';
 
 export default {
   components: {
@@ -206,6 +199,7 @@ export default {
     id: String
   },
   data: () => ({
+    newMember: undefined,
     saving: false,
     initialValues: undefined,
     choices: {
@@ -235,53 +229,52 @@ export default {
   }),
   computed: {
     title() {
-      let title = "Bénévole";
+      if (this.newMember)
+        return "Nouveau bénévole";
       if (this.member?.infos)
-        title += ` : ${this.member.infos.firstname} ${this.member.infos.lastname}`;
+        return `Bénévole : ${this.member.infos.firstname} ${this.member.infos.lastname}`;
 
-      return title;
+      return "Bénévole";
     },
     modifiedProperties() {
       if (!this.member || !this.initialValues)
         return [];
 
-      let newValues = this.getAllProperties(this.member);
+      let newValues = getAllProperties(this.member, true);
 
       return getDelta(newValues, this.initialValues)
         .map(k => ({key: k, value: newValues[k]}));
     },
     hasUnsavedChanges() {
       return this.modifiedProperties.length > 0;
+    },
+    canSave() {
+      return this.hasUnsavedChanges &&
+        !!this.member.infos.firstname &&
+        !!this.member.infos.lastname;
     }
   },
   methods: {
-    getAllProperties(m) {
-        let properties = {};
-
-        if (m) {
-          ['infos', 'abilities', 'membership'].forEach(rootKey => {
-            Object.keys(m[rootKey]).forEach(key => properties[`${rootKey}.${key}`] = m[rootKey][key]);
-          });
-        }
-        return properties;
-    },
     handleSubmit(event) {
-      let changes = this.modifiedProperties;
+      let changes = this.modifiedProperties; // compute it only once
       if (changes.length === 0) 
         return;
 
       this.saving = true;
-      Meteor.call('members.update', 
-        this.member._id, 
-        changes,
-        (error) => {
-          this.$refs.layout.onSaveEnd(error);
-          setTimeout(() => this.saving = false, 500); // extra delay
-          
-          if (!error)
-            this.initialValues = this.getAllProperties(this.member);
+
+      const callback = (error, result) => {
+        this.$refs.layout.onSaveEnd(error, !!this.newMember);
+        setTimeout(() => this.saving = false, 500); // extra delay
+        
+        if (!error) {          
+          this.initialValues = getAllProperties(this.member, true);
         }
-      );
+      };
+
+      if (this.newMember)
+        Meteor.call('members.create', this.member, callback);
+      else
+        Meteor.call('members.update', this.member._id, changes, callback);
     }
   },
   meteor: {
@@ -292,14 +285,32 @@ export default {
       if (!this.id)
         return undefined;
 
-      let foundMember = MembersCollection.findOne(this.id);
+      if (this.id === 'new') {
+        if (!this.newMember) {
+          this.newMember = {
+            infos: {
+              birthdate: new Date()
+            },
+            abilities: {},
+            membership: {
+              date: new Date()
+            },
+            trips: {}
+          };
+          this.initialValues = [];
+        }
 
-      // initialValues will allow to detect form modifications
-      if (foundMember && !this.initialValues) {
-        this.initialValues = this.getAllProperties(foundMember);
+        return this.newMember;
       }
+      else {
+        let foundMember = MembersCollection.findOne(this.id);
 
-      return foundMember;
+        if (foundMember && !this.initialValues) {
+          this.initialValues = getAllProperties(foundMember, true);
+        }
+
+        return foundMember;
+      }
     }
   }
 }

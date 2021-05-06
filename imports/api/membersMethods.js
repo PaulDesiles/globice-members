@@ -10,14 +10,14 @@ import {
 
 Meteor.methods({
   'members.create'(data) {
-    check(data, Array);
+    check(data, Object);
     
     ensureUserConnected(this.userId);
     ensureContainsUpdates(data);
 
     addCreationDate(data);
 
-    MembersCollection.insert(arrayToObject(data));
+    MembersCollection.insert(data);
   },
 
 

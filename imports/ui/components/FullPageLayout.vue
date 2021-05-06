@@ -1,6 +1,6 @@
 <template>
   <v-container class="layoutRoot">
-    <v-app-bar color="secondary" dark>
+    <v-app-bar color="secondary" dark class="pl-4 pr-4">
       <h2>{{ title }}</h2>
       <div class="alignRight">
         <slot name="header-right">
@@ -11,7 +11,7 @@
       <v-col>
         <v-row class="mb-5">
           <a
-            class="backLink"
+            class="backLink ml-2"
             :to="backTarget"
             event=""
             @click.prevent="goBack(false)"
@@ -112,7 +112,7 @@
 
         this.$refs.flyout.open(!!error, error ? "Une erreur est survenue" : "Modification enregistrées !");
 
-        if (creation)
+        if (!error && creation)
           setTimeout(() => this.goBack(true), 500);
       }
     }
