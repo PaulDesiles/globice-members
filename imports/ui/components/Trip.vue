@@ -170,20 +170,20 @@
           </v-row>
         </template>
 
-        <v-row>
-          <v-col>
-            <v-btn
-              type="submit"
-              color="primary"
-              elevation="5"
-              :loading="saving"
-              :disabled="saving || !canSave"
-              rounded
-            >
-              {{ !!newTrip ? 'créer la sortie' : 'enregistrer les modifications' }}
-            </v-btn>
-          </v-col>
-        </v-row>
+        
+        <div class="d-flex justify-end">
+          <v-btn
+            type="submit"
+            color="primary"
+            elevation="7"
+            :loading="saving"
+            :disabled="saving || !canSave"
+            rounded
+            large
+          >
+            {{ !!newTrip ? 'créer la sortie' : 'enregistrer les modifications' }}
+          </v-btn>
+        </div>
       </v-form>
 
     </template>

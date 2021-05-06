@@ -167,17 +167,19 @@
       <h3>Sorties effectuées</h3>
       <h3>Sorties refusées</h3>
 
-
-      <v-btn
-        type="submit"
-        color="primary"
-        elevation="5"
-        :loading="saving"
-        :disabled="saving || !canSave"
-        rounded
-      >
-        {{ !!newMember ? 'ajouter le bénévole' : 'enregistrer les modifications' }}
-      </v-btn>
+      <div class="d-flex justify-end">
+        <v-btn
+          type="submit"
+          color="primary"
+          elevation="7"
+          :loading="saving"
+          :disabled="saving || !canSave"
+          rounded
+          large
+        >
+          {{ !!newMember ? 'ajouter le bénévole' : 'enregistrer les modifications' }}
+        </v-btn>
+      </div>
     </v-form>
   </template>
   </FullPageLayout>

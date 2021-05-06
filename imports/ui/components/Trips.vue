@@ -3,19 +3,17 @@
     title="Sorties"
     backLabel="retour à l'accueil"
     backTarget="/">
-
-    <v-row>
-      <v-col>
-        <v-btn
-          color="primary"
-          elevation="5"
-          rounded
-          @click="createTrip"
-        >
+    <template v-slot:header-right>
+      <v-btn
+        color="primary"
+        elevation="5"
+        rounded
+        @click="createTrip"
+      >
+        <v-icon left>mdi-calendar</v-icon>
           créer une sortie
-        </v-btn>
-      </v-col>
-    </v-row>
+      </v-btn>
+    </template>
 
     <v-row>
       <v-layout child-flex>
