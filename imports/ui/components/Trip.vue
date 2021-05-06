@@ -99,13 +99,12 @@
         max-width="900"
         min-height="600"
       >
-        <CrewEditor 
-          :applicants.sync="trip.applicants"
-          @close="editCrew = false"
-        />
+          <CrewEditor v-if="$subReady.trips"
+            :applicants.sync="trip.applicants"
+            @close="editCrew = false"
+          />
       </v-dialog>
     </template>
-
   </FullPageLayout>
 </template>
 

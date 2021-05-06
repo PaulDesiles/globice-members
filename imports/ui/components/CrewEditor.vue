@@ -14,7 +14,7 @@
       <h3>Candidats</h3>
 
       <v-form>
-        <v-row>
+        <v-row class="align-center">
           <v-col :cols="6">
             <v-autocomplete
               v-model="selectedMember"
@@ -60,11 +60,12 @@
         <template v-slot:default>
           <thead>
             <tr>
-              <th class="text-left">Nom</th>
-              <th class="text-left">Sorties</th>
-              <th class="text-left">Refus</th>
-              <th class="text-left">Rôle candidaté</th>
-              <th class="text-left">Rôle alloué</th>
+              <th class="text-left" :style="{ width: '30%' }">Nom</th>
+              <th class="text-left" :style="{ width: '10%' }">Sorties</th>
+              <th class="text-left" :style="{ width: '10%' }">Refus</th>
+              <th class="text-left" :style="{ width: '15%' }">Rôle candidaté</th>
+              <th class="text-left" :style="{ width: '25%' }">Rôle alloué</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -92,6 +93,23 @@
                   hide-details="auto"
                 />
               </td>
+              <td>
+
+                <v-tooltip right>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn 
+                      color="red"
+                      icon
+                      v-bind="attrs"
+                      v-on="on"
+                      @click="deleteApplicant(applicant)"
+                    >
+                      <v-icon>mdi-delete</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Supprimer</span>
+                </v-tooltip>
+              </td>
             </tr>
           </tbody>
         </template>
@@ -106,7 +124,7 @@
       <v-btn
         color="primary"
         text
-        @click="$emit('close')"
+        @click="cancelChanges()"
       >
         annuler les changements
       </v-btn>
@@ -129,20 +147,28 @@ export default {
   props: {
     applicants: Array
   },
-  data: () => ({
-    editableApplicants: this.applicants || [],
-    roles: [ 
-      { text:'aucun', value: null }, 
-      'script', 
-      'observateur', 
-      'photographe' 
-      ],
-    selectedMember: null,
-    selectedRole: null
-  }),
+  data() {
+    return {
+      editableApplicants: JSON.parse(JSON.stringify(this.applicants)) || [],
+      roles: [ 
+        { text:'aucun', value: null }, 
+        'script', 
+        'observateur', 
+        'photographe' 
+        ],
+      selectedMember: null,
+      selectedRole: null
+    };
+  },
+  watch: {
+    applicants() {
+      this.resetApplicants();
+    }
+  },
   computed: {
     autocompleteItems() {
       return this.members
+        ?.filter(m => !this.editableApplicants.some(a => a.memberId === m._id))
         ?.map(m => ({
           text: `${m.infos.firstname} ${m.infos.lastname}`,
           value: m
@@ -151,19 +177,29 @@ export default {
     }
   },
   methods: {
+    resetApplicants() {
+      this.editableApplicants = JSON.parse(JSON.stringify(this.applicants)) || [];
+    },
     addApplicant() {
       this.editableApplicants.push({ 
         memberId: this.selectedMember._id,
         memberName: `${this.selectedMember.infos.firstname} ${this.selectedMember.infos.lastname}`,
         desiredRole: this.selectedRole,
-        assignedRole: undefined
+        assignedRole: null
       });
 
       this.selectedMember = null;
       this.selectedRole = null;
     },
+    deleteApplicant(applicant) {
+      this.editableApplicants = this.editableApplicants.filter(a => a !== applicant);
+    },
     saveChanges() {
       this.$emit('update:applicants', this.editableApplicants);
+      this.$emit('close');
+    },
+    cancelChanges() {
+      this.resetApplicants();
       this.$emit('close');
     }
   },
