@@ -60,22 +60,115 @@
           </v-col>
         </v-row>
 
+        <template v-if="refusedApplicants && refusedApplicants.length > 0">
+          <h3>Candidats refusés</h3>
+            <v-chip class="mr-2 mb-2" v-for="c in refusedApplicants" :key="c._id">
+              {{ c.memberName }}
+            </v-chip>
+        </template>
+
         <h3>Équipage</h3>
-        <ul v-if="crew">
-          <li v-for="c in crew" :key="c._id">
-            {{ c.memberName }} - {{ c.assignedRole }}
-          </li>
-        </ul>
-        <p v-else><i>Aucun membre d'équipage enregistré</i></p>
+        <v-row>
+          <v-col :cols="newTrip ? 4 : 12">
+            <v-simple-table 
+              v-if="crew && crew.length > 0"
+              class="elevation-3 mb-5"
+            >
+              <template v-slot:default>
+                <thead>
+                  <tr>
+                    <th class="text-left" :style="{ width: '25%' }">Nom</th>
+                    <th class="text-left" :style="{ width: '15%' }">Rôle</th>
+
+                    <template v-if="!newTrip">
+                      <th class="text-left" :style="{ width: '10%' }">Présent</th>
+                      <th class="text-left" :style="{ width: '10%' }">Créditer la sortie</th>
+                      <th class="text-left">Commentaire</th>
+                    </template>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="applicant in crew"
+                    :key="applicant.memberId"
+                  >
+                    <td>{{ applicant.memberName }}</td>
+                    <td>{{ applicant.assignedRole }}</td>
+                    
+                    <template v-if="!newTrip">
+                      <td>
+                        <v-switch v-model="applicant.onboard" inset />
+                      </td>
+                      <td>
+                        <v-switch v-model="applicant.credited" inset />
+                      </td>
+                      <td>
+                        <v-text-field
+                          v-model="applicant.comment"
+                          solo
+                          flat
+                          dense
+                          outlined
+                          hide-details="auto"
+                        />
+                      </td>
+                    </template>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table>
+          </v-col>
+        </v-row>
 
         <v-btn
           color="primary"
           elevation="5"
+          class="mb-5"
           rounded
           @click="editCrew = true"
         >
           modifier l'équipage
+          <v-icon right>mdi-pencil</v-icon>
         </v-btn>
+
+        <v-dialog
+          v-model="editCrew"
+          persistent
+          max-width="900"
+          min-height="600"
+        >
+            <CrewEditor v-if="$subReady.trips"
+              :applicants.sync="trip.applicants"
+              @close="editCrew = false"
+            />
+        </v-dialog>
+
+        <template v-if="!newTrip">
+          <h3>Après la sortie</h3>
+          <v-row>
+            <v-col :cols="4">
+              <v-text-field
+                label="Frais d'essence"
+                suffix="€"
+                v-model="trip.fee"
+                type="number"
+                outlined
+                hide-details="auto"
+              />
+            </v-col>
+          </v-row>
+          
+          <v-row>
+            <v-col>
+              <v-textarea
+                label="Commentaires sur la sortie et observations réalisées"
+                v-model="trip.comment" 
+                outlined
+                hide-details="auto"
+              />
+            </v-col>
+          </v-row>
+        </template>
 
         <v-row>
           <v-col>
@@ -93,17 +186,6 @@
         </v-row>
       </v-form>
 
-      <v-dialog
-        v-model="editCrew"
-        persistent
-        max-width="900"
-        min-height="600"
-      >
-          <CrewEditor v-if="$subReady.trips"
-            :applicants.sync="trip.applicants"
-            @close="editCrew = false"
-          />
-      </v-dialog>
     </template>
   </FullPageLayout>
 </template>
@@ -150,6 +232,9 @@ export default {
     crew() {
       return this.trip?.applicants?.filter(a => a.assignedRole);
     },
+    refusedApplicants() {
+      return this.trip?.applicants?.filter(a => !a.assignedRole);
+    },
     modifiedProperties() {
       if (!this.trip || !this.initialValues)
         return [];
@@ -179,7 +264,15 @@ export default {
         return properties;
     },
     handleSubmit(event) {
-      let changes = this.modifiedProperties;
+      // Set crew as onboard by default
+      if (!!this.newTrip && this.crew) {
+        this.crew.forEach(c => {
+          c.onboard = true;
+          c.credited = true;
+        })
+      }
+
+      let changes = this.modifiedProperties; // compute it only once
       if (changes.length === 0) 
         return;
 
@@ -189,8 +282,12 @@ export default {
         this.$refs.layout.onSaveEnd(error);
         setTimeout(() => this.saving = false, 500); // extra delay
         
-        if (!error)
+        if (!error) {
+          if (!!this.newTrip)
+            this.$router.push('/trips');
+          
           this.initialValues = this.getAllProperties(this.trip);
+        }
       };
 
       if (!!this.newTrip)
@@ -233,3 +330,12 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  .v-data-table {
+    overflow: hidden; /* to crop header background with a correct border-radius */
+  }
+  .v-data-table thead {
+    background: #efefef;
+  }
+</style>
