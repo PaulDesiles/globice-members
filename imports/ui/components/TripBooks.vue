@@ -116,6 +116,7 @@
             <v-btn
               color="primary"
               @click="addPurchase"
+              :disabled="!canAdd"
             >
               Ajouter
             </v-btn>
@@ -153,6 +154,9 @@ export default {
   computed: {
     orderedPurchases() {
       return this.purchases.sort((x,y) => sortDates(x.date, y.date));
+    },
+    canAdd() {
+      return this.bookSize && this.paymentDate;
     }
   },
   methods: {

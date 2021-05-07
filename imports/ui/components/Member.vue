@@ -264,7 +264,8 @@ export default {
     canSave() {
       return this.hasUnsavedChanges &&
         !!this.member.infos.firstname &&
-        !!this.member.infos.lastname;
+        !!this.member.infos.lastname &&
+        !!this.member.infos.email;
     }
   },
   methods: {
@@ -313,7 +314,11 @@ export default {
             membership: {
               date: new Date()
             },
-            trips: {}
+            trips: {
+              purchases: [],
+              confirmedTrips: [],
+              refusedTrips: [],
+            }
           };
           this.initialValues = [];
         }
