@@ -52,7 +52,7 @@ try {
           "certificate": cells[12]
         },
         "trips": {
-          "purshases": [],
+          "purchases": [],
           "confirmedTrips": [],
           "refusedTrips": []
         },

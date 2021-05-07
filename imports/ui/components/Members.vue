@@ -122,14 +122,6 @@ export default {
 </script>
 
 <style>
-  .v-data-table {
-    overflow: hidden; /* to crop header background with a correct border-radius */
-    
-  }
-  .v-data-table-header {
-    background: #efefef;
-  }
-
   table {
     table-layout : fixed;
   }

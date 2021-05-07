@@ -21,8 +21,7 @@
           <v-col>
             <DateInput 
               label="Date"
-              :date="trip.date"
-              :setDate="d => trip.date = d"
+              :date.sync="trip.date"
               :allowFuturDates="true"
               />
           </v-col>
@@ -336,12 +335,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-  .v-data-table {
-    overflow: hidden; /* to crop header background with a correct border-radius */
-  }
-  .v-data-table thead {
-    background: #efefef;
-  }
-</style>

@@ -10,22 +10,14 @@ h1 {
   margin: 3px 0;
 }
 
-
 h3 {
   color: var(--blue);
   margin: 10px 0;
 }
 
-.roundButton {
-  padding: 8px 15px;
-  background: var(--blue);
-  border: none;
-  border-radius: 20px;
-  color: white;
-
-  font-size: 12pt;
+.v-data-table {
+  overflow: hidden; /* to crop header background with a correct border-radius */
 }
-
-.roundButton:hover {
-  background: var(--blue-hover);
+.v-data-table thead {
+  background: #efefef;
 }

@@ -36,7 +36,6 @@ export default {
   props: {
     label: String,
     date: Date,
-    setDate: Function,
     startWithYear: Boolean,
     allowFuturDates: Boolean,
   },
@@ -65,7 +64,7 @@ export default {
   methods: {
     save(d) {
       this.$refs.menu.save(d);
-      this.setDate(new Date(d));
+      this.$emit('update:date', new Date(d));
     }
   },
 }

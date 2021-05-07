@@ -41,8 +41,7 @@
         <v-col>
           <DateInput 
             label="Date de naisance"
-            :date="member.infos.birthdate"
-            :setDate="d => member.infos.birthdate = d"
+            :date.sync="member.infos.birthdate"
             :startWithYear="true"
             />
         </v-col>
@@ -150,15 +149,14 @@
 
       <h3>Adhésion</h3>
       <v-row>
-        <v-col :cols="4">
+        <v-col :cols="3">
           <DateInput 
             label="Date d'adhésion"
-            :date="member.membership.date"
-            :setDate="d => member.membership.date = d"
+            :date.sync="member.membership.date"
           />
         </v-col>
 
-        <v-col :cols="4">
+        <v-col :cols="3">
           <v-select
             label="Primo-adhésion"
             v-model="member.membership.isNewMember" 
@@ -171,6 +169,8 @@
 
 
       <h3>Carnets de sorties</h3>
+      <TripBooks :purchases.sync="member.trips.purchases" />
+      
       <h3>Sorties effectuées</h3>
       <h3>Sorties refusées</h3>
 
@@ -196,6 +196,7 @@
 import FullPageLayout from './FullPageLayout.vue';
 import DateInput from './DateInput.vue';
 import DeleteButton from './DeleteButton.vue';
+import TripBooks from './TripBooks';
 import { Meteor } from 'meteor/meteor';
 import { MembersCollection } from "../../db/MembersCollection";
 import { getAllProperties, getDelta } from '../helpers/objectHelper';
@@ -204,7 +205,8 @@ export default {
   components: {
     FullPageLayout,
     DateInput,
-    DeleteButton
+    DeleteButton,
+    TripBooks
   },
   props: {
     id: String
