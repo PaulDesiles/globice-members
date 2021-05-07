@@ -33,6 +33,9 @@
           <template v-slot:[`item.date`]="{item}">
               <span>{{ formatDate(item.date) }}</span>
           </template>
+          <template v-slot:[`item.state`]="{item}">
+              <span>{{ getTripState(item) }}</span>
+          </template>
         </v-data-table>
       </v-layout>
     </v-row>
@@ -58,7 +61,7 @@ export default {
         { text: 'Port', value: 'port' },
         { text: 'Type', value: 'type' },
         { text: 'Loueur', value: 'renter' },
-        { text: 'Etat', value: 'state' }
+        { text: 'Etat', value: 'state'}
       ]
     };
   },
@@ -69,6 +72,12 @@ export default {
     },
     createTrip() {
       this.$router.push({ path: `/trip/new` });
+    },
+    getTripState(trip) {
+      if (trip && trip.fee && trip.comment)
+        return 'terminée';
+
+      return 'en cours';
     }
   },
   meteor: {

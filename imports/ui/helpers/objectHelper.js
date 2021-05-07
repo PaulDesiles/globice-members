@@ -38,7 +38,7 @@ function areEqual(a, b) {
       return Object.keys(a).every(k => areEqual(a[k], b[k]));
   }
 
-  return a === b;
+  return a == b;
 }
 
 export function getDelta(newValues, oldValues) {
