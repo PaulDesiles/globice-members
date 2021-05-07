@@ -24,6 +24,7 @@
       v-model="pickerDate"
       :max="maxDate"
       :min="minDate"
+      :first-day-of-week="1"
       @change="save"
     ></v-date-picker>
   </v-menu>
