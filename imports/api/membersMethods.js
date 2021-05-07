@@ -36,4 +36,10 @@ Meteor.methods({
       $set: dataObj,
     });
   },
+
+  'members.delete'(memberId) {
+    check(memberId, String);
+    ensureUserConnected(this.userId);
+    MembersCollection.remove(memberId);
+  }
 });

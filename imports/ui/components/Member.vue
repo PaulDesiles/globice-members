@@ -7,6 +7,13 @@
     :hasUnsavedChanges="hasUnsavedChanges"
     :loading="!$subReady.members"
   >
+  <template v-slot:header-right>
+    <DeleteButton
+      v-if="!newMember"
+      entityLabel="ce bénévole"
+      :onDelete="deleteMember"
+    />
+  </template>
 
   <template v-if="member">
     <v-form @submit.prevent="handleSubmit">
@@ -188,6 +195,7 @@
 <script>
 import FullPageLayout from './FullPageLayout.vue';
 import DateInput from './DateInput.vue';
+import DeleteButton from './DeleteButton.vue';
 import { Meteor } from 'meteor/meteor';
 import { MembersCollection } from "../../db/MembersCollection";
 import { getAllProperties, getDelta } from '../helpers/objectHelper';
@@ -195,7 +203,8 @@ import { getAllProperties, getDelta } from '../helpers/objectHelper';
 export default {
   components: {
     FullPageLayout,
-    DateInput
+    DateInput,
+    DeleteButton
   },
   props: {
     id: String
@@ -277,6 +286,11 @@ export default {
         Meteor.call('members.create', this.member, callback);
       else
         Meteor.call('members.update', this.member._id, changes, callback);
+    },
+    deleteMember() {
+      Meteor.call('members.delete', this.member._id, (error, resul) => {
+        this.$refs.layout.onSaveEnd(error, true);
+      });
     }
   },
   meteor: {

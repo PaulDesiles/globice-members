@@ -7,6 +7,14 @@
     :hasUnsavedChanges="hasUnsavedChanges"
     :loading="!$subReady.trips"
   >
+    <template v-slot:header-right>
+      <DeleteButton
+        v-if="!newTrip"
+        entityLabel="cette sortie"
+        :onDelete="deleteTrip"
+      />
+    </template>
+
     <template v-if="trip">
       <v-form @submit.prevent="handleSubmit">
         <v-row>
@@ -194,6 +202,7 @@
 import FullPageLayout from './FullPageLayout.vue';
 import DateInput from './DateInput.vue';
 import CrewEditor from './CrewEditor.vue';
+import DeleteButton from './DeleteButton.vue';
 import { Meteor } from 'meteor/meteor';
 import { TripsCollection } from "../../db/TripsCollection";
 import { formatDate } from '../helpers/dateHelper';
@@ -203,7 +212,8 @@ export default {
   components: {
     FullPageLayout,
     DateInput,
-    CrewEditor
+    CrewEditor,
+    DeleteButton
   },
   props: {
     id: String
@@ -286,6 +296,11 @@ export default {
         Meteor.call('trips.create', changes, callback);
       else
         Meteor.call('trips.update', this.trip._id, changes, callback);
+    },
+    deleteTrip() {
+      Meteor.call('trips.delete', this.trip._id, (error, resul) => {
+        this.$refs.layout.onSaveEnd(error, true);
+      });
     }
   },
   meteor: {

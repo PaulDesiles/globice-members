@@ -46,5 +46,12 @@ Meteor.methods({
     TripsCollection.update(tripId, {
       $set: dataObj,
     });
+  },
+  
+  'trips.delete'(tripId) {
+    check(tripId, String);
+    ensureUserConnected(this.userId);
+    TripsCollection.remove(tripId);
   }
+
 });
