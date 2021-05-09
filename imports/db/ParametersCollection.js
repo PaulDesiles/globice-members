@@ -4,7 +4,7 @@ import SimpleSchema from 'simpl-schema';
 export const ParametersCollection = new Mongo.Collection('parameters');
 
 const choiceSchema = new SimpleSchema({
-  label: String,
+  text: String,
   value: { type: SimpleSchema.oneOf(String, Number), optional: true }
 })
 

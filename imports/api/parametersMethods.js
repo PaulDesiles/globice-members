@@ -1,4 +1,5 @@
 import { ParametersCollection } from '../db/ParametersCollection';
+import { check } from 'meteor/check';
 import { 
   ensureContainsUpdates, 
   ensureUserConnected,
@@ -6,14 +7,15 @@ import {
 } from './commonMethods';
 
 Meteor.methods({
-  'trips.update'(id, data) {
-    check(data, Array);
+  'parameters.update'(id, data) {
+    check(id, String);
+    check(data, Object);
     ensureUserConnected(this.userId);
     ensureContainsUpdates(data);
 
     addModificationDate(data);
 
-    TripsCollection.update(id, {
+    ParametersCollection.update(id, {
       $set: data,
     });
   }

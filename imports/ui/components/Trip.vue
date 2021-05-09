@@ -5,7 +5,7 @@
     backLabel="retour à la liste des sorties"
     backTarget="/trips"
     :hasUnsavedChanges="hasUnsavedChanges"
-    :loading="!$subReady.trips"
+    :loading="!$subReady.trips || !$subReady.parameters"
   >
     <template v-slot:header-right>
       <DeleteButton
@@ -15,7 +15,7 @@
       />
     </template>
 
-    <template v-if="trip">
+    <template v-if="trip && parameters">
       <v-form @submit.prevent="handleSubmit">
         <v-row>
           <v-col>
@@ -30,7 +30,7 @@
             <v-select
               label="Capitaine"
               v-model="trip.captain" 
-              :items="choices.captain"
+              :items="parameters.trip.captain"
               outlined
               hide-details="auto"
             />
@@ -42,7 +42,7 @@
             <v-select
               label="Type"
               v-model="trip.type" 
-              :items="choices.type"
+              :items="parameters.trip.type"
               outlined
               hide-details="auto"
             />
@@ -51,7 +51,7 @@
             <v-select
               label="Port"
               v-model="trip.port" 
-              :items="choices.port"
+              :items="parameters.trip.port"
               outlined
               hide-details="auto"
             />
@@ -60,7 +60,7 @@
             <v-select
               label="Loueur"
               v-model="trip.renter" 
-              :items="choices.renter"
+              :items="parameters.trip.renter"
               outlined
               hide-details="auto"
             />
@@ -204,6 +204,7 @@ import CrewEditor from './CrewEditor.vue';
 import DeleteButton from './DeleteButton.vue';
 import { Meteor } from 'meteor/meteor';
 import { TripsCollection } from "../../db/TripsCollection";
+import { ParametersCollection } from "../../db/ParametersCollection";
 import { formatDate } from '../helpers/dateHelper';
 import { getAllProperties, getDelta } from '../helpers/objectHelper';
 
@@ -222,12 +223,6 @@ export default {
     saving: false,
     initialValues: undefined,
     editCrew: false,
-    choices: {
-      captain: [ 'John', 'James'],
-      type: [ 'Declic', 'Long Bec'],
-      port: [ 'St Denis', 'St Gilles', 'St Pierre', 'Ste Rose'],
-      renter: [ 'Batoloc', 'loc'],
-    }
   }),
   computed: {
     title() {
@@ -304,7 +299,11 @@ export default {
   },
   meteor: {
     $subscribe: {
-      'trips': []
+      'trips': [],
+      'parameters': []
+    },
+    parameters() {
+      return ParametersCollection.findOne({});
     },
     trip() {
       if (!this.id)

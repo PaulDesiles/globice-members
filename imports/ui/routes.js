@@ -8,6 +8,7 @@ import Members from './components/Members.vue';
 import Member from './components/Member.vue';
 import Trips from './components/Trips.vue';
 import Trip from './components/Trip.vue';
+import Parameters from './components/Parameters.vue';
 
 const routes = [
   {
@@ -36,6 +37,11 @@ const routes = [
     name: 'Trip',
     component: Trip,
     props: true
+  },
+  {
+    path: "/parameters",
+    name: 'Parameters',
+    component: Parameters
   }
 ];
 
