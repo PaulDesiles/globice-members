@@ -1,7 +1,7 @@
 <template>
 
   <v-row>
-    <v-col :cols="6">
+    <v-col class="col-12 col-lg-6">
 
       <template v-if="purchases.length > 0">
 
@@ -74,7 +74,7 @@
               <v-select
                 label="Taille de carnet"
                 v-model="bookSize" 
-                :items="bookSizeChoices"
+                :items="parameters.member.bookSizeChoices"
                 outlined
                 hide-details="auto"
               />
@@ -135,6 +135,7 @@ import { sortDates, formatDate } from '../helpers/dateHelper';
 export default {
   props: {
     purchases: Array,
+    parameters: Object
   },
   components: {
     DateInput
@@ -145,10 +146,6 @@ export default {
       bookSize: undefined,
       paymentDate: new Date(),
       paymentInfos: undefined,
-      bookSizeChoices: [
-        { text:'5 sorties', value: 5 }, 
-        { text:'10 sorties', value: 10 }, 
-      ]
     }
   },
   computed: {

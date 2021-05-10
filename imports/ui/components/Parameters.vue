@@ -26,7 +26,12 @@
           <ChoicesEditor title="Compétences plongée" v-model="parameters.member.diving" />
           <ChoicesEditor title="Compétences photo" v-model="parameters.member.photo" />
           <ChoicesEditor title="Primo-adhérent" v-model="parameters.member.newMember" />
-          <ChoicesEditor title="Taille des carnets de sorties" v-model="parameters.member.bookSizeChoices" />
+          <ChoicesEditor
+            title="Taille des carnets de sorties"
+            v-model="parameters.member.bookSizeChoices"
+            integerValues
+            :labelGetter="(x) => `${x} sorties`"
+          />
         </div>
         
         <div class="d-flex justify-end">

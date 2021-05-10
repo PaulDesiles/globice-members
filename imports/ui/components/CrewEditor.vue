@@ -32,11 +32,11 @@
               :name="Math.random()"
             />
           </v-col>
-          <v-col :cols="3">
+          <v-col :cols="3" v-if="parameters">
             <v-select
               label="Role"
               v-model="selectedRole" 
-              :items="roles"
+              :items="parameters.trip.roles"
               outlined
               hide-details="auto"
             />
@@ -83,9 +83,10 @@
               <td>{{ applicant.desiredRole }}</td>
               <td>
                 <v-select
+                  v-if="parameters"
                   label="Role"
                   v-model="applicant.assignedRole" 
-                  :items="roles"
+                  :items="parameters.trip.roles"
                   outlined
                   dense
                   solo
@@ -141,20 +142,16 @@
 <script>
 import { Meteor } from 'meteor/meteor';
 import { MembersCollection } from "../../db/MembersCollection";
+import { ParametersCollection } from "../../db/ParametersCollection";
 
 export default {
   props: {
-    applicants: Array
+    applicants: Array,
+    parameters: Object,
   },
   data() {
     return {
       editableApplicants: JSON.parse(JSON.stringify(this.applicants)) || [],
-      roles: [ 
-        { text:'aucun', value: null }, 
-        'script', 
-        'observateur', 
-        'photographe' 
-        ],
       selectedMember: null,
       selectedRole: null
     };
@@ -204,7 +201,7 @@ export default {
   },
   meteor: {
     $subscribe: {
-      'members': []
+      'members': [],
     },
     members() {
       return MembersCollection.find({}).fetch();

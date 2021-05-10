@@ -5,13 +5,12 @@
       <div class="card">
         <slot />
       </div>
+      <slot name="below" />
     </div>
   </div>
 </template>
 
 <script>
-import Vue from "vue";
-
 export default {
   props: {
     title: String

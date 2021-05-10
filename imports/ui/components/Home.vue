@@ -4,6 +4,17 @@
       <MainButton target="members" label="Bénévoles" />
       <MainButton target="trips" label="Sorties" />
     </div>
+    <template slot="below">
+      <div class="d-flex justify-end">
+          <v-btn
+            plain
+            @click="$router.push('/parameters')"
+          >
+            <v-icon left>mdi-wrench-outline</v-icon>
+            Paramètres
+          </v-btn>
+      </div>
+    </template>
   </CardLayout>
 </template>
 

@@ -17,6 +17,7 @@
               icon
               color="red"
               @click="deleteChoice(choice)"
+              :disabled="!choice.value"
             >
               <v-icon>
                 mdi-delete
@@ -30,10 +31,21 @@
       <v-row no-gutters class="mt-2">
         <v-col class="flex-grow-1 flex-shrink-0">
           <v-text-field
+            v-if="integerValues"
             outlined
             dense
             hide-details="auto"
-            v-model="newLabel"
+            v-model="newValue"
+            type="number"
+            :min="1"
+            :step="1"
+          />
+          <v-text-field
+            v-else
+            outlined
+            dense
+            hide-details="auto"
+            v-model="newValue"
           />
         </v-col>
         <v-col class="flex-grow-0 flex-shrink-1 ml-3">
@@ -52,11 +64,16 @@
 export default {
   props: {
     title: String,
-    value: Array
+    value: Array,
+    integerValues: Boolean,
+    labelGetter: {
+      type: Function,
+      default: (x) => x
+    }
   },
   data() {
     return {
-      newLabel: '',
+      newValue: '',
     };
   },
   methods: {
@@ -65,10 +82,10 @@ export default {
     },
     addChoice() {
       this.$emit('input', [...this.value, {
-        text: this.newLabel,
-        value: this.newLabel
+        text: this.labelGetter(this.newValue),
+        value: this.integerValues ? parseInt(this.newValue) : this.newValue
       }]);
-      this.newLabel = '';
+      this.newValue = '';
     }
   }
 }

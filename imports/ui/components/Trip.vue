@@ -144,8 +144,9 @@
           max-width="900"
           min-height="600"
         >
-            <CrewEditor v-if="$subReady.trips"
+            <CrewEditor 
               :applicants.sync="trip.applicants"
+              :parameters="parameters"
               @close="editCrew = false"
             />
         </v-dialog>
@@ -178,7 +179,7 @@
         </template>
 
         
-        <div class="d-flex justify-end">
+        <div class="d-flex justify-end mt-4">
           <v-btn
             type="submit"
             color="primary"
