@@ -7,7 +7,8 @@ import {
   addModificationDate,
   arrayToObject 
 } from './commonMethods';
-import { updateMembersTripAssociation } from './membersTripsLinks';
+
+import * as denormalizer from './denormalizer';
 
 Meteor.methods({
   'trips.create'(data) {
@@ -21,7 +22,14 @@ Meteor.methods({
     const dataObj = arrayToObject(data);
     const id = TripsCollection.insert(dataObj);
 
-    updateMembersTripAssociation(id, dataObj.applicants, []);
+    denormalizer.onApplicantsListChanged(
+      { 
+        id,
+        date: dataObj.date
+      },
+      dataObj.applicants, 
+      []
+    );
   },
 
   'trips.update'(tripId, data) {
@@ -33,18 +41,29 @@ Meteor.methods({
 
     addModificationDate(data);
 
-    const previousApplicantsData = JSON.parse(
-      JSON.stringify(
-        TripsCollection.findOne(tripId).applicants
-      )
-    );
+    const previousData = TripsCollection.findOne(tripId);
+    const previousApplicantsData = JSON.parse(JSON.stringify(previousData.applicants));
+    const previousDate = previousData.date;
 
     const dataObj = arrayToObject(data);
     TripsCollection.update(tripId, {
       $set: dataObj,
     });
 
-    updateMembersTripAssociation(tripId, dataObj.applicants, previousApplicantsData);
+    if (dataObj.date) {
+      denormalizer.onTripDateChanged(tripId, dataObj.date, dataObj.applicants || previousApplicantsData);
+    }
+
+    if (dataObj.applicants) {
+      denormalizer.onApplicantsListChanged(
+        {
+          id: tripId,
+          date: dataObj.date || previousDate
+        },
+        dataObj.applicants,
+        previousApplicantsData
+      );
+    }
   },
   
   'trips.delete'(tripId) {
@@ -59,7 +78,7 @@ Meteor.methods({
 
     TripsCollection.remove(tripId);
 
-    updateMembersTripAssociation(tripId, [], previousApplicantsData);
+    denormalizer.onApplicantsListChanged({ id: tripId }, [], previousApplicantsData);
   }
 
 });
