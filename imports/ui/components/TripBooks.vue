@@ -5,7 +5,7 @@
 
       <template v-if="purchases.length > 0">
 
-        <p><strong>{{ purchases.reduce((acc,p) => acc + p.size, 0) }}</strong> sorties achetées</p>
+        <p><strong>{{ getTotalTripsBought(purchases) }}</strong> sorties achetées</p>
 
         <v-simple-table class="elevation-3 mb-5" >
           <template v-slot:default>
@@ -131,6 +131,7 @@
 import DateInput from './DateInput.vue';
 import { v4 as uuidv4 } from 'uuid';
 import { sortDates, formatDate } from '../helpers/dateHelper';
+import { getTotalTripsBought } from '../helpers/memberHelper';
 
 export default {
   props: {
@@ -158,6 +159,7 @@ export default {
   },
   methods: {
     formatDate,
+    getTotalTripsBought,
     hideAndResetDialog() {
       this.showDialog = false;
       this.bookSize = undefined;

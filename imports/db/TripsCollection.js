@@ -6,6 +6,7 @@ export const TripsCollection = new Mongo.Collection('trips');
 const applicantSchema = new SimpleSchema({
   memberId: { type: String, regEx: SimpleSchema.RegEx.Id },
   memberName: String,
+  desiredRole: { type: String, optional: true },
   assignedRole: { type: String, optional: true },
   onboard: { type: Boolean, optional: true },
   credited: { type: Boolean, optional: true },

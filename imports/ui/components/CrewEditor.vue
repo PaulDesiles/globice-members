@@ -60,7 +60,8 @@
         <template v-slot:default>
           <thead>
             <tr>
-              <th class="text-left" :style="{ width: '30%' }">Nom</th>
+              <th class="text-left" :style="{ width: '25%' }">Nom</th>
+              <th class="text-left" :style="{ width: '10%' }">Autorisé</th>
               <th class="text-left" :style="{ width: '10%' }">Sorties</th>
               <th class="text-left" :style="{ width: '10%' }">Refus</th>
               <th class="text-left" :style="{ width: '15%' }">Rôle candidaté</th>
@@ -78,8 +79,15 @@
                   {{ applicant.memberName }}
                 </span>
               </td>
-              <td>0/0</td>
-              <td>0</td>
+              <td>
+                <MemberCheck :member="applicant._member" />
+              </td>
+              <td>
+                <TripCounter :trips="applicant._member.trips.confirmedTrips" />
+              </td>
+              <td>
+                <TripCounter :trips="applicant._member.trips.refusedTrips" />
+              </td>
               <td>{{ applicant.desiredRole }}</td>
               <td>
                 <v-select
@@ -94,7 +102,7 @@
                   hide-details="auto"
                 />
               </td>
-              <td>
+              <td class="pa-0">
                 <v-tooltip right>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn 
@@ -140,14 +148,20 @@
 </template>
 
 <script>
+import TripCounter from './TripCounter.vue';
+import MemberCheck from './MemberCheck.vue';
+
 import { Meteor } from 'meteor/meteor';
 import { MembersCollection } from "../../db/MembersCollection";
-import { ParametersCollection } from "../../db/ParametersCollection";
 
 export default {
   props: {
     applicants: Array,
     parameters: Object,
+  },
+  components: {
+    TripCounter,
+    MemberCheck,
   },
   data() {
     return {
@@ -181,7 +195,9 @@ export default {
         memberId: this.selectedMember._id,
         memberName: `${this.selectedMember.infos.firstname} ${this.selectedMember.infos.lastname}`,
         desiredRole: this.selectedRole,
-        assignedRole: null
+        assignedRole: null,
+        // temporary infos : will not be stored
+        _member: this.selectedMember
       });
 
       this.selectedMember = null;

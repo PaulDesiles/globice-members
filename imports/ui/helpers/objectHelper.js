@@ -4,16 +4,20 @@ function getRelevantKeys(obj) {
 }
 
 
-export function getAllProperties(obj, nested) {
+export function getAllProperties(obj, nested, excludeKeys = []) {
   let properties = {};
 
   if (obj) {
     if (nested) {
       getRelevantKeys(obj).forEach(rootKey => {
-        Object.keys(obj[rootKey]).forEach(key => properties[`${rootKey}.${key}`] = obj[rootKey][key]);
+        getRelevantKeys(obj[rootKey])
+          .filter(key => !excludeKeys.some(e => e === `${rootKey}.${key}`))
+          .forEach(key => properties[`${rootKey}.${key}`] = obj[rootKey][key]);
       });
     } else {
-      getRelevantKeys(obj).forEach(key => properties[key] = obj[key]);
+      getRelevantKeys(obj)
+        .filter(key => !excludeKeys.some(e => e === key))
+        .forEach(key => properties[key] = obj[key]);
     }
   }
 

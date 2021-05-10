@@ -81,48 +81,46 @@
               v-if="crew && crew.length > 0"
               class="elevation-3 mb-5"
             >
-              <template v-slot:default>
-                <thead>
-                  <tr>
-                    <th class="text-left" :style="{ width: '25%' }">Nom</th>
-                    <th class="text-left" :style="{ width: '15%' }">Rôle</th>
+              <thead>
+                <tr>
+                  <th class="text-left" :style="{ width: '25%' }">Nom</th>
+                  <th class="text-left" :style="{ width: '15%' }">Rôle</th>
 
-                    <template v-if="!newTrip">
-                      <th class="text-left" :style="{ width: '10%' }">Présent</th>
-                      <th class="text-left" :style="{ width: '10%' }">Créditer la sortie</th>
-                      <th class="text-left">Commentaire</th>
-                    </template>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr
-                    v-for="applicant in crew"
-                    :key="applicant.memberId"
-                  >
-                    <td>{{ applicant.memberName }}</td>
-                    <td>{{ applicant.assignedRole }}</td>
-                    
-                    <template v-if="!newTrip">
-                      <td>
-                        <v-switch v-model="applicant.onboard" inset />
-                      </td>
-                      <td>
-                        <v-switch v-model="applicant.credited" inset />
-                      </td>
-                      <td>
-                        <v-text-field
-                          v-model="applicant.comment"
-                          solo
-                          flat
-                          dense
-                          outlined
-                          hide-details="auto"
-                        />
-                      </td>
-                    </template>
-                  </tr>
-                </tbody>
-              </template>
+                  <template v-if="!newTrip">
+                    <th class="text-left" :style="{ width: '10%' }">Présent</th>
+                    <th class="text-left" :style="{ width: '10%' }">Créditer la sortie</th>
+                    <th class="text-left">Commentaire</th>
+                  </template>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="applicant in crew"
+                  :key="applicant.memberId"
+                >
+                  <td>{{ applicant.memberName }}</td>
+                  <td>{{ applicant.assignedRole }}</td>
+                  
+                  <template v-if="!newTrip">
+                    <td>
+                      <v-switch v-model="applicant.onboard" inset />
+                    </td>
+                    <td>
+                      <v-switch v-model="applicant.credited" inset />
+                    </td>
+                    <td>
+                      <v-text-field
+                        v-model="applicant.comment"
+                        solo
+                        flat
+                        dense
+                        outlined
+                        hide-details="auto"
+                      />
+                    </td>
+                  </template>
+                </tr>
+              </tbody>
             </v-simple-table>
           </v-col>
         </v-row>

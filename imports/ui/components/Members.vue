@@ -47,17 +47,17 @@
           >
 
             <template v-slot:[`item.trips.acceptedSumUp`]="{item}">
-              <span>0/0</span>
+              <TripCounter :trips="item.trips.confirmedTrips" />
             </template>
 
             <template v-slot:[`item.trips.refusedSumUp`]="{item}">
-              <span>0</span>
+              <TripCounter :trips="item.trips.refusedTrips" />
             </template>
 
             <template v-slot:[`item.membership.date`]="{item}">
               <span>{{ formatDate(item.membership.date) }}</span>
 
-              <template v-if="membershipUpToDate(item.membership.date)">
+              <template v-if="isMembershipUpToDate(item)">
                 <v-icon color="green darken-2">mdi-checkbox-marked-circle</v-icon>
               </template>
               <template v-else>
@@ -73,16 +73,18 @@
 
 <script>
 import FullPageLayout from './FullPageLayout.vue';
+import TripCounter from './TripCounter.vue';
+
 import { Meteor } from 'meteor/meteor';
 import { MembersCollection } from "../../db/MembersCollection";
 import { sortDates, formatDate } from '../helpers/dateHelper';
 import { getMemberSearchQuery } from '../helpers/mongoHelper';
-
-const pivotMembershipDate = Date.UTC(new Date().getUTCFullYear() - 1, 4, 1,0, 0, 0);
+import { isMembershipUpToDate } from '../helpers/memberHelper';
 
 export default {
   components: {
-    FullPageLayout
+    FullPageLayout,
+    TripCounter,
   },
   data() {
     return {
@@ -99,9 +101,7 @@ export default {
   },
   methods: {
     formatDate,
-    membershipUpToDate(date) {
-      return date > pivotMembershipDate;
-    },
+    isMembershipUpToDate,
     itemClick(item) {
       this.$router.push({ path: `/member/${item._id}` });
     },

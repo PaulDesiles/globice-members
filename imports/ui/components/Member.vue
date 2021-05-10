@@ -175,7 +175,19 @@
         />
         
         <h3>Sorties effectuées</h3>
+        <TripList
+          :trips="confirmedTrips"
+          :memberId="id"
+          showComments
+          adjectiveSingular="effectuée"
+        />
+
         <h3>Sorties refusées</h3>
+        <TripList
+          :trips="refusedTrips"
+          :memberId="id"
+          adjectiveSingular="refusée"
+        />
 
         <div class="d-flex justify-end">
           <v-btn
@@ -199,9 +211,12 @@
 import FullPageLayout from './FullPageLayout.vue';
 import DateInput from './DateInput.vue';
 import DeleteButton from './DeleteButton.vue';
-import TripBooks from './TripBooks';
+import TripBooks from './TripBooks.vue';
+import TripList from './TripList.vue';
+
 import { Meteor } from 'meteor/meteor';
 import { MembersCollection } from "../../db/MembersCollection";
+import { TripsCollection } from "../../db/TripsCollection";
 import { ParametersCollection } from "../../db/ParametersCollection";
 import { getAllProperties, getDelta } from '../helpers/objectHelper';
 
@@ -210,7 +225,8 @@ export default {
     FullPageLayout,
     DateInput,
     DeleteButton,
-    TripBooks
+    TripBooks,
+    TripList,
   },
   props: {
     id: String
@@ -219,6 +235,7 @@ export default {
     newMember: undefined,
     saving: false,
     initialValues: undefined,
+    linkedTrips: []
   }),
   computed: {
     title() {
@@ -233,7 +250,7 @@ export default {
       if (!this.member || !this.initialValues)
         return [];
 
-      let newValues = getAllProperties(this.member, true);
+      let newValues = this.getAllFilteredProperties(this.member);
 
       return getDelta(newValues, this.initialValues)
         .map(k => ({key: k, value: newValues[k]}));
@@ -249,6 +266,13 @@ export default {
     }
   },
   methods: {
+    getAllFilteredProperties(member) {
+      return getAllProperties(
+            member,
+            true,
+            ['trips.confirmedTrips', 'trips.refusedTrips']
+          );
+    },
     handleSubmit(event) {
       let changes = this.modifiedProperties; // compute it only once
       if (changes.length === 0) 
@@ -261,7 +285,7 @@ export default {
         setTimeout(() => this.saving = false, 500); // extra delay
         
         if (!error) {          
-          this.initialValues = getAllProperties(this.member, true);
+          this.initialValues = this.getAllFilteredProperties(this.member);
         }
       };
 
@@ -279,7 +303,8 @@ export default {
   meteor: {
     $subscribe: {
       'members': [],
-      'parameters': []
+      'parameters': [],
+      'trips':[]
     },
     parameters() {
       return ParametersCollection.findOne({});
@@ -313,11 +338,31 @@ export default {
         let foundMember = MembersCollection.findOne(this.id);
 
         if (foundMember && !this.initialValues) {
-          this.initialValues = getAllProperties(foundMember, true);
+          this.initialValues = this.getAllFilteredProperties(foundMember);
         }
 
         return foundMember;
       }
+    },
+    confirmedTrips() {
+      if (this.member && this.member.trips.confirmedTrips) {
+        const ids = this.member.trips.confirmedTrips.map(t => t.id);
+
+        return TripsCollection.find({ _id: { $in: ids }})
+          .fetch();
+      }
+
+      return [];
+    },
+    refusedTrips() {
+      if (this.member && this.member.trips.refusedTrips) {
+        const ids = this.member.trips.refusedTrips.map(t => t.id);
+
+        return TripsCollection.find({ _id: { $in: ids }})
+          .fetch();
+      }
+
+      return [];
     }
   }
 }
