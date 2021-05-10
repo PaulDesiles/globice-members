@@ -8,14 +8,7 @@ import {
   arrayToObject 
 } from './commonMethods';
 
-function checkTrip(t) {
-  check(t.date, Date);
-  check(t.captain, String);
-  check(t.port, String);
-  check(t.type, String);
-  check(t.renter, String);
-  check(t.applicants, Array);
-}
+import * as denormalizer from './denormalizer';
 
 Meteor.methods({
   'trips.create'(data) {
@@ -26,10 +19,17 @@ Meteor.methods({
 
     addCreationDate(data);
 
-    var dataObj = arrayToObject(data);
-    checkTrip(dataObj);
+    const dataObj = arrayToObject(data);
+    const id = TripsCollection.insert(dataObj);
 
-    TripsCollection.insert(dataObj);
+    denormalizer.onApplicantsListChanged(
+      { 
+        id,
+        date: dataObj.date
+      },
+      dataObj.applicants, 
+      []
+    );
   },
 
   'trips.update'(tripId, data) {
@@ -41,17 +41,44 @@ Meteor.methods({
 
     addModificationDate(data);
 
-    var dataObj = arrayToObject(data);
+    const previousData = TripsCollection.findOne(tripId);
+    const previousApplicantsData = JSON.parse(JSON.stringify(previousData.applicants));
+    const previousDate = previousData.date;
 
+    const dataObj = arrayToObject(data);
     TripsCollection.update(tripId, {
       $set: dataObj,
     });
+
+    if (dataObj.date) {
+      denormalizer.onTripDateChanged(tripId, dataObj.date, dataObj.applicants || previousApplicantsData);
+    }
+
+    if (dataObj.applicants) {
+      denormalizer.onApplicantsListChanged(
+        {
+          id: tripId,
+          date: dataObj.date || previousDate
+        },
+        dataObj.applicants,
+        previousApplicantsData
+      );
+    }
   },
   
   'trips.delete'(tripId) {
     check(tripId, String);
     ensureUserConnected(this.userId);
+    
+    const previousApplicantsData = JSON.parse(
+      JSON.stringify(
+        TripsCollection.findOne(tripId).applicants
+      )
+    );
+
     TripsCollection.remove(tripId);
+
+    denormalizer.onApplicantsListChanged({ id: tripId }, [], previousApplicantsData);
   }
 
 });

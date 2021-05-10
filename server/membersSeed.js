@@ -19,6 +19,9 @@ try {
       return undefined;
     
     const d = new Date(Date.UTC(dateParts[2], dateParts[1] - 1, dateParts[0], 0, 0, 0));
+    if (isNaN(d))
+      return undefined;
+
     return d;
   };
 

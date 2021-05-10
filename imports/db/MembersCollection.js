@@ -11,9 +11,9 @@ const purchaseSchema = new SimpleSchema({
 });
 
 const tripSchema = new SimpleSchema({
-  type: String, 
-  regEx: SimpleSchema.RegEx.Id
-});
+  id: { type: String, regEx: SimpleSchema.RegEx.Id },
+  date: Date
+})
 
 MembersCollection.schema = new SimpleSchema({
   _schemaVersion: { type: Number, defaultValue: 1 },
@@ -23,8 +23,8 @@ MembersCollection.schema = new SimpleSchema({
   infos: Object,
   "infos.firstname": String,
   "infos.lastname": String,
-  "infos.birthdate": Date,
-  "infos.email": String,
+  "infos.birthdate": {type: Date, optional: true},
+  "infos.email": {type: String, optional: true},
   "infos.phone": {type: String, optional: true},
   "infos.address": {type: String, optional: true},
   "infos.postCode": {type: String, optional: true},
@@ -38,7 +38,7 @@ MembersCollection.schema = new SimpleSchema({
   "abilities.comment": {type: String, optional: true},
 
   membership: Object,
-  "membership.date": Date,
+  "membership.date": {type: Date, optional: true},
   "membership.isNewMember": {type: String, optional: true},
   "membership.certificate": {type: String, optional: true},
 
