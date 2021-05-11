@@ -15,12 +15,12 @@ export default {
 </script>
 
 <style scoped>
-  a {
+  .router-link a {
     color: white;
     text-decoration: none;
   }
 
-  a img {
+  .router-link a img {
     width: 150px;
     height: 150px;
     border-radius: 50%;
@@ -30,12 +30,12 @@ export default {
     transition: border .5s, box-shadow .5s;
   }
 
-  a:hover img {
+  .router-link a:hover img {
     border-color: var(--blue-hover);
     box-shadow: 0 0 20px var(--blue);
   }
 
-  a span {
+  .router-link a span {
     display: block;
     text-align: center;
     font-size: 14pt;

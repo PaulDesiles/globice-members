@@ -92,6 +92,10 @@ export default {
     height: 100%;
   }
 
+  .content h1 { 
+    color: white;
+  }
+  
   form {
     display: grid;
     grid-auto-rows: auto;
@@ -100,9 +104,6 @@ export default {
     gap: 12px;
   }
 
-  h1 { 
-    color: white;
-  }
 
   .invalid-button {
     opacity: 0.7;

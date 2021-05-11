@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="cardContainer">
-      <h1>{{ title }}</h1>
+      <h1 class="cardTitle">{{ title }}</h1>
       <div class="card">
         <slot />
       </div>
@@ -20,7 +20,7 @@ export default {
 
 <style scoped>
 
-  h1 {
+  h1.cardTitle {
     color: black;
     text-align: center;
   }
