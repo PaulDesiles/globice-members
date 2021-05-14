@@ -28,6 +28,12 @@ export function setApiListeners() {
           },
           abilities: {
             comment: JSON.stringify(item)
+          },
+          membership: { },
+          trips: {
+            purchases: [],
+            confirmedTrips: [],
+            refusedTrips: [],
           }
         };
         
@@ -35,9 +41,14 @@ export function setApiListeners() {
 
         MembersCollection.insert(
           member, 
-          (error) => {
-            console.log(error ? 'failed to add new member' : 'new member added');
-            console.log(error);
+          (error, memberId) => {
+            if (error) {
+              console.log('failed to add new member');
+              console.log(error);
+            } else {
+              console.log('new member added');
+              console.log(memberId);
+            }
         });
       }
     }
