@@ -11,5 +11,5 @@ Meteor.startup(() => {
     vuetify,
     el: '#app',
     ...App,
-  })
+  });
 });

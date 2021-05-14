@@ -26,3 +26,4 @@ johanbrook:publication-collector  # Test a Meteor publication by collecting its 
 accounts-password@1.7.0
 quave:testing
 aldeed:collection2
+communitypackages:picker

@@ -13,7 +13,10 @@ import '/imports/api/parametersMethods';
 
 // import membersSeed from './membersSeed.js';
 
+import { setApiListeners } from '/imports/api/helloAsso';
+
 Meteor.startup(() => {
+  setApiListeners();
   
   // --- Helpers for seeding from a local instance ---
 
