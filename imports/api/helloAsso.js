@@ -10,8 +10,7 @@ export function setApiListeners() {
 
   postRoutes.route('/api/helloasso', function(params, req, res, next) {
     console.log("received post from helloasso");
-    console.log(`${req.body.items.length} items received`);
-    console.log(req.body.items[0]);
+    console.log(typeof req.body.items);
     res.end("ok");
   });
 }
