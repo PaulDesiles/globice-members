@@ -27,6 +27,9 @@ Meteor.startup(() => {
   //   });
   // }
 
+  ParametersCollection.remove({});
+  initParametersCollection();
+
   // if (!ParametersCollection.findOne({})) {
   //   initParametersCollection();
   // }

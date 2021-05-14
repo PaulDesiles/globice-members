@@ -33,6 +33,65 @@
             :labelGetter="(x) => `${x} sorties`"
           />
         </div>
+
+        <h3>Nouveaux Bénévoles via HelloAsso</h3>
+        <p>Textes des questions du formulaire d'adhésion HelloAsso, pour ajouter automatiquement les bénévoles à partir des réponses</p>
+        
+        <v-text-field 
+          outlined
+          label="Date de naisance"
+          v-model="parameters.newMemberForm.birthdate"
+        />
+        <v-text-field 
+          outlined
+          label="Email"
+          v-model="parameters.newMemberForm.email"
+        />
+        <v-text-field 
+          outlined
+          label="Téléphone"
+          v-model="parameters.newMemberForm.phone"
+        />
+        <v-text-field 
+          outlined
+          label="Adresse"
+          v-model="parameters.newMemberForm.address"
+        />
+        <v-text-field 
+          outlined
+          label="Code postal"
+          v-model="parameters.newMemberForm.postCode"
+        />
+        <v-text-field 
+          outlined
+          label="Ville"
+          v-model="parameters.newMemberForm.city"
+        />
+        <v-text-field 
+          outlined
+          label="Permis bateau"
+          v-model="parameters.newMemberForm.boatLicense"
+        />
+        <v-text-field 
+          outlined
+          label="Capitaine"
+          v-model="parameters.newMemberForm.captain"
+        />
+        <v-text-field 
+          outlined
+          label="Plongée"
+          v-model="parameters.newMemberForm.diving"
+        />
+        <v-text-field 
+          outlined
+          label="Photo"
+          v-model="parameters.newMemberForm.photo"
+        />
+        <v-text-field 
+          outlined
+          label="PrimoAdhésion"
+          v-model="parameters.newMemberForm.isNewMember"
+        />
         
         <div class="d-flex justify-end">
           <v-btn
@@ -62,7 +121,7 @@ import { ParametersCollection } from "../../db/ParametersCollection";
 export default {
   components: {
     FullPageLayout,
-    ChoicesEditor
+    ChoicesEditor,
   },
   data() {
     return {

@@ -1,7 +1,57 @@
 import { Picker } from 'meteor/communitypackages:picker';
 import bodyParser from 'body-parser';
 import { MembersCollection } from '../db/MembersCollection';
+import { getParameters } from '../db/ParametersCollection';
 import { addCreationDate } from './commonMethods';
+
+import { rawMemberFieldsConverters } from './memberCreationHelper';
+
+function getRawFormAnswer(formData, question) {
+  const lowerQuestion = question.toLocaleLowerCase();
+  return formData.customFields
+    .find(field => field.name.toLocaleLowerCase() === lowerQuestion)
+    ?.answer
+    ?.trim();
+}
+
+function searchAndAddValueForKey(container, key, formData, parameters) {
+  const raw = getRawFormAnswer(formData, parameters.newMemberForm[key]);
+  if (raw) {
+    const converter = rawMemberFieldsConverters[key];
+    container[key] = converter ? converter(raw) : raw;
+  }
+}
+
+function createMember(formData, parameters) {
+  
+  const member = {
+    infos: {
+      firstname: formData.user.firstName,
+      lastname: formData.user.lastName
+    },
+    abilities: {},
+    membership: { 
+      date: new Date()
+    },
+    trips: {
+      purchases: [],
+      confirmedTrips: [],
+      refusedTrips: [],
+    }
+  };
+
+  ['birthdate', 'email', 'phone', 'address', 'postCode', 'city']
+    .forEach(k => searchAndAddValueForKey(member.infos, k, formData, parameters));
+
+  ['boatLicense', 'captain', 'diving', 'photo']
+    .forEach(k => searchAndAddValueForKey(member.abilities, k, formData, parameters));
+
+  searchAndAddValueForKey(member.membership, 'isNewMember', formData, parameters);
+
+  addCreationDate(member);
+
+  return member;
+}
 
 export function setApiListeners() {
   Picker.middleware(bodyParser.json());
@@ -18,37 +68,30 @@ export function setApiListeners() {
     });
 
     if (req?.body?.eventType === 'Order') {
-      const item = req?.body?.data?.items?.[0];
-      if (item && item.type === 'Membership') {
+      const items = req?.body?.data?.items;
+      if (items) {
+        console.log(`order contains ${items.length} items`);
 
-        const member = {
-          infos: {
-            firstname: 'test',
-            lastname: 'test'
-          },
-          abilities: {
-            comment: JSON.stringify(item)
-          },
-          membership: { },
-          trips: {
-            purchases: [],
-            confirmedTrips: [],
-            refusedTrips: [],
-          }
-        };
-        
-        addCreationDate(member);
-
-        MembersCollection.insert(
-          member, 
-          (error, memberId) => {
-            if (error) {
-              console.log('failed to add new member');
-              console.log(error);
+        items.forEach(item => {
+          if (item.type === 'Membership') {
+            const parameters = getParameters();
+    
+            if (!parameters) {
+              console.log('failed to retrieve parameters');
             } else {
-              console.log('new member added');
-              console.log(memberId);
+              const member = createMember(item, parameters);
+              MembersCollection.insert(
+                member, 
+                (error, memberId) => {
+                  if (error) {
+                    console.log('failed to add new member');
+                    console.log(error);
+                  } else {
+                    console.log(`new member added : ${memberId}`);
+                  }
+              });
             }
+          }
         });
       }
     }

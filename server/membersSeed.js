@@ -1,29 +1,10 @@
 import fs from 'fs';
+import { rawMemberFieldsConverters } from '/imports/api/memberCreationHelpers';
 
 let membersSeed = [];
 
 try {
   const data = fs.readFileSync('C:\\Users\\Paul\\Documents\\members.csv', 'utf8');
-
-  const normalize = input => {
-    return [input[0].toUpperCase(), ...input.toLowerCase().slice(1)].join('');
-  };
-
-  const getDate = input => {
-    const dateParts= input
-      ?.split(' ')[0]
-      ?.split('/')
-      .map(x => parseInt(x));
-    
-    if (!dateParts && dateParts.length !== 3)
-      return undefined;
-    
-    const d = new Date(Date.UTC(dateParts[2], dateParts[1] - 1, dateParts[0], 0, 0, 0));
-    if (isNaN(d))
-      return undefined;
-
-    return d;
-  };
 
   membersSeed = data.split('\n')
     .slice(1)
@@ -33,9 +14,9 @@ try {
 
       return {
         "infos": {
-          "firstname": normalize(cells[7]),
-          "lastname": normalize(cells[6]),
-          "birthdate": getDate(cells[11]),
+          "firstname": rawMemberFieldsConverters['firstname'](cells[7]),
+          "lastname": rawMemberFieldsConverters['lastname'](cells[6]),
+          "birthdate": rawMemberFieldsConverters['birthdate'](cells[11]),
           "email": cells[10],
           "phone": cells[22],
           "address": cells[24],
@@ -45,13 +26,13 @@ try {
         "abilities": {
           "boatLicense": cells[30],
           "captain": cells[31],
-          "diving": cells[32].replace('NI', 'Ni'),
+          "diving": rawMemberFieldsConverters['diving'](cells[32]),
           "photo": cells[33].trim(),
           "comment": ""
         },
         "membership": {
-          "date": getDate(cells[9]),
-          "isNewMember": cells[29] === 'une primo-adhésion' ? 'Oui' : 'Non',
+          "date": rawMemberFieldsConverters['date'](cells[9]),
+          "isNewMember": rawMemberFieldsConverters['isNewMember'](cells[29]),
           "certificate": cells[12]
         },
         "trips": {
