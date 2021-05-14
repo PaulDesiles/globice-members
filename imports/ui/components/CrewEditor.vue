@@ -56,7 +56,7 @@
         </v-row>
       </v-form>
 
-      <v-simple-table>
+      <v-simple-table class="mt-2">
         <template v-slot:default>
           <thead>
             <tr>
@@ -64,9 +64,10 @@
               <th class="text-left" :style="{ width: '10%' }">Autorisé</th>
               <th class="text-left" :style="{ width: '10%' }">Sorties</th>
               <th class="text-left" :style="{ width: '10%' }">Refus</th>
-              <th class="text-left" :style="{ width: '15%' }">Rôle candidaté</th>
-              <th class="text-left" :style="{ width: '25%' }">Rôle alloué</th>
-              <th></th>
+              <th class="text-left" :style="{ width: '10%' }">Photo</th>
+              <th class="text-left" :style="{ width: '10%' }">Rôle candidaté</th>
+              <th class="text-left" :style="{ width: '20%' }">Rôle alloué</th>
+              <th :style="{ width: '5%' }"></th>
             </tr>
           </thead>
           <tbody>
@@ -74,20 +75,59 @@
               v-for="applicant in editableApplicants"
               :key="applicant.memberId"
             >
-              <td>
-                <span :class="!!applicant.assignedRole ? 'selected-member' : 'unselected-member'">
-                  {{ applicant.memberName }}
-                </span>
+              <td class="pa-0">
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn 
+                      text
+                      block
+                      class="notUpperCaseBtn"
+                      :to="`/member/${ applicant.memberId }`"
+                      target="_blank"
+                      v-bind="attrs"
+                      v-on="on"
+                    >
+                      <v-icon left>mdi-account-details</v-icon>
+                      <span :class="!!applicant.assignedRole ? 'selected-member' : 'unselected-member'">
+                        {{ applicant.memberName }}
+                      </span>
+                      <v-spacer />
+                    </v-btn>
+                  </template>
+                  <span>ouvrir la fiche bénévole</span>
+                </v-tooltip>
               </td>
-              <td>
-                <MemberCheck :member="applicant._member" />
-              </td>
-              <td>
-                <TripCounter :trips="applicant._member.trips.confirmedTrips" />
-              </td>
-              <td>
-                <TripCounter :trips="applicant._member.trips.refusedTrips" />
-              </td>
+              <template  v-if="applicant._member">
+                <td>
+                  <MemberCheck :member="applicant._member" />
+                </td>
+                <td>
+                  <TripCounter :trips="applicant._member.trips.confirmedTrips" />
+                </td>
+                <td>
+                  <TripCounter :trips="applicant._member.trips.refusedTrips" />
+                </td>
+                <td>
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-icon 
+                        :color="getCameraColor(applicant._member.abilities.photo)"
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        mdi-camera
+                      </v-icon>
+                    </template>
+                    <span>{{ applicant._member.abilities.photo }}</span>
+                  </v-tooltip>
+                </td>
+              </template>
+              <template v-else>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+              </template>
               <td>{{ applicant.desiredRole }}</td>
               <td>
                 <v-select
@@ -103,7 +143,7 @@
                 />
               </td>
               <td class="pa-0">
-                <v-tooltip right>
+                <v-tooltip bottom>
                   <template v-slot:activator="{ on, attrs }">
                     <v-btn 
                       color="red"
@@ -213,6 +253,16 @@ export default {
     cancelChanges() {
       this.resetApplicants();
       this.$emit('close');
+    },
+    getCameraColor(photoAbility) {
+      if (!photoAbility)
+        return 'gray';
+      if (photoAbility === 'Amateur')
+        return 'red'
+      if (photoAbility === 'Amateur ++')
+        return 'green'
+
+      return 'blue';
     }
   },
   meteor: {
@@ -220,7 +270,18 @@ export default {
       'members': [],
     },
     members() {
-      return MembersCollection.find({}).fetch();
+      const list = MembersCollection.find({}).fetch();
+
+      // re-populate 'member' for previously added applicants
+      if (list && list.length > 0 && this.editableApplicants) {
+        this.editableApplicants
+          .filter(a => !a._member)
+          .forEach(a => {
+            a._member = list.find(m => m._id === a.memberId);
+          });
+      }
+
+      return list;
     }
   }
 }
@@ -235,5 +296,9 @@ export default {
   .selected-member {
     color: var(--blue);
     font-weight: bold;
+  }
+
+  .notUpperCaseBtn {
+    text-transform: none !important;
   }
 </style>

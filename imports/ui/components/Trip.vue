@@ -139,7 +139,7 @@
         <v-dialog
           v-model="editCrew"
           persistent
-          max-width="900"
+          max-width="1000"
           min-height="600"
         >
             <CrewEditor 
