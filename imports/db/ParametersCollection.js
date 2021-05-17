@@ -18,6 +18,7 @@ ParametersCollection.schema = new SimpleSchema({
   'trip.port': [choiceSchema],
   'trip.renter': [choiceSchema],
   'trip.roles': [choiceSchema],
+  'trip.mailBody': String,
 
   member: Object,
   'member.boatLicense': [choiceSchema],
@@ -65,6 +66,9 @@ export function initParametersCollection() {
         labelAsValue('observateur'), 
         labelAsValue('photographe') 
       ],
+      mailBody: `Bonjour à tous
+
+      Je vous confirme que votre candidature à la sortie de {PORT} le {DATE} a été retenue.`,
     },
     member: {
       boatLicense: [ "Non", "Côtier", "Hauturier" ].map(labelAsValue),

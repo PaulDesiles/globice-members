@@ -149,6 +149,34 @@
             />
         </v-dialog>
 
+        <template v-if="mandatoryDataFilled">
+          <h3>Email</h3>
+          <p>Recopiez ces informations dans votre messagerie pour contacter votre équipage</p>
+
+          <v-row>
+            <v-col>
+              <v-text-field
+                label="Destinataires"
+                v-model="mailRecipients"
+                outlined
+                hide-details="auto"
+                readonly
+              />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col>
+              <v-textarea
+                label="Message"
+                v-model="mailBody"
+                outlined
+                hide-details="auto"
+                readonly
+              />
+            </v-col>
+          </v-row>
+        </template>
+
         <template v-if="!newTrip">
           <h3>Après la sortie</h3>
           <v-row>
@@ -250,14 +278,27 @@ export default {
     hasUnsavedChanges() {
       return this.modifiedProperties.length > 0;
     },
-    canSave() {
-      return this.hasUnsavedChanges &&
-        !!this.trip.date &&
+    mandatoryDataFilled() {
+      return !!this.trip.date &&
         !!this.trip.captain &&
         !!this.trip.type &&
         !!this.trip.port &&
         !!this.trip.renter &&
         this.crew?.length > 0;
+    },
+    canSave() {
+      return this.hasUnsavedChanges && this.mandatoryDataFilled;
+        
+    },
+    mailRecipients() {
+      return this.crew
+        .map(x => x.memberEmail || `<email de ${x.memberName}>`)
+        .join(';');
+    },
+    mailBody() {
+      return this.parameters?.trip?.mailBody
+        ?.replace('{PORT}', this.trip.port)
+        .replace('{DATE}', formatDate(this.trip.date));
     }
   },
   methods: {

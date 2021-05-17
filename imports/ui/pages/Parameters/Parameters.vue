@@ -2,7 +2,7 @@
   <FullPageLayout
     ref="layout"
     title="Paramètres"
-    backLabel="retour à la l'accueil"
+    backLabel="retour à l'accueil"
     backTarget="/"
     :hasUnsavedChanges="hasUnsavedChanges"
     :loading="!$subReady.parameters"
@@ -18,6 +18,14 @@
           <ChoicesEditor title="Loueur du bateau" v-model="parameters.trip.renter" />
           <ChoicesEditor title="Rôles des bénévoles" v-model="parameters.trip.roles" />
         </div>
+
+        <v-textarea
+          class="mt-4"
+          outlined
+          label="Mail de contact type"
+          v-model="parameters.trip.mailBody"
+        />
+
 
         <h3>Bénévoles</h3>
         <div class="d-flex flex-wrap">

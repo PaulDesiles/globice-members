@@ -60,12 +60,12 @@
         <template v-slot:default>
           <thead>
             <tr>
-              <th class="text-left" :style="{ width: '25%' }">Nom</th>
+              <th class="text-left" :style="{ width: '20%' }">Nom</th>
               <th class="text-left" :style="{ width: '10%' }">Autorisé</th>
               <th class="text-left" :style="{ width: '10%' }">Sorties</th>
               <th class="text-left" :style="{ width: '10%' }">Refus</th>
               <th class="text-left" :style="{ width: '10%' }">Photo</th>
-              <th class="text-left" :style="{ width: '10%' }">Rôle candidaté</th>
+              <th class="text-left" :style="{ width: '15%' }">Rôle candidaté</th>
               <th class="text-left" :style="{ width: '20%' }">Rôle alloué</th>
               <th :style="{ width: '5%' }"></th>
             </tr>
@@ -234,6 +234,7 @@ export default {
       this.editableApplicants.push({ 
         memberId: this.selectedMember._id,
         memberName: `${this.selectedMember.infos.firstname} ${this.selectedMember.infos.lastname}`,
+        memberEmail: this.selectedMember.infos.email,
         desiredRole: this.selectedRole,
         assignedRole: null,
         // temporary infos : will not be stored
