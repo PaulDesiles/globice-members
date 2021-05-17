@@ -8,36 +8,36 @@
     <v-dialog
         v-model="showDialog"
         max-width="600"
-      >
-        <v-card>
-          <v-card-title class="headline">
-            Suppression
-          </v-card-title>
+    >
+      <v-card>
+        <v-card-title class="headline">
+          Suppression
+        </v-card-title>
 
-          <v-card-text>
-            Voulez-vous supprimer definitivement {{ entityLabel }} ?
-          </v-card-text>
+        <v-card-text>
+          Voulez-vous supprimer definitivement {{ entityLabel }} ?
+        </v-card-text>
 
-          <v-card-actions>
-            <v-btn
-              color="primary"
-              text
-              @click="showDialog = false"
-            >
-              Retour
-            </v-btn>
+        <v-card-actions>
+          <v-btn
+            color="primary"
+            text
+            @click="showDialog = false"
+          >
+            Retour
+          </v-btn>
 
-            <v-spacer></v-spacer>
+          <v-spacer></v-spacer>
 
-            <v-btn
-              color="primary"
-              @click="() => { showDialog = false; onDelete(); }"
-            >
-              Supprimer
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+          <v-btn
+            color="primary"
+            @click="() => { showDialog = false; onDelete(); }"
+          >
+            Supprimer
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 

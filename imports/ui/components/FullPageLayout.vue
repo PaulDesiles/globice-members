@@ -9,7 +9,7 @@
     </v-app-bar>
     <v-container>
       <v-col>
-        <v-row class="mb-5">
+        <v-row class="mb-5" justify="space-between">
           <a
             class="backLink ml-2"
             :to="backTarget"
@@ -21,6 +21,10 @@
             </v-icon>
             <span>{{ backLabel }}</span>
           </a>
+          <v-col class="flex-grow-0 pa-0">
+            <slot name="top-right">
+            </slot>
+          </v-col>
         </v-row>
 
         <template v-if="loading">

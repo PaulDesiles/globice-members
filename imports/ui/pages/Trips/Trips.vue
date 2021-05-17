@@ -14,7 +14,13 @@
           créer une sortie
       </v-btn>
     </template>
-
+    <template v-slot:top-right>
+      <ExpandingButton
+          icon="mdi-download"
+          label="Télécharger les données" 
+          :onClick="download"
+        />
+    </template>
     <v-row>
       <v-layout child-flex>
         <v-data-table
@@ -44,13 +50,16 @@
 
 <script>
 import FullPageLayout from '../../components/FullPageLayout.vue';
+import ExpandingButton from '../../components/ExpandingButton.vue';
 import { Meteor } from 'meteor/meteor';
 import { TripsCollection } from "../../../db/TripsCollection";
 import { sortDates, formatDate } from '../../helpers/dateHelper';
+import { exportTrips } from '../../helpers/exportHelper';
 
 export default {
   components: {
-    FullPageLayout
+    FullPageLayout,
+    ExpandingButton
   },
   data() {
     return {
@@ -78,7 +87,12 @@ export default {
         return 'terminée';
 
       return 'en cours';
-    }
+    },
+    download() {
+      if (this.trips) {
+        exportTrips(this.trips);
+      }
+    },
   },
   meteor: {
     $subscribe: {
