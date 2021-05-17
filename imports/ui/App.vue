@@ -19,7 +19,7 @@
 <script>
 import Vue from "vue";
 import { Meteor } from 'meteor/meteor';
-import Login from "./components/Login.vue";
+import Login from "./pages/Login/Login.vue";
 
 export default {
   components: {

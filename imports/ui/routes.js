@@ -3,12 +3,12 @@ import VueRouter from 'vue-router';
 
 Vue.use(VueRouter);
 
-import Home from './components/Home.vue';
-import Members from './components/Members.vue';
-import Member from './components/Member.vue';
-import Trips from './components/Trips.vue';
-import Trip from './components/Trip.vue';
-import Parameters from './components/Parameters.vue';
+import Home from './pages/Home/Home.vue';
+import Members from './pages/Members/Members.vue';
+import Member from './pages/Member/Member.vue';
+import Trips from './pages/Trips/Trips.vue';
+import Trip from './pages/Trip/Trip.vue';
+import Parameters from './pages/Parameters/Parameters.vue';
 
 const routes = [
   {

@@ -128,10 +128,10 @@
 </template>
 
 <script>
-import DateInput from './DateInput.vue';
+import DateInput from '../../components/DateInput.vue';
 import { v4 as uuidv4 } from 'uuid';
-import { sortDates, formatDate } from '../helpers/dateHelper';
-import { getTotalTripsBought } from '../helpers/memberHelper';
+import { sortDates, formatDate } from '../../helpers/dateHelper';
+import { getTotalTripsBought } from '../../helpers/memberHelper';
 
 export default {
   props: {

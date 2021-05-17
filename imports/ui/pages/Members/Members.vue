@@ -72,14 +72,14 @@
 </template>
 
 <script>
-import FullPageLayout from './FullPageLayout.vue';
-import TripCounter from './TripCounter.vue';
+import FullPageLayout from '../../components/FullPageLayout.vue';
+import TripCounter from '../../components/TripCounter.vue';
 
 import { Meteor } from 'meteor/meteor';
-import { MembersCollection } from "../../db/MembersCollection";
-import { sortDates, formatDate } from '../helpers/dateHelper';
-import { getMemberSearchQuery } from '../helpers/mongoHelper';
-import { isMembershipUpToDate } from '../helpers/memberHelper';
+import { MembersCollection } from "../../../db/MembersCollection";
+import { sortDates, formatDate } from '../../helpers/dateHelper';
+import { getMemberSearchQuery } from '../../helpers/mongoHelper';
+import { isMembershipUpToDate } from '../../helpers/memberHelper';
 
 export default {
   components: {

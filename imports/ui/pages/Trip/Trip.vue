@@ -197,15 +197,15 @@
 </template>
 
 <script>
-import FullPageLayout from './FullPageLayout.vue';
-import DateInput from './DateInput.vue';
+import FullPageLayout from '../../components/FullPageLayout.vue';
+import DateInput from '../../components/DateInput.vue';
 import CrewEditor from './CrewEditor.vue';
-import DeleteButton from './DeleteButton.vue';
+import DeleteButton from '../../components/DeleteButton.vue';
 import { Meteor } from 'meteor/meteor';
-import { TripsCollection } from "../../db/TripsCollection";
-import { ParametersCollection } from "../../db/ParametersCollection";
-import { formatDate } from '../helpers/dateHelper';
-import { getAllProperties, getDelta } from '../helpers/objectHelper';
+import { TripsCollection } from "../../../db/TripsCollection";
+import { ParametersCollection } from "../../../db/ParametersCollection";
+import { formatDate } from '../../helpers/dateHelper';
+import { getAllProperties, getDelta } from '../../helpers/objectHelper';
 
 export default {
   components: {

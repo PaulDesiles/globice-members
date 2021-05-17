@@ -208,17 +208,17 @@
 </template>
 
 <script>
-import FullPageLayout from './FullPageLayout.vue';
-import DateInput from './DateInput.vue';
-import DeleteButton from './DeleteButton.vue';
+import FullPageLayout from '../../components/FullPageLayout.vue';
+import DateInput from '../../components/DateInput.vue';
+import DeleteButton from '../../components/DeleteButton.vue';
 import TripBooks from './TripBooks.vue';
 import TripList from './TripList.vue';
 
 import { Meteor } from 'meteor/meteor';
-import { MembersCollection } from "../../db/MembersCollection";
-import { TripsCollection } from "../../db/TripsCollection";
-import { ParametersCollection } from "../../db/ParametersCollection";
-import { getAllProperties, getDelta } from '../helpers/objectHelper';
+import { MembersCollection } from "../../../db/MembersCollection";
+import { TripsCollection } from "../../../db/TripsCollection";
+import { ParametersCollection } from "../../../db/ParametersCollection";
+import { getAllProperties, getDelta } from '../../helpers/objectHelper';
 
 export default {
   components: {

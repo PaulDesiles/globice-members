@@ -43,7 +43,7 @@
 
 <script>
 import { Meteor } from 'meteor/meteor';
-import CardLayout from './CardLayout.vue';
+import CardLayout from '../../components/CardLayout.vue';
 
 export default {
   name: "Login",

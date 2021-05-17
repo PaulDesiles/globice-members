@@ -43,10 +43,10 @@
 </template>
 
 <script>
-import FullPageLayout from './FullPageLayout.vue';
+import FullPageLayout from '../../components/FullPageLayout.vue';
 import { Meteor } from 'meteor/meteor';
-import { TripsCollection } from "../../db/TripsCollection";
-import { sortDates, formatDate } from '../helpers/dateHelper';
+import { TripsCollection } from "../../../db/TripsCollection";
+import { sortDates, formatDate } from '../../helpers/dateHelper';
 
 export default {
   components: {

@@ -37,8 +37,8 @@
 </template>
 
 <script>
-import { formatDate } from '../helpers/dateHelper';
-import { getLastXMonthsCount } from '../helpers/tripsHelper';
+import { formatDate } from '../../helpers/dateHelper';
+import { getLastXMonthsCount } from '../../helpers/tripsHelper';
 
 export default {
   props: {

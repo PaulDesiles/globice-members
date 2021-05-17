@@ -188,11 +188,11 @@
 </template>
 
 <script>
-import TripCounter from './TripCounter.vue';
+import TripCounter from '../../components/TripCounter.vue';
 import MemberCheck from './MemberCheck.vue';
 
 import { Meteor } from 'meteor/meteor';
-import { MembersCollection } from "../../db/MembersCollection";
+import { MembersCollection } from "../../../db/MembersCollection";
 
 export default {
   props: {

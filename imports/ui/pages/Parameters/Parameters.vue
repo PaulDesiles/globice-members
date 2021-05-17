@@ -112,11 +112,11 @@
 </template>
 
 <script>
-import FullPageLayout from './FullPageLayout.vue';
+import FullPageLayout from '../../components/FullPageLayout.vue';
 import ChoicesEditor from './ChoicesEditor.vue';
 
 import { Meteor } from 'meteor/meteor';
-import { ParametersCollection } from "../../db/ParametersCollection";
+import { ParametersCollection } from "../../../db/ParametersCollection";
 
 export default {
   components: {

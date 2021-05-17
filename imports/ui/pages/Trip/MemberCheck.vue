@@ -15,8 +15,8 @@
 </template>
 
 <script>
-import { formatDate } from '../helpers/dateHelper';
-import { isMembershipUpToDate, getTripsLeft } from '../helpers/memberHelper';
+import { formatDate } from '../../helpers/dateHelper';
+import { isMembershipUpToDate, getTripsLeft } from '../../helpers/memberHelper';
 
 export default {
   props: {

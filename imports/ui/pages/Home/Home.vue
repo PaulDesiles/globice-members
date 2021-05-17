@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import CardLayout from './CardLayout.vue';
+import CardLayout from '../../components/CardLayout.vue';
 import MainButton from './MainButton.vue';
 
 export default {
