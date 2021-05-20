@@ -29,6 +29,14 @@
           clearable
         />
       </v-col>
+      <v-spacer />
+      <v-col class="pt-0 pb-2 flex-grow-0">
+        <ExpandingButton
+          icon="mdi-download"
+          label="Télécharger les données" 
+          :onClick="download"
+        />
+      </v-col>
     </v-row>
     <v-row>
       <v-col>
@@ -42,6 +50,7 @@
             :item-class="i => 'memberRow'"
             :loading="!$subReady.members"
             loading-text="chargement..."
+            no-data-text="aucun bénévole trouvé"
             @click:row="itemClick"
             class="elevation-3"
           >
@@ -74,17 +83,20 @@
 <script>
 import FullPageLayout from '../../components/FullPageLayout.vue';
 import TripCounter from '../../components/TripCounter.vue';
+import ExpandingButton from '../../components/ExpandingButton.vue';
 
 import { Meteor } from 'meteor/meteor';
 import { MembersCollection } from "../../../db/MembersCollection";
 import { sortDates, formatDate } from '../../helpers/dateHelper';
 import { getMemberSearchQuery } from '../../helpers/mongoHelper';
 import { isMembershipUpToDate } from '../../helpers/memberHelper';
+import { exportMembers } from '../../helpers/exportHelper';
 
 export default {
   components: {
     FullPageLayout,
     TripCounter,
+    ExpandingButton
   },
   data() {
     return {
@@ -107,6 +119,11 @@ export default {
     },
     createMember() {
       this.$router.push({ path: `/member/new` });
+    },
+    download() {
+      if (this.members) {
+        exportMembers(this.members);
+      }
     }
   },
   meteor: {

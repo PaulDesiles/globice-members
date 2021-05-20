@@ -78,7 +78,7 @@
         <v-row>
           <v-col :cols="newTrip ? 4 : 12">
             <v-simple-table 
-              v-if="crew && crew.length > 0"
+              v-if="hasCrew"
               class="elevation-3 mb-5"
             >
               <thead>
@@ -132,7 +132,7 @@
           rounded
           @click="editCrew = true"
         >
-          modifier l'équipage
+          {{ hasCrew ? "modifier l'équipage" : "constituer l'équipage" }}
           <v-icon right>mdi-pencil</v-icon>
         </v-btn>
 
@@ -195,8 +195,19 @@
           <v-row>
             <v-col>
               <v-textarea
-                label="Commentaires sur la sortie et observations réalisées"
-                v-model="trip.comment" 
+                label="Observations effectuées"
+                v-model="trip.observations" 
+                outlined
+                hide-details="auto"
+              />
+            </v-col>
+          </v-row>
+
+          <v-row>
+            <v-col>
+              <v-textarea
+                label="Alertes éventuelles Globice"
+                v-model="trip.alerts" 
                 outlined
                 hide-details="auto"
               />
@@ -262,6 +273,9 @@ export default {
     },
     crew() {
       return this.trip?.applicants?.filter(a => a.assignedRole);
+    },
+    hasCrew() {
+      return this.crew && this.crew.length > 0;
     },
     refusedApplicants() {
       return this.trip?.applicants?.filter(a => !a.assignedRole);

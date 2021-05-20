@@ -25,7 +25,8 @@ TripsCollection.schema = new SimpleSchema({
   renter: String,
   applicants: [applicantSchema],
   fee: { type: Number, optional: true },
-  comment: { type: String, optional: true },
+  observations: { type: String, optional: true },
+  alerts: { type: String, optional: true },
 });
 
 TripsCollection.attachSchema(TripsCollection.schema);
