@@ -1,5 +1,6 @@
 import { Picker } from 'meteor/communitypackages:picker';
 import bodyParser from 'body-parser';
+import { HelloAssoCollection } from '../db/HelloAssoCollection';
 import { MembersCollection } from '../db/MembersCollection';
 import { getParameters } from '../db/ParametersCollection';
 import { addCreationDate } from './commonMethods';
@@ -62,6 +63,11 @@ export function setApiListeners() {
 
   postRoutes.route('/api/helloasso', function(params, req, res, next) {
     console.log("received post from helloasso");
+
+    if (req?.body && process.env.ACTIVATE_HA_RAW_SAVING) {
+      HelloAssoCollection.insert(req.body);
+    }
+
     console.log({
       type: req?.body?.eventType,
       id: req?.body?.data?.id
@@ -73,7 +79,7 @@ export function setApiListeners() {
         console.log(`order contains ${items.length} items`);
 
         items.forEach(item => {
-          if (item.type === 'Membership') {
+          if (item.type === 'Membership' && process.env.ACTIVATE_HA_MEMBERS_IMPORT) {
             const parameters = getParameters();
     
             if (!parameters) {

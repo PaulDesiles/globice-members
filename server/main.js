@@ -10,6 +10,7 @@ import '/imports/api/tripsMethods';
 import { ParametersCollection, initParametersCollection } from '../imports/db/ParametersCollection.js';
 import '/imports/api/parametersPublications';
 import '/imports/api/parametersMethods';
+import { HelloAssoCollection } from '../imports/db/HelloAssoCollection.js';
 
 // import membersSeed from './membersSeed.js';
 
@@ -20,15 +21,12 @@ Meteor.startup(() => {
   
   // --- Helpers for seeding from a local instance ---
 
-  // if (!Accounts.findUserByUsername('user')) {
+  // if (!Accounts.findUserByUsername('globicelocal')) {
   //   Accounts.createUser({
-  //     username: process.env.DEFAULT_USER,
-  //     password: process.env.DEFAULT_USER_PASSWORD,
+  //     username: 'globicelocal',
+  //     password: 'password',
   //   });
   // }
-
-  ParametersCollection.remove({});
-  initParametersCollection();
 
   // if (!ParametersCollection.findOne({})) {
   //   initParametersCollection();
