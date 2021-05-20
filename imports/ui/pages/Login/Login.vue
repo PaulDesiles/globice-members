@@ -13,6 +13,7 @@
           dark
           required
           v-model="username"
+          @change="dismissError"
         />
 
         <v-text-field
@@ -23,6 +24,7 @@
           dense
           dark
           required
+          @change="dismissError"
           :error-messages="error ? ['mot de passe incorrect'] : []"
           v-model="password"
         />
