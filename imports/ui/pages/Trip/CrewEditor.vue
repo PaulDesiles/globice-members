@@ -256,14 +256,9 @@ export default {
       this.$emit('close');
     },
     getCameraColor(photoAbility) {
-      if (!photoAbility)
-        return 'gray';
-      if (photoAbility === 'Amateur')
-        return 'red'
-      if (photoAbility === 'Amateur ++')
-        return 'green'
-
-      return 'blue';
+      const index = this.parameters?.member.photo.map(x => x.value).indexOf(photoAbility);
+      const color = this.parameters?.member.photoColors[index]?.value;
+      return color || 'gray';
     }
   },
   meteor: {

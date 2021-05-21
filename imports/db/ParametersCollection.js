@@ -25,6 +25,7 @@ ParametersCollection.schema = new SimpleSchema({
   'member.captain': [choiceSchema],
   'member.diving': [choiceSchema],
   'member.photo': [choiceSchema],
+  'member.photoColors': [choiceSchema],
   'member.newMember': [choiceSchema],
   'member.bookSizeChoices': [choiceSchema],
 
@@ -75,6 +76,7 @@ export function initParametersCollection() {
       captain: [ "Non", "Oui" ].map(labelAsValue),
       diving: [ "Aucun", ...[1,2,3,4,5].map(x => `Niveau ${x}`) ].map(labelAsValue),
       photo: [ "Amateur", "Amateur ++", "Professionnel" ].map(labelAsValue),
+      photoColors: [ "red", "green", "blue" ].map(labelAsValue),
       newMember: [ "Non", "Oui" ].map(labelAsValue),
       bookSizeChoices: [
         { text:'5 sorties', value: 5 }, 

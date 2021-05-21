@@ -33,6 +33,7 @@
           <ChoicesEditor title="Volonté d'être capitaine" v-model="parameters.member.captain" />
           <ChoicesEditor title="Compétences plongée" v-model="parameters.member.diving" />
           <ChoicesEditor title="Compétences photo" v-model="parameters.member.photo" />
+          <ChoicesEditor title="Couleurs des compétences photo" v-model="parameters.member.photoColors" />
           <ChoicesEditor title="Primo-adhérent" v-model="parameters.member.newMember" />
           <ChoicesEditor
             title="Taille des carnets de sorties"
