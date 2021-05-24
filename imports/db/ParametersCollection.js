@@ -10,8 +10,9 @@ const choiceSchema = new SimpleSchema({
 
 ParametersCollection.schema = new SimpleSchema({
   _schemaVersion: { type: Number, defaultValue: 1 },
-  _modificationDate: {type: Date, optional: true},
+  _modificationDate: { type: Date, optional: true },
 
+  resourcesLink: { type: String, optional: true },
   trip: Object,
   'trip.captain': [choiceSchema],
   'trip.type': [choiceSchema],
@@ -56,6 +57,7 @@ export function initParametersCollection() {
   });
 
   ParametersCollection.insert({
+    resourcesLink: '',
     trip: {
       captain: [ 'Alain', 'Bernard', 'Héloïse', 'Isabelle', 'Jean-Marc', 'Lilly', 'Patrick'].map(labelAsValue),
       type: [ 'Declic', 'Long Bec'].map(labelAsValue),

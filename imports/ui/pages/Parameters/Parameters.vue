@@ -10,6 +10,14 @@
     <template v-if="parameters" >
 
       <v-form @submit.prevent="handleSubmit">
+        <h3>Ressources</h3>
+        <v-text-field
+          outlined
+          label="Lien vers les ressources"
+          v-model="parameters.resourcesLink"
+        />
+
+
         <h3>Sorties</h3>
         <div class="d-flex flex-wrap">
           <ChoicesEditor title="Capitaines" v-model="parameters.trip.captain" />

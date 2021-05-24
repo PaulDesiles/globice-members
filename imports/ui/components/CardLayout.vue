@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <div :class="containerClasses">
     <div class="cardContainer">
       <h1 class="cardTitle">{{ title }}</h1>
       <div class="card">
@@ -13,7 +13,17 @@
 <script>
 export default {
   props: {
-    title: String
+    title: String,
+    large: Boolean
+  },
+  computed: {
+    containerClasses() {
+      let classes = ['container'];
+      if (this.large)
+        classes.push('large');
+        
+      return classes;
+    }
   }
 }
 </script>
@@ -31,6 +41,10 @@ export default {
     display: grid;
     grid-template: 1fr 300px 1fr / 1fr 500px 1fr;
     color: white;
+  }
+
+  .container.large {
+    grid-template: 1fr 300px 1fr / 1fr 600px 1fr;
   }
 
   .cardContainer {

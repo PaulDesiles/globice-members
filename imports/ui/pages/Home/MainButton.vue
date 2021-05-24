@@ -1,6 +1,10 @@
 <template>
-  <router-link :to="target">
-    <img :src="'/img/' + target + '.jpg'" />
+  <a v-if="external" :href="target" :class="linkClass" target="_blank">
+    <img :src="imageSource" />
+    <span>{{ label }}</span>
+  </a>
+  <router-link v-else :to="target">
+    <img :src="imageSource" />
     <span>{{ label }}</span>
   </router-link>
 </template>
@@ -9,7 +13,17 @@
 export default {
   props: {
     target: String,
-    label: String
+    label: String,
+    image: String,
+    external: Boolean
+  },
+  computed: {
+    imageSource() {
+      return '/img/' + (this.image || this.target) + '.jpg';
+    },
+    linkClass() {
+      return this.target ? undefined : 'disabledButton';
+    }
   }
 }
 </script>
@@ -39,5 +53,10 @@ export default {
     display: block;
     text-align: center;
     font-size: 14pt;
+  }
+
+  .disabledButton {
+    opacity: 0.6;
+    pointer-events: none;
   }
 </style>

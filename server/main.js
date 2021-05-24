@@ -28,10 +28,16 @@ Meteor.startup(() => {
   //   });
   // }
 
+
+  // ParametersCollection.remove({});
+  // initParametersCollection();
+
   // if (!ParametersCollection.findOne({})) {
   //   initParametersCollection();
   // }
 
+
+  
   // if (true) {
   //   MembersCollection.remove({});
   //   membersSeed.forEach(m => MembersCollection.insert(m));
