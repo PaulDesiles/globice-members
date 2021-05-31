@@ -1,10 +1,10 @@
 import fs from 'fs';
-import { rawMemberFieldsConverters } from '/imports/api/memberCreationHelpers';
+import { rawMemberFieldsConverters } from '/imports/api/memberCreationHelper';
 
 let membersSeed = [];
 
 try {
-  const data = fs.readFileSync('C:\\Users\\Paul\\Documents\\members.csv', 'utf8');
+  const data = fs.readFileSync('D:\\Docs_Globice\\members2.csv', 'utf8');
 
   membersSeed = data.split('\n')
     .slice(1)
@@ -14,29 +14,30 @@ try {
 
       return {
         "infos": {
-          "firstname": rawMemberFieldsConverters['firstname'](cells[7]),
-          "lastname": rawMemberFieldsConverters['lastname'](cells[6]),
-          "birthdate": rawMemberFieldsConverters['birthdate'](cells[11]),
-          "email": cells[10],
-          "phone": cells[22],
-          "address": cells[24],
-          "postCode": cells[25],
-          "city": cells[26]
+          "firstname": rawMemberFieldsConverters['firstname'](cells[1]),
+          "lastname": rawMemberFieldsConverters['lastname'](cells[0]),
+          "birthdate": rawMemberFieldsConverters['birthdate'](cells[2]),
+          "email": cells[4],
+          "phone": cells[3],
+          "address": cells[5],
+          "postCode": cells[6],
+          "city": cells[7]
         },
         "abilities": {
-          "boatLicense": cells[30],
-          "captain": cells[31],
-          "diving": rawMemberFieldsConverters['diving'](cells[32]),
-          "photo": cells[33].trim(),
+          "boatLicense": rawMemberFieldsConverters['boatLicense'](cells[10]),
+          "captain": cells[11],
+          "diving": rawMemberFieldsConverters['diving'](cells[12]),
+          "photo": cells[13].trim(),
           "comment": ""
         },
         "membership": {
-          "date": rawMemberFieldsConverters['date'](cells[9]),
-          "isNewMember": rawMemberFieldsConverters['isNewMember'](cells[29]),
-          "certificate": cells[12]
+          "date": rawMemberFieldsConverters['date'](cells[8]),
+          "isNewMember": rawMemberFieldsConverters['isNewMember'](cells[9])
         },
         "trips": {
-          "purchases": [],
+          "purchases": [
+            { id: 'legacy', size: cells[14], date: new Date(), paymentInfos: 'solde au 01/06/21' }
+          ].filter(p => p.size > 0),
           "confirmedTrips": [],
           "refusedTrips": []
         },

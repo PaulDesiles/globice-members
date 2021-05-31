@@ -16,7 +16,7 @@ function getDelta(cur, prev) {
 
 function updateMembers(list, action, options = undefined) {
   list.forEach(memberId => {
-    console.log(`updating ${memberId}`);
+    // console.log(`updating ${memberId}`);
     MembersCollection.update(memberId, action, options);
   });
 }
@@ -33,18 +33,18 @@ export function onApplicantsListChanged(
   currentApplicants,
   previousApplicants)
 {
-  console.log('updating members');
-  console.log(currentApplicants);
-  console.log(previousApplicants);
+  // console.log('updating members');
+  // console.log(currentApplicants);
+  // console.log(previousApplicants);
 
   const current = segregate(currentApplicants);
   const previous = segregate(previousApplicants);
   const selectedOnes = getDelta(current.selected, previous.selected);
   const refusedOnes = getDelta(current.refused, previous.refused);
 
-  console.log('deltas :');
-  console.log(selectedOnes);
-  console.log(refusedOnes);
+  // console.log('deltas :');
+  // console.log(selectedOnes);
+  // console.log(refusedOnes);
 
   // updateMembers(selectedOnes.add, { $push: { 'trips.confirmedTrips': tripData }});
 
@@ -62,7 +62,7 @@ export function onApplicantsListChanged(
 
 export function onTripDateChanged(id, date, applicants) {
   const ids = applicants.map(a => a.memberId);
-  console.log(`update date for trip ${id} on the applicants ${ids.join(',')}`);
+  // console.log(`update date for trip ${id} on the applicants ${ids.join(',')}`);
 
   updateMembers(ids, 
     { $set: {
@@ -74,17 +74,4 @@ export function onTripDateChanged(id, date, applicants) {
       arrayFilters: [ { "changedTrip.id": id } ],
       bypassCollection2: true
     });  
-}
-
-export function onCreditedChange(tripId, memberId, credited) {
-  console.log(`update credited for trip ${tripId} on applicants ${memberId}`);
-  updateMembers([id], 
-    { $set: {
-      'trips.confirmedTrips.$[changedTrip].credited': credited,
-    }},
-    {
-      multi: true,
-      arrayFilters: [ { "changedTrip.id": id } ],
-      bypassCollection2: true
-    }); 
 }

@@ -1,5 +1,8 @@
 
 export const normalize = input => {
+  if (!input)
+    return undefined;
+    
   return [input[0].toUpperCase(), ...input.toLowerCase().slice(1)].join('');
 };
 

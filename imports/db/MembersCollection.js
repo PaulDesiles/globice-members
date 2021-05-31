@@ -41,12 +41,16 @@ MembersCollection.schema = new SimpleSchema({
   membership: Object,
   "membership.date": {type: Date, optional: true},
   "membership.isNewMember": {type: String, optional: true},
-  "membership.certificate": {type: String, optional: true},
 
   trips: Object,
   "trips.purchases": [purchaseSchema],
   "trips.confirmedTrips": [tripSchema],
   "trips.refusedTrips": [tripSchema],
+
+  "trips.legacyData": {type: Object, optional: true},
+  // "trips.legacyData.purchases": Number,
+  "trips.legacyData.confirmedTrips": Number,
+  "trips.legacyData.refusedTrips": Number,
 });
 
 MembersCollection.attachSchema(MembersCollection.schema);
