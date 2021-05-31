@@ -5,7 +5,7 @@
 
       <template v-if="purchases.length > 0">
 
-        <p><strong>{{ getTotalTripsBought(purchases) }}</strong> sorties achetées</p>
+        <p><strong>{{ tripsBought }}</strong> sorties achetées</p>
 
         <v-simple-table class="elevation-3 mb-5" >
           <template v-slot:default>
@@ -155,6 +155,9 @@ export default {
     },
     canAdd() {
       return this.bookSize && this.paymentDate;
+    },
+    tripsBought() {
+      return getTotalTripsBought(this.purchases);
     }
   },
   methods: {

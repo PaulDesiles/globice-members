@@ -5,7 +5,7 @@ export function isMembershipUpToDate(member) {
 }
 
 export function getTotalTripsBought(purchases) {
-  return purchases.reduce((prev, cur) => prev.size + cur, 0);
+  return purchases.reduce((prev, cur) => prev + cur.size, 0);
 }
 
 export function getTripsLeft(member) {
