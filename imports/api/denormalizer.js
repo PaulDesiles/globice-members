@@ -17,8 +17,15 @@ function getDelta(cur, prev) {
 function updateMembers(list, action, options = undefined) {
   list.forEach(memberId => {
     console.log(`updating ${memberId}`);
-    MembersCollection.update(memberId, action, options)
+    MembersCollection.update(memberId, action, options);
   });
+}
+
+function getFullTripData(commonTripData, memberId, applicants) {
+  return {
+    ...commonTripData,
+    credited: applicants.find(a => a.memberId === memberId).credited
+  }
 }
 
 export function onApplicantsListChanged(
@@ -39,7 +46,15 @@ export function onApplicantsListChanged(
   console.log(selectedOnes);
   console.log(refusedOnes);
 
-  updateMembers(selectedOnes.add, { $push: { 'trips.confirmedTrips': tripData }});
+  // updateMembers(selectedOnes.add, { $push: { 'trips.confirmedTrips': tripData }});
+
+  current.selected.forEach(memberId => {
+    // delete previous if any to update it
+    MembersCollection.update(memberId, { $pull: { 'trips.confirmedTrips': { id: tripData.id }}});
+    let data = getFullTripData(tripData, memberId, currentApplicants);
+    MembersCollection.update(memberId, { $push: { 'trips.confirmedTrips': data }});
+  });
+  
   updateMembers(selectedOnes.delete, { $pull: { 'trips.confirmedTrips': { id: tripData.id }}});
   updateMembers(refusedOnes.add, { $push: { 'trips.refusedTrips': tripData }});
   updateMembers(refusedOnes.delete, { $pull: { 'trips.refusedTrips': { id: tripData.id }}});
@@ -59,4 +74,17 @@ export function onTripDateChanged(id, date, applicants) {
       arrayFilters: [ { "changedTrip.id": id } ],
       bypassCollection2: true
     });  
+}
+
+export function onCreditedChange(tripId, memberId, credited) {
+  console.log(`update credited for trip ${tripId} on applicants ${memberId}`);
+  updateMembers([id], 
+    { $set: {
+      'trips.confirmedTrips.$[changedTrip].credited': credited,
+    }},
+    {
+      multi: true,
+      arrayFilters: [ { "changedTrip.id": id } ],
+      bypassCollection2: true
+    }); 
 }

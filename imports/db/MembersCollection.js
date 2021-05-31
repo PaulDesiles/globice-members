@@ -12,7 +12,8 @@ const purchaseSchema = new SimpleSchema({
 
 const tripSchema = new SimpleSchema({
   id: { type: String, regEx: SimpleSchema.RegEx.Id },
-  date: Date
+  date: Date,
+  credited: {type: Boolean, optional: true}
 })
 
 MembersCollection.schema = new SimpleSchema({

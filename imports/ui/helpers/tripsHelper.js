@@ -7,8 +7,14 @@ export function getLastXMonthsCount(tripsList, x, memberId) {
   
   if (memberId)
     list = list?.filter(t => {
-      const applicant = t.applicants?.find(a => a.memberId === memberId);
-      return applicant?.credited;
+      if (t.id) {
+        // sumup trip object
+        return t.credited;
+      } else if (t._id) {
+        // full trip object
+        const applicant = t.applicants.find(a => a.memberId === memberId);
+        return applicant.credited;
+      }
     });
 
   return list?.length || 0;
