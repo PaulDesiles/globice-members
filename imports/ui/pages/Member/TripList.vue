@@ -17,18 +17,45 @@
         <tr>
           <th class="text-left" :style="{ width: '20%' }">Date</th>
           <th class="text-left" :style="{ width: '20%' }">Port</th>
-          <th class="text-left">{{ showComments ? 'Commentaire sur le bénévole' : '' }}</th>
+          <template v-if="isConfirmedList">
+            <th class="text-left" :style="{ width: '10%' }">Présent</th>
+            <th class="text-left" :style="{ width: '10%' }">Crédité</th>
+            <th class="text-left">Commentaire sur le bénévole</th>
+          </template>
+          <th class="text-left" :style="{ width: '10%' }">Lien</th>
         </tr>
       </thead>
       <tbody>
         <tr
           v-for="trip in trips"
-          :key="trip.id"
+          :key="trip._id"
         >
           <td>{{ formatDate(trip.date) }}</td>
           <td>{{ trip.port }}</td>
-          <td v-if="showComments">
-            {{ getComment(trip) }}
+          <template v-if="isConfirmedList">
+            <td>
+              <v-checkbox :input-value="getApplicant(trip).onboard" value disabled />
+            </td>
+            <td>
+              <v-checkbox :input-value="getApplicant(trip).credited" value disabled />
+            </td>
+            <td>{{ getApplicant(trip).comment }}</td>
+          </template>
+          <td>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn 
+                  icon
+                  v-bind="attrs"
+                  v-on="on"
+                  :to="`/trip/${ trip._id }`"
+                  target="_blank"
+                >
+                  <v-icon>mdi-open-in-new</v-icon>
+                </v-btn>
+              </template>
+              <span>ouvrir la fiche sortie</span>
+            </v-tooltip>
           </td>
         </tr>
       </tbody>
@@ -44,21 +71,24 @@ export default {
   props: {
     trips: Array,
     memberId: String,
-    showComments: Boolean,
-    adjectiveSingular: String
+    isConfirmedList: Boolean
   },
   methods: {
     formatDate,
-    getComment(trip) {
+    getApplicant(trip) {
       return trip.applicants
-        .filter(a => a.memberId === this.memberId)
-        [0]
-        ?.comment;
+        .find(a => a.memberId === this.memberId)
+        || {};
     },
     getXMonthsLabel(x) {
-      const count = getLastXMonthsCount(this.trips, x);
+      const count = getLastXMonthsCount(
+        this.trips, 
+        x, 
+        this.isConfirmedList && this.memberId
+      );
       const suffix = (count > 1 ? 's' : '');
-      return `${count} sortie${suffix} ${this.adjectiveSingular}${suffix}`;
+      const adjectiveSingular = this.isConfirmedList ? "effectuée" : "refusée";
+      return `${count} sortie${suffix} ${adjectiveSingular}${suffix}`;
     },
   }
 }

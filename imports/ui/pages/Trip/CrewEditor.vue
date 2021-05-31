@@ -34,7 +34,7 @@
           </v-col>
           <v-col :cols="3" v-if="parameters">
             <v-select
-              label="Role"
+              label="Role candidaté"
               v-model="selectedRole" 
               :items="parameters.trip.roles"
               outlined
@@ -102,10 +102,20 @@
                   <MemberCheck :member="applicant._member" />
                 </td>
                 <td>
-                  <TripCounter :trips="applicant._member.trips.confirmedTrips" />
+                  <TripCounter 
+                    :trips="applicant._member.trips.confirmedTrips"
+                    :currentTripId="currentTripId"
+                    :isConfirmedList="true"
+                    :memberId="applicant.memberId"
+                  />
                 </td>
                 <td>
-                  <TripCounter :trips="applicant._member.trips.refusedTrips" />
+                  <TripCounter
+                  :trips="applicant._member.trips.refusedTrips"
+                  :currentTripId="currentTripId"
+                  :isConfirmedList="false"
+                  :memberId="applicant.memberId"
+                />
                 </td>
                 <td>
                   <v-tooltip bottom>
@@ -198,6 +208,7 @@ export default {
   props: {
     applicants: Array,
     parameters: Object,
+    currentTripId: String,
   },
   components: {
     TripCounter,
@@ -234,7 +245,6 @@ export default {
       this.editableApplicants.push({ 
         memberId: this.selectedMember._id,
         memberName: `${this.selectedMember.infos.firstname} ${this.selectedMember.infos.lastname}`,
-        memberEmail: this.selectedMember.infos.email,
         desiredRole: this.selectedRole,
         assignedRole: null,
         // temporary infos : will not be stored
@@ -267,15 +277,6 @@ export default {
     },
     members() {
       const list = MembersCollection.find({}).fetch();
-
-      // re-populate 'member' for previously added applicants
-      if (list && list.length > 0 && this.editableApplicants) {
-        this.editableApplicants
-          .filter(a => !a._member)
-          .forEach(a => {
-            a._member = list.find(m => m._id === a.memberId);
-          });
-      }
 
       return list;
     }

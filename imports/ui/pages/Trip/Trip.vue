@@ -145,6 +145,7 @@
             <CrewEditor 
               :applicants.sync="trip.applicants"
               :parameters="parameters"
+              :currentTripId="id"
               @close="editCrew = false"
             />
         </v-dialog>
@@ -243,6 +244,7 @@ import DeleteButton from '../../components/DeleteButton.vue';
 import { Meteor } from 'meteor/meteor';
 import { TripsCollection } from "../../../db/TripsCollection";
 import { ParametersCollection } from "../../../db/ParametersCollection";
+import { MembersCollection } from "../../../db/MembersCollection";
 import { formatDate } from '../../helpers/dateHelper';
 import { getAllProperties, getDelta } from '../../helpers/objectHelper';
 
@@ -306,7 +308,7 @@ export default {
     },
     mailRecipients() {
       return this.crew
-        .map(x => x.memberEmail || `<email de ${x.memberName}>`)
+        .map(x => x._member?.infos.email || `<email de ${x.memberName}>`)
         .join(';');
     },
     mailBody() {
@@ -354,7 +356,8 @@ export default {
   meteor: {
     $subscribe: {
       'trips': [],
-      'parameters': []
+      'parameters': [],
+      'members': []
     },
     parameters() {
       return ParametersCollection.findOne({});
@@ -378,8 +381,24 @@ export default {
       else {
         foundTrip = TripsCollection.findOne(this.id);
 
-        if (foundTrip && !this.initialValues) {
-          this.initialValues = getAllProperties(foundTrip);
+        if (foundTrip) {
+          const memberIds = foundTrip.applicants.map(a => a.memberId);
+          if (memberIds && memberIds.length > 0) {
+            const members = MembersCollection
+              .find({ _id: {$in: memberIds}})
+              .fetch();
+            
+            if (members && members.length > 0) {
+              foundTrip.applicants.forEach(a => {
+                a._member = members.find(m => m._id === a.memberId);
+              });
+            }
+          }
+
+
+          if (!this.initialValues) {
+            this.initialValues = getAllProperties(foundTrip);
+          }
         }
 
         return foundTrip;

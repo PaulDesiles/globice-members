@@ -55,12 +55,20 @@
             class="elevation-3"
           >
 
-            <template v-slot:[`item.trips.acceptedSumUp`]="{item}">
-              <TripCounter :trips="item.trips.confirmedTrips" />
+            <template v-slot:[`item.trips.confirmedSumUp`]="{item}">
+              <TripCounter
+                :trips="item.trips.confirmedTrips"
+                :isConfirmedList="true"
+                :memberId="item._id"
+              />
             </template>
 
             <template v-slot:[`item.trips.refusedSumUp`]="{item}">
-              <TripCounter :trips="item.trips.refusedTrips" />
+              <TripCounter
+                :trips="item.trips.refusedTrips"
+                :isConfirmedList="false"
+                :memberId="item._id"
+              />
             </template>
 
             <template v-slot:[`item.membership.date`]="{item}">
@@ -105,7 +113,7 @@ export default {
         { text: 'Nom', value: 'infos.lastname', width: '17%' },
         { text: 'Prénom', value: 'infos.firstname', width: '17%' },
         { text: 'Email', value: 'infos.email', width: '31%' },
-        { text: 'Sorties', value: 'trips.acceptedSumUp', width: '10%' },
+        { text: 'Sorties', value: 'trips.confirmedSumUp', width: '10%' },
         { text: 'Refus', value: 'trips.refusedSumUp', width: '10%' },
         { text: 'Date d\'adhésion', value: 'membership.date', width: '15%', sort: sortDates },
       ]

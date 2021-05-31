@@ -26,7 +26,7 @@ export function getAllProperties(obj, nested, excludeKeys = []) {
 
 
 function areEqual(a, b) {
-  if (a && b) {
+  if (typeof a !== 'boolean' && a && b) {
     if (typeof a.getTime === 'function') // Date comparison
       return a.getTime() === b.getTime();
 
@@ -39,7 +39,7 @@ function areEqual(a, b) {
     }
 
     if (typeof a === 'object')
-      return Object.keys(a).every(k => areEqual(a[k], b[k]));
+      return getRelevantKeys(a).every(k => areEqual(a[k], b[k]));
   }
 
   return a == b;

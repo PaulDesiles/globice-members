@@ -178,15 +178,14 @@
         <TripList
           :trips="confirmedTrips"
           :memberId="id"
-          showComments
-          adjectiveSingular="effectuée"
+          :isConfirmedList="true"
         />
 
         <h3>Sorties refusées</h3>
         <TripList
           :trips="refusedTrips"
           :memberId="id"
-          adjectiveSingular="refusée"
+          :isConfirmedList="false"
         />
 
         <div class="d-flex justify-end">
@@ -234,8 +233,7 @@ export default {
   data: () => ({
     newMember: undefined,
     saving: false,
-    initialValues: undefined,
-    linkedTrips: []
+    initialValues: undefined
   }),
   computed: {
     title() {

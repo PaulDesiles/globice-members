@@ -19,13 +19,19 @@ export default {
   props: {
     trips: Array,
     months: { type: Number, default: 2 },
+    isConfirmedList: Boolean,
+    currentTripId: String,
+    memberId: String
   },
   computed: {
+    allTripsButCurrent() {
+      return this.trips.filter(t => t.id !== this.currentTripId);
+    },
     monthsCount() {
-      return getLastXMonthsCount(this.trips, this.months);
+      return getLastXMonthsCount(this.allTripsButCurrent, this.months, this.isConfirmedList && this.memberId);
     },
     yearCount() {
-      return getLastXMonthsCount(this.trips, 12);
+      return getLastXMonthsCount(this.allTripsButCurrent, 12, this.isConfirmedList && this.memberId);
     }
   }
 }
