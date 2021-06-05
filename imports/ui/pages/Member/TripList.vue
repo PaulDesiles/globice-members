@@ -31,32 +31,43 @@
           :key="trip._id"
         >
           <td>{{ formatDate(trip.date) }}</td>
-          <td>{{ trip.port }}</td>
-          <template v-if="isConfirmedList">
-            <td>
-              <v-checkbox :input-value="getApplicant(trip).onboard" value disabled />
-            </td>
-            <td>
-              <v-checkbox :input-value="getApplicant(trip).credited" value disabled />
-            </td>
-            <td>{{ getApplicant(trip).comment }}</td>
+          <template v-if="trip.legacy">
+            <td>inconnu</td>
+            <template v-if="isConfirmedList">
+              <td></td>
+              <td></td>
+              <td></td>
+            </template>
+            <td></td>
           </template>
-          <td>
-            <v-tooltip bottom>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn 
-                  icon
-                  v-bind="attrs"
-                  v-on="on"
-                  :to="`/trip/${ trip._id }`"
-                  target="_blank"
-                >
-                  <v-icon>mdi-open-in-new</v-icon>
-                </v-btn>
-              </template>
-              <span>ouvrir la fiche sortie</span>
-            </v-tooltip>
-          </td>
+          <template v-else>
+            <td>{{ trip.port }}</td>
+            <template v-if="isConfirmedList">
+              <td>
+                <v-checkbox :input-value="getApplicant(trip).onboard" value disabled />
+              </td>
+              <td>
+                <v-checkbox :input-value="getApplicant(trip).credited" value disabled />
+              </td>
+              <td>{{ getApplicant(trip).comment }}</td>
+            </template>
+            <td>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on, attrs }">
+                  <v-btn 
+                    icon
+                    v-bind="attrs"
+                    v-on="on"
+                    :to="`/trip/${ trip._id }`"
+                    target="_blank"
+                  >
+                    <v-icon>mdi-open-in-new</v-icon>
+                  </v-btn>
+                </template>
+                <span>ouvrir la fiche sortie</span>
+              </v-tooltip>
+            </td>
+          </template>
         </tr>
       </tbody>
     </v-simple-table>
@@ -77,8 +88,12 @@ export default {
     formatDate,
     getApplicant(trip) {
       return trip.applicants
-        .find(a => a.memberId === this.memberId)
-        || {};
+        ?.find(a => a.memberId === this.memberId)
+        || {
+          onboard: '',
+          credited: '',
+          comment: '',
+        };
     },
     getXMonthsLabel(x) {
       const count = getLastXMonthsCount(

@@ -219,6 +219,26 @@ import { TripsCollection } from "../../../db/TripsCollection";
 import { ParametersCollection } from "../../../db/ParametersCollection";
 import { getAllProperties, getDelta } from '../../helpers/objectHelper';
 
+function fullfillTrips(summaryTrips, collection) {
+  let fullTrips = [];
+
+  const ids = summaryTrips
+    .filter(t => !t.legacy)
+    .map(t => t.id);
+
+  if (ids.length > 0) {
+    fullTrips = collection
+      .find({ _id: { $in: ids }})
+      .fetch();
+  }
+
+  return [
+    ...summaryTrips.filter(t => t.legacy),
+    ...fullTrips
+  ];
+}
+
+
 export default {
   components: {
     FullPageLayout,
@@ -344,20 +364,14 @@ export default {
     },
     confirmedTrips() {
       if (this.member && this.member.trips.confirmedTrips) {
-        const ids = this.member.trips.confirmedTrips.map(t => t.id);
-
-        return TripsCollection.find({ _id: { $in: ids }})
-          .fetch();
+        return fullfillTrips(this.member.trips.confirmedTrips, TripsCollection);
       }
 
       return [];
     },
     refusedTrips() {
       if (this.member && this.member.trips.refusedTrips) {
-        const ids = this.member.trips.refusedTrips.map(t => t.id);
-
-        return TripsCollection.find({ _id: { $in: ids }})
-          .fetch();
+        return fullfillTrips(this.member.trips.refusedTrips, TripsCollection);
       }
 
       return [];
