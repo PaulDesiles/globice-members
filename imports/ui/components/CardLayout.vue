@@ -1,20 +1,29 @@
 <template>
-  <div :class="containerClasses">
-    <div class="cardContainer">
-      <h1 class="cardTitle">{{ title }}</h1>
-      <div class="card">
-        <slot />
+  <div class="backgroundContainer">
+    <LazyImage v-if="showBackground" src="/img/background.jpg" />
+    <div :class="containerClasses">
+      <div class="cardContainer">
+        <h1 class="cardTitle">{{ title }}</h1>
+        <div class="card">
+          <slot />
+        </div>
+        <slot name="below" />
       </div>
-      <slot name="below" />
     </div>
   </div>
 </template>
 
 <script>
+import LazyImage from './LazyImage.vue';
+
 export default {
+  components: {
+    LazyImage
+  },
   props: {
     title: String,
-    large: Boolean
+    large: Boolean,
+    showBackground: Boolean
   },
   computed: {
     containerClasses() {
@@ -29,6 +38,10 @@ export default {
 </script>
 
 <style scoped>
+  .backgroundContainer {
+    width: 100%;
+    height: 100%;
+  }
 
   h1.cardTitle {
     color: black;
@@ -36,6 +49,9 @@ export default {
   }
 
   .container {
+    position: relative;
+    z-index: 1;
+
     width: 100%;
     height: 100%;
     display: grid;

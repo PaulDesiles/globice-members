@@ -1,5 +1,5 @@
 <template>
-  <v-app :style="{background: $vuetify.theme.themes[theme].background}">
+  <v-app :style="{background: '#eee'}">
     <v-main>
         <template v-if="currentUser">
           <transition :name="transitionName" mode="out-in">
