@@ -5,7 +5,10 @@
 
       <template v-if="purchases.length > 0">
 
-        <p><strong>{{ tripsBought }}</strong> sorties achetées</p>
+        <p>
+          <strong>{{ tripsBought }}</strong> sorties achetées
+          : <strong>{{ tripsLeft }}</strong> restantes
+        </p>
 
         <v-simple-table class="elevation-3 mb-5" >
           <template v-slot:default>
@@ -13,7 +16,6 @@
               <tr>
                 <th class="text-left" :style="{ width: '20%' }">Carnet</th>
                 <th class="text-left" :style="{ width: '20%' }">Date d'achat</th>
-                <th class="text-left" :style="{ width: '50%' }">Paiement</th>
                 <th class="text-left" :style="{ width: '10%' }"></th>
               </tr>
             </thead>
@@ -24,7 +26,6 @@
               >
                 <td>{{ purchase.size }} sorties</td>
                 <td>{{ formatDate(purchase.date) }}</td>
-                <td>{{ purchase.paymentInfos }}</td>
                 <td>
                   <v-tooltip right>
                     <template v-slot:activator="{ on, attrs }">
@@ -89,17 +90,6 @@
               />
               </v-col>
             </v-row>
-
-            <v-row>
-              <v-col>
-              <v-text-field 
-                label="Infos de paiement"
-                v-model="paymentInfos" 
-                outlined
-                hide-details="auto"
-              />
-              </v-col>
-            </v-row>
           </v-card-text>
 
           <v-card-actions>
@@ -131,11 +121,13 @@
 import DateInput from '../../components/DateInput.vue';
 import { v4 as uuidv4 } from 'uuid';
 import { sortDates, formatDate } from '../../helpers/dateHelper';
-import { getTotalTripsBought } from '../../helpers/memberHelper';
+import { getTripsLeft, getTotalTripsBought } from '../../helpers/memberHelper';
 
 export default {
   props: {
+    memberId: String,
     purchases: Array,
+    confirmedTrips: Array,
     parameters: Object
   },
   components: {
@@ -146,7 +138,6 @@ export default {
       showDialog: false,
       bookSize: undefined,
       paymentDate: new Date(),
-      paymentInfos: undefined,
     }
   },
   computed: {
@@ -158,6 +149,9 @@ export default {
     },
     tripsBought() {
       return getTotalTripsBought(this.purchases);
+    },
+    tripsLeft() {
+      return getTripsLeft(this.memberId, this.purchases, this.confirmedTrips);
     }
   },
   methods: {
@@ -167,14 +161,12 @@ export default {
       this.showDialog = false;
       this.bookSize = undefined;
       this.paymentDate = undefined;
-      this.paymentInfos = undefined;
     },
     addPurchase() {
       this.purchases.push({
         id: uuidv4(),
         size: this.bookSize,
-        date: this.paymentDate,
-        paymentInfos: this.paymentInfos
+        date: this.paymentDate
       });
 
       this.hideAndResetDialog();

@@ -170,7 +170,9 @@
 
         <h3>Carnets de sorties</h3>
         <TripBooks 
+          :memberId="member._id"
           :purchases.sync="member.trips.purchases"
+          :confirmedTrips="member.trips.confirmedTrips"
           :parameters="parameters"
         />
         

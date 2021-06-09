@@ -10,7 +10,8 @@
     </template>
     <span>{{ tripsLeft }} {{ tripsLabel }} sur le carnet</span>
     <br />
-    <span>adhésion à jour</span>
+    <span v-if="isMembershipUpToDate">adhésion à jour</span>
+    <span v-else>adhésion non renouvellée</span>
   </v-tooltip>
 </template>
 
@@ -24,10 +25,14 @@ export default {
   },
   computed: {
     tripsLeft() {
-      return getTripsLeft(this.member);
+      return getTripsLeft(
+        this.member._id,
+        this.member.trips.purchases,
+        this.member.trips.confirmedTrips
+      );
     },
     isMembershipUpToDate() {
-      return isMembershipUpToDate(this.member);
+      return isMembershipUpToDate(this.member.membership.date);
     },
     tripsLabel() {
       return this.tripsLeft > 1 ? 'sorties restantes' : 'sortie restante';

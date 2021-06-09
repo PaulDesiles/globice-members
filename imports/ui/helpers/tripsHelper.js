@@ -1,34 +1,25 @@
+import { ensureIsDate } from './dateHelper';
+
+export function isTripCredited(trip, memberId) {
+  if (trip.id) {
+    // sumup trip object
+    return trip.credited;
+  } else if (trip._id) {
+    // full trip object
+    const applicant = trip.applicants.find(a => a.memberId === memberId);
+    return applicant.credited;
+  }
+}
+
 export function getLastXMonthsCount(tripsList, x, memberId) {
   const today = new Date();
   const comparisonTime = today.setMonth(today.getMonth() - x);
 
   let list = tripsList
-    ?.filter(t => getTime(t.date) > comparisonTime);
+    ?.filter(t => (ensureIsDate(t.date)?.getTime() ?? 0) > comparisonTime);
   
   if (memberId)
-    list = list?.filter(t => {
-      if (t.id) {
-        // sumup trip object
-        return t.credited;
-      } else if (t._id) {
-        // full trip object
-        const applicant = t.applicants.find(a => a.memberId === memberId);
-        return applicant.credited;
-      }
-    });
+    list = list?.filter(t => isTripCredited(t, memberId));
 
   return list?.length || 0;
-}
-
-function getTime(date) {
-  if (date && date.getTime)
-    return date.getTime();
-  else {
-    var d = new Date(date);
-    if (d) {
-      return d.getTime();
-    }
-  }
-
-  return 0;
 }

@@ -1,5 +1,5 @@
 <template>
-  <CardLayout title="Accueil" large>
+  <CardLayout title="Globice Crew" showBackground large>
     <div class="split-row">
       <MainButton target="members" label="Bénévoles" />
       <MainButton target="trips" label="Sorties" />

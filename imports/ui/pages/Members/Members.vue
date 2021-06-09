@@ -74,7 +74,7 @@
             <template v-slot:[`item.membership.date`]="{item}">
               <span>{{ formatDate(item.membership.date) }}</span>
 
-              <template v-if="isMembershipUpToDate(item)">
+              <template v-if="isMembershipUpToDate(item.membership.date)">
                 <v-icon color="green darken-2">mdi-checkbox-marked-circle</v-icon>
               </template>
               <template v-else>
