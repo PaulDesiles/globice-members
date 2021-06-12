@@ -30,10 +30,16 @@
         <v-textarea
           class="mt-4"
           outlined
-          label="Mail de contact type"
+          label="Mail de contact type : acceptés"
           v-model="parameters.trip.mailBody"
         />
 
+        <v-textarea
+          class="mt-4"
+          outlined
+          label="Mail de contact type : refusés"
+          v-model="parameters.trip.refusedMailBody"
+        />
 
         <h3>Bénévoles</h3>
         <div class="d-flex flex-wrap">

@@ -132,8 +132,8 @@
           rounded
           @click="editCrew = true"
         >
+          <v-icon left>mdi-pencil</v-icon>
           {{ hasCrew ? "modifier l'équipage" : "constituer l'équipage" }}
-          <v-icon right>mdi-pencil</v-icon>
         </v-btn>
 
         <v-dialog
@@ -152,30 +152,32 @@
 
         <template v-if="mandatoryDataFilled">
           <h3>Email</h3>
-          <p>Recopiez ces informations dans votre messagerie pour contacter votre équipage</p>
 
-          <v-row>
-            <v-col>
-              <v-text-field
-                label="Destinataires"
-                v-model="mailRecipients"
-                outlined
-                hide-details="auto"
-                readonly
-              />
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col>
-              <v-textarea
-                label="Message"
-                v-model="mailBody"
-                outlined
-                hide-details="auto"
-                readonly
-              />
-            </v-col>
-          </v-row>
+          <v-btn
+            color="primary"
+            elevation="5"
+            class="mb-5"
+            rounded
+            @click="showMailContent = true"
+          >
+            <v-icon left>mdi-email-mark-as-unread</v-icon>
+            contacter les candidats
+          </v-btn>
+
+          <v-dialog
+            v-model="showMailContent"
+            max-width="1000"
+            min-height="600"
+          >
+            <MailContent
+              :acceptedApplicants="crew"
+              :refusedApplicants="refusedApplicants"
+              :port="trip.port"
+              :date="trip.date"
+              :parameters="parameters"
+              @close="showMailContent = false"
+            />
+          </v-dialog>
         </template>
 
         <template v-if="!newTrip">
@@ -239,8 +241,10 @@
 <script>
 import FullPageLayout from '../../components/FullPageLayout.vue';
 import DateInput from '../../components/DateInput.vue';
-import CrewEditor from './CrewEditor.vue';
 import DeleteButton from '../../components/DeleteButton.vue';
+import CrewEditor from './CrewEditor.vue';
+import MailContent from './MailContent.vue';
+
 import { Meteor } from 'meteor/meteor';
 import { TripsCollection } from "../../../db/TripsCollection";
 import { ParametersCollection } from "../../../db/ParametersCollection";
@@ -253,7 +257,8 @@ export default {
     FullPageLayout,
     DateInput,
     CrewEditor,
-    DeleteButton
+    DeleteButton,
+    MailContent
   },
   props: {
     id: String
@@ -263,6 +268,7 @@ export default {
     saving: false,
     initialValues: undefined,
     editCrew: false,
+    showMailContent: false,
   }),
   computed: {
     title() {
@@ -304,18 +310,7 @@ export default {
     },
     canSave() {
       return this.hasUnsavedChanges && this.mandatoryDataFilled;
-        
     },
-    mailRecipients() {
-      return this.crew
-        .map(x => x._member?.infos.email || `<email de ${x.memberName}>`)
-        .join(';');
-    },
-    mailBody() {
-      return this.parameters?.trip?.mailBody
-        ?.replace('{PORT}', this.trip.port)
-        .replace('{DATE}', formatDate(this.trip.date));
-    }
   },
   methods: {
     handleSubmit(event) {

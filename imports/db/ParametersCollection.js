@@ -20,6 +20,7 @@ ParametersCollection.schema = new SimpleSchema({
   'trip.renter': [choiceSchema],
   'trip.roles': [choiceSchema],
   'trip.mailBody': String,
+  'trip.refusedMailBody': String,
 
   member: Object,
   'member.boatLicense': [choiceSchema],
