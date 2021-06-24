@@ -1,7 +1,10 @@
 <template>
   <v-app :style="{background: '#eee'}">
     <v-main>
-        <template v-if="currentUser">
+        <template v-if="isCheckingUser">
+        </template>
+
+        <template v-else-if="currentUser">
           <transition :name="transitionName" mode="out-in">
             <router-view></router-view>
           </transition>
@@ -12,6 +15,7 @@
             <Login />
           </transition>
         </template>
+        
     </v-main>
   </v-app>
 </template>
@@ -43,14 +47,10 @@ export default {
       }
     }
   },
-  methods: {
-  },
-  computed:{
-    theme(){
-      return (this.$vuetify.theme.dark) ? 'dark' : 'light'
-    }
-  },
   meteor: {
+    isCheckingUser() {
+      return Meteor.loggingIn();
+    },
     currentUser() {
       return Meteor.user();
     }
