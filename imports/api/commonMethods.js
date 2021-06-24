@@ -1,8 +1,23 @@
-
-export function ensureUserConnected(userId) {
+function ensureUserIsInRoles(userId, roles) {
   if (!userId) {
-    throw new Meteor.Error('Not authorized.');
+    throw new Meteor.Error('Not connected');
   }
+
+  if (!Roles.userIsInRole(userId, roles)) {
+    throw new Meteor.Error('Not authorized');
+  }
+}
+
+export function ensureIsAdmin(userId) {
+  ensureUserIsInRoles(['admin']);
+}
+
+export function ensureCanEditTrips(userId) {
+  ensureUserIsInRoles(['admin', 'captain']);
+}
+
+export function ensureCanViewData(userId) {
+  ensureUserIsInRoles(['admin', 'captain', 'viewer']);
 }
 
 function isArray(x) {

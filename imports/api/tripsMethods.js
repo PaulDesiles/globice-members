@@ -2,7 +2,7 @@ import { check } from 'meteor/check';
 import { TripsCollection } from '../db/TripsCollection';
 import { 
   ensureContainsUpdates, 
-  ensureUserConnected,
+  ensureCanEditTrips,
   addCreationDate,
   addModificationDate,
   arrayToObject 
@@ -14,7 +14,7 @@ Meteor.methods({
   'trips.create'(data) {
     check(data, Array);
 
-    ensureUserConnected(this.userId);
+    ensureCanEditTrips(this.userId);
     ensureContainsUpdates(data);
 
     addCreationDate(data);
@@ -36,7 +36,7 @@ Meteor.methods({
     check(tripId, String);
     check(data, Array);
 
-    ensureUserConnected(this.userId);
+    ensureCanEditTrips(this.userId);
     ensureContainsUpdates(data);
 
     addModificationDate(data);
@@ -68,7 +68,7 @@ Meteor.methods({
   
   'trips.delete'(tripId) {
     check(tripId, String);
-    ensureUserConnected(this.userId);
+    ensureCanEditTrips(this.userId);
     
     const previousApplicantsData = JSON.parse(
       JSON.stringify(

@@ -28,6 +28,16 @@ Meteor.startup(() => {
   //   });
   // }
 
+  ['admin', 'captain', 'viewer'].forEach(function (role) {
+    Roles.createRole(role, {unlessExists: true});
+  });
+  
+  var user = Accounts.findUserByUsername('globicelocal');
+  if (user) {
+    Roles.addUsersToRoles(user._id, 'admin', Roles.GLOBAL_GROUP);
+    // Roles.addUsersToRoles(user._id, 'captain', Roles.GLOBAL_GROUP);
+  }
+
 
   // ParametersCollection.remove({});
   // initParametersCollection();

@@ -2,7 +2,7 @@ import { check } from 'meteor/check';
 import { MembersCollection } from '../db/MembersCollection';
 import { 
   ensureContainsUpdates, 
-  ensureUserConnected,
+  ensureIsAdmin,
   addCreationDate,
   addModificationDate,
   arrayToObject 
@@ -12,7 +12,7 @@ Meteor.methods({
   'members.create'(data) {
     check(data, Object);
     
-    ensureUserConnected(this.userId);
+    ensureIsAdmin(this.userId);
     ensureContainsUpdates(data);
 
     addCreationDate(data);
@@ -25,7 +25,7 @@ Meteor.methods({
     check(memberId, String);
     check(data, Array);
 
-    ensureUserConnected(this.userId);
+    ensureIsAdmin(this.userId);
     ensureContainsUpdates(data);
 
     addModificationDate(data);
@@ -39,7 +39,7 @@ Meteor.methods({
 
   'members.delete'(memberId) {
     check(memberId, String);
-    ensureUserConnected(this.userId);
+    ensureIsAdmin(this.userId);
     MembersCollection.remove(memberId);
   }
 });
