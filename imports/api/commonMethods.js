@@ -9,15 +9,15 @@ function ensureUserIsInRoles(userId, roles) {
 }
 
 export function ensureIsAdmin(userId) {
-  ensureUserIsInRoles(['admin']);
+  ensureUserIsInRoles(userId, ['admin']);
 }
 
 export function ensureCanEditTrips(userId) {
-  ensureUserIsInRoles(['admin', 'captain']);
+  ensureUserIsInRoles(userId, ['admin', 'captain']);
 }
 
 export function ensureCanViewData(userId) {
-  ensureUserIsInRoles(['admin', 'captain', 'viewer']);
+  ensureUserIsInRoles(userId, ['admin', 'captain', 'viewer']);
 }
 
 function isArray(x) {

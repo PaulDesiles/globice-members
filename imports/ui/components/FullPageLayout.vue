@@ -111,12 +111,19 @@
         return true;
       },
       onSaveEnd(error, creation) {
-        if (error)
-          console.log(error);
+        var isError = !!error;
+        var message = "Modification enregistrées !";
 
-        this.$refs.flyout.open(!!error, error ? "Une erreur est survenue" : "Modification enregistrées !");
+        if (error) {
+          if (error.error === "Not authorized")
+            message = "Vous n'êtes pas autorisé à effectuer cette action";
+          else
+            message = "Une erreur est survenue";
+        }
 
-        if (!error && creation)
+        this.$refs.flyout.open(isError, message);
+
+        if (!isError && creation)
           setTimeout(() => this.goBack(true), 500);
       }
     }

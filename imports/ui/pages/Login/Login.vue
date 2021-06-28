@@ -71,7 +71,6 @@ export default {
       setTimeout(() => {
         this.loading = false;
         if (errors) {
-          console.log(errors);
           this.error = true;
         }
       }, 1000);

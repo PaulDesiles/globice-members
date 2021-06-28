@@ -28,16 +28,38 @@ Meteor.startup(() => {
   //   });
   // }
 
-  ['admin', 'captain', 'viewer'].forEach(function (role) {
-    Roles.createRole(role, {unlessExists: true});
-  });
+  // ['admin', 'captain', 'viewer'].forEach(function (role) {
+  //   Roles.createRole(role, {unlessExists: true});
+  // });
   
-  var user = Accounts.findUserByUsername('globicelocal');
-  if (user) {
-    Roles.addUsersToRoles(user._id, 'admin', Roles.GLOBAL_GROUP);
-    // Roles.addUsersToRoles(user._id, 'captain', Roles.GLOBAL_GROUP);
-  }
+  // var user = Accounts.findUserByUsername('globicelocal');
+  // if (user) {
+  //   Roles.addUsersToRoles(user._id, 'admin', Roles.GLOBAL_GROUP);
+  // }
 
+  // if (!Accounts.findUserByUsername('capitaine')) {
+  //   Accounts.createUser({
+  //     username: 'capitaine',
+  //     password: 'password',
+  //   });
+
+  //   var user = Accounts.findUserByUsername('capitaine');
+  //   if (user) {
+  //     Roles.addUsersToRoles(user._id, 'captain', Roles.GLOBAL_GROUP);
+  //   }
+  // }
+
+  // if (!Accounts.findUserByUsername('demo')) {
+  //   Accounts.createUser({
+  //     username: 'demo',
+  //     password: 'password',
+  //   });
+
+  //   var user = Accounts.findUserByUsername('demo');
+  //   if (user) {
+  //     Roles.addUsersToRoles(user._id, 'viewer', Roles.GLOBAL_GROUP);
+  //   }
+  // }
 
   // ParametersCollection.remove({});
   // initParametersCollection();
