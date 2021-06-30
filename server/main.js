@@ -13,64 +13,24 @@ import '/imports/api/parametersMethods';
 import { HelloAssoCollection } from '../imports/db/HelloAssoCollection.js';
 
 // import membersSeed from './membersSeed.js';
+import { seedAccounts } from './accountsSeed.js';
 
 import { setApiListeners } from '/imports/api/helloAsso';
 
 Meteor.startup(() => {
   setApiListeners();
-  
+
   // --- Helpers for seeding from a local instance ---
 
-  // if (!Accounts.findUserByUsername('globicelocal')) {
-  //   Accounts.createUser({
-  //     username: 'globicelocal',
-  //     password: 'password',
-  //   });
-  // }
-
-  // ['admin', 'captain', 'viewer'].forEach(function (role) {
-  //   Roles.createRole(role, {unlessExists: true});
-  // });
-  
-  // var user = Accounts.findUserByUsername('globicelocal');
-  // if (user) {
-  //   Roles.addUsersToRoles(user._id, 'admin', Roles.GLOBAL_GROUP);
-  // }
-
-  // if (!Accounts.findUserByUsername('capitaine')) {
-  //   Accounts.createUser({
-  //     username: 'capitaine',
-  //     password: 'password',
-  //   });
-
-  //   var user = Accounts.findUserByUsername('capitaine');
-  //   if (user) {
-  //     Roles.addUsersToRoles(user._id, 'captain', Roles.GLOBAL_GROUP);
-  //   }
-  // }
-
-  // if (!Accounts.findUserByUsername('demo')) {
-  //   Accounts.createUser({
-  //     username: 'demo',
-  //     password: 'password',
-  //   });
-
-  //   var user = Accounts.findUserByUsername('demo');
-  //   if (user) {
-  //     Roles.addUsersToRoles(user._id, 'viewer', Roles.GLOBAL_GROUP);
-  //   }
-  // }
+  seedAccounts();
 
   // ParametersCollection.remove({});
   // initParametersCollection();
+  if (!ParametersCollection.findOne({})) {
+    initParametersCollection();
+  }
 
-  // if (!ParametersCollection.findOne({})) {
-  //   initParametersCollection();
-  // }
-
-
-  
-  // if (true) {
+  // if (false) {
   //   MembersCollection.remove({});
   //   membersSeed.forEach(m => MembersCollection.insert(m));
   // }
