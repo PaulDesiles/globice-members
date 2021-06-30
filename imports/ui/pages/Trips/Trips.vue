@@ -33,7 +33,7 @@
           :item-class="i => 'memberRow'"
           :loading="!$subReady.trips"
           loading-text="chargement..."
-          no-data-text="aucune sortie trouvé"
+          no-data-text="aucune sortie trouvée"
           @click:row="itemClick"
           class="elevation-3"
         >
