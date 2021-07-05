@@ -6,6 +6,8 @@
       <MainButton :target="resourcesTarget" image="resources" label="Ressources" external />
     </div>
     <template slot="below">
+      <a id="disconnect-button" @click="disconnect">déconnexion</a>
+      
       <div class="d-flex justify-end">
           <v-btn
             plain
@@ -40,6 +42,11 @@ export default {
       return '/';
     }
   },
+  methods: {
+    disconnect() {
+      Meteor.logout();
+    }
+  },
   meteor: {
     $subscribe: {
       'parameters': [],
@@ -58,5 +65,12 @@ export default {
     grid-template-columns: auto auto auto;
     align-content: center;
     justify-content: space-evenly;
+  }
+
+  #disconnect-button {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    color: var(--dark-blue);
   }
 </style>
