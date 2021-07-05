@@ -71,8 +71,9 @@ export function initParametersCollection() {
         labelAsValue('photographe') 
       ],
       mailBody: `Bonjour à tous
-
-      Je vous confirme que votre candidature à la sortie de {PORT} le {DATE} a été retenue.`,
+Je vous confirme que votre candidature à la sortie de {PORT} le {DATE} a été retenue.`,
+      refusedMailBody: `Bonjour à tous
+J'ai le regret de vous annoncer que votre candidature n'a pas été retenue pour la sortie de {PORT} le {DATE}.`,
     },
     member: {
       boatLicense: [ "Non", "Côtier", "Hauturier" ].map(labelAsValue),
