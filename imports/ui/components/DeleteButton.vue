@@ -5,44 +5,22 @@
       icon="mdi-delete"
       :onClick="() => showDialog = true"
     />
-    <v-dialog
-        v-model="showDialog"
-        max-width="600"
-    >
-      <v-card>
-        <v-card-title class="headline">
-          Suppression
-        </v-card-title>
-
-        <v-card-text>
-          Voulez-vous supprimer definitivement {{ entityLabel }} ?
-        </v-card-text>
-
-        <v-card-actions>
-          <v-btn
-            color="primary"
-            text
-            @click="showDialog = false"
-          >
-            Retour
-          </v-btn>
-
-          <v-spacer></v-spacer>
-
-          <v-btn
-            color="primary"
-            @click="() => { showDialog = false; onDelete(); }"
-          >
-            Supprimer
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    
+    <ConfirmationDialog 
+      :show="showDialog"
+      title="Suppression"
+      :mainText="`Voulez-vous supprimer definitivement  ${ entityLabel } ?`"
+      cancelText="Retour"
+      continueText="Supprimer"
+      :cancelAction="() => showDialog = false"
+      :continueAction="() => { showDialog = false; onDelete(); }"
+    />
   </div>
 </template>
 
 <script>
 import ExpandingButton from './ExpandingButton.vue';
+import ConfirmationDialog from './ConfirmationDialog.vue';
 
 export default {
   props: {
@@ -50,7 +28,8 @@ export default {
     onDelete: Function,
   },
   components: {
-    ExpandingButton
+    ExpandingButton,
+    ConfirmationDialog
   },
   data() {
     return {

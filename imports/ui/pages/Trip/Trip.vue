@@ -136,19 +136,14 @@
           {{ hasCrew ? "modifier l'équipage" : "constituer l'équipage" }}
         </v-btn>
 
-        <v-dialog
-          v-model="editCrew"
-          persistent
-          max-width="1000"
-          min-height="600"
-        >
-            <CrewEditor 
-              :applicants.sync="trip.applicants"
-              :parameters="parameters"
-              :currentTripId="id"
-              @close="editCrew = false"
-            />
-        </v-dialog>
+        
+        <CrewEditor 
+          :show="editCrew"
+          :applicants.sync="trip.applicants"
+          :parameters="parameters"
+          :currentTripId="id"
+          @close="editCrew = false"
+        />
 
         <template v-if="mandatoryDataFilled">
           <h3>Email</h3>

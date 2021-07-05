@@ -41,38 +41,15 @@
         </template>
       </v-col>
 
-      <v-dialog
-        v-model="showWarnDialog"
-        max-width="600"
-      >
-        <v-card>
-          <v-card-title class="headline">
-            Modifications non enregistrées
-          </v-card-title>
-
-          <v-card-text>
-            Vous avez modifié des informations sur cette page, mais ne les avez pas enregistré.
-          </v-card-text>
-
-          <v-card-actions>
-            <v-btn
-              color="primary"
-              text
-              @click="goBack(true)"
-            >
-              Annuler ces modifications
-            </v-btn>
-
-            <v-spacer></v-spacer>
-            <v-btn
-              color="primary"
-              @click="showWarnDialog = false"
-            >
-              Rester sur la page
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+      <ConfirmationDialog 
+        :show="showWarnDialog"
+        title="Modifications non enregistrées"
+        mainText="Vous avez modifié des informations sur cette page, mais ne les avez pas enregistré."
+        cancelText="Rester sur la page"
+        continueText="Annuler ces modifications"
+        :cancelAction="() => showWarnDialog = false"
+        :continueAction="() => goBack(true)"
+      />
       
       <MessageFlyout ref="flyout" />
     </v-container>
@@ -80,11 +57,13 @@
 </template>
 
 <script>
+  import ConfirmationDialog from './ConfirmationDialog.vue';
   import MessageFlyout from './MessageFlyout.vue';
 
   export default {
     components: {
-      MessageFlyout
+      MessageFlyout,
+      ConfirmationDialog
     },
     props: {
       title: String,
