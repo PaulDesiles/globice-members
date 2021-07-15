@@ -51,6 +51,7 @@
         <v-col class="flex-grow-0 flex-shrink-1 ml-3">
           <v-btn
             @click="addChoice()"
+            :disabled="!canAdd"
           >
             ajouter
           </v-btn>
@@ -76,16 +77,24 @@ export default {
       newValue: '',
     };
   },
+  computed: {
+    canAdd() {
+      return this.newValue !== undefined && this.newValue.trim().length > 0;
+    }
+  },
   methods: {
     deleteChoice(choice) {
       this.$emit('input', this.value.filter(c => c!== choice));
     },
     addChoice() {
-      this.$emit('input', [...this.value, {
-        text: this.labelGetter(this.newValue),
-        value: this.integerValues ? parseInt(this.newValue) : this.newValue
-      }]);
-      this.newValue = '';
+      if (this.canAdd)
+      {
+        this.$emit('input', [...this.value, {
+          text: this.labelGetter(this.newValue),
+          value: this.integerValues ? parseInt(this.newValue) : this.newValue
+        }]);
+        this.newValue = '';
+      }
     }
   }
 }
