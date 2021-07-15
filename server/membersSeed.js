@@ -93,3 +93,26 @@ try {
 }
 
 export default membersSeed;
+
+
+export function correctMembers() {
+  MembersCollection.find({}).forEach(member => {
+    var diff = member.trips.confirmedTrips.filter(t => t.legacy).length;
+    if (diff > 0) {
+      // var legacyPurchase = member.trips.purchases.filter(p => p.id === "legacy")[0];
+      // if (legacyPurchase) {
+      // }
+
+        MembersCollection.update(memberId, 
+          { $inc: { "trips.purchases.$[elem].size" : diff } },
+          {
+            multi: true,
+            arrayFilters: [ { "elem.legacy": { $eq: true } } ],
+            bypassCollection2: true
+          }
+        );
+    }
+
+    throw Error("let's stop there");
+  });
+}
