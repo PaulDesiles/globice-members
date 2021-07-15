@@ -29,7 +29,7 @@
           :disablePagination="true"
           :hide-default-footer="true"
           :must-sort="true"
-          :options="{ sortBy: ['date'] }"
+          :options="{ sortBy: ['date'], sortDesc: [true] }"
           :item-class="i => 'memberRow'"
           :loading="!$subReady.trips"
           loading-text="chargement..."
@@ -84,7 +84,7 @@ export default {
       this.$router.push({ path: `/trip/new` });
     },
     getTripState(trip) {
-      if (trip && trip.fee && trip.comment)
+      if (trip && trip.fee != undefined && trip.observations)
         return 'terminée';
 
       return 'en cours';
