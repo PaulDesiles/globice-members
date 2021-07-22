@@ -74,7 +74,7 @@ export default {
   },
   computed: {
     showDemoHelper() {
-      return process.env.SHOW_DEMO_CREDENTIALS;
+      return process.env.VUE_APP_SHOW_DEMO_CREDENTIALS;
     }
   },
   methods: {
