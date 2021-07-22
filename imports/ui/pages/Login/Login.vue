@@ -39,6 +39,18 @@
           :loading="loading"
         >valider</v-btn>
       </v-form>
+
+      <v-snackbar
+        v-model="showDemoHelper"
+        :multi-line="true"
+        :timeout="-1"
+      >
+        <p class="text-center ma-0">
+          Hi github visitor ! Take a little tour with the demo credentials:
+          <br />
+          <span class="font-weight-bold">demo</span> // <span class="font-weight-bold">password</span>
+        </p>
+    </v-snackbar>
     </div>
   </CardLayout>
 </template>
@@ -59,6 +71,11 @@ export default {
       loading: false,
       error: false
     };
+  },
+  computed: {
+    showDemoHelper() {
+      return process.env.SHOW_DEMO_CREDENTIALS;
+    }
   },
   methods: {
     handleSubmit(event) {
