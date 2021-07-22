@@ -46,7 +46,7 @@
         :timeout="-1"
       >
         <p class="text-center ma-0">
-          Hi github visitor ! Take a little tour with the demo credentials:
+          👋 Hi github visitor ! Take a little tour with the demo credentials:
           <br />
           <span class="font-weight-bold">demo</span> // <span class="font-weight-bold">password</span>
         </p>
@@ -57,6 +57,8 @@
 
 <script>
 import { Meteor } from 'meteor/meteor';
+import { PublicParametersCollection } from "../../../db/PublicParametersCollection";
+
 import CardLayout from '../../components/CardLayout.vue';
 
 export default {
@@ -74,7 +76,7 @@ export default {
   },
   computed: {
     showDemoHelper() {
-      return process.env.SHOW_DEMO_CREDENTIALS;
+      return this.$subReady['public-parameters'] && this['public-parameters'].showDemoCredentials;
     }
   },
   methods: {
@@ -99,6 +101,14 @@ export default {
       return this.error || !this.username || !this.password;
     }
   },
+  meteor: {
+    $subscribe: {
+      'public-parameters': [],
+    },
+    'public-parameters'() {
+      return PublicParametersCollection.findOne({});
+    },
+  }
 }
 </script>
 

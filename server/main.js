@@ -10,6 +10,8 @@ import '/imports/api/tripsMethods';
 import { ParametersCollection, initParametersCollection } from '../imports/db/ParametersCollection.js';
 import '/imports/api/parametersPublications';
 import '/imports/api/parametersMethods';
+import { PublicParametersCollection } from '../imports/db/PublicParametersCollection.js';
+import '/imports/api/publicParametersPublications';
 import { HelloAssoCollection } from '../imports/db/HelloAssoCollection.js';
 
 // import membersSeed from './membersSeed.js';
@@ -24,11 +26,15 @@ Meteor.startup(() => {
 
   seedAccounts();
 
-  // ParametersCollection.remove({});
-  // initParametersCollection();
   if (!ParametersCollection.findOne({})) {
     initParametersCollection();
   }
+
+  // if (!PublicParametersCollection.findOne({})) {
+  //   PublicParametersCollection.insert({
+  //     showDemoCredentials: 1
+  //   });
+  // }
 
   // if (false) {
   //   MembersCollection.remove({});
