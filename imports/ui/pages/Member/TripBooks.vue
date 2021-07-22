@@ -70,7 +70,7 @@
           </v-card-title>
 
           <v-card-text>
-            <v-row>
+            <!-- <v-row>
               <v-col>
               <v-select
                 label="Taille de carnet"
@@ -79,6 +79,33 @@
                 outlined
                 hide-details="auto"
               />
+              </v-col>
+            </v-row> -->
+            <v-row>
+              <v-col md="auto">
+                <v-radio-group v-model="bookSize" mandatory label="Taille de carnet">
+                  <v-radio
+                    v-for="n in parameters.member.bookSizeChoices"
+                    :key="n.value"
+                    :label="n.text"
+                    :value="n.value"
+                  />
+
+                  <v-radio
+                    label="autre taille"
+                    :value="0"
+                    class="mb-3"
+                  />
+                </v-radio-group>
+              </v-col>
+              <v-col align-self="end">
+                <v-text-field 
+                  outlined
+                  dense
+                  v-if="bookSize === 0"
+                  suffix="sorties"
+                  v-model="customBookSize"
+                />
               </v-col>
             </v-row>
 
@@ -138,14 +165,29 @@ export default {
       showDialog: false,
       bookSize: undefined,
       paymentDate: new Date(),
+      customBookSize: undefined
     }
   },
   computed: {
     orderedPurchases() {
       return this.purchases.sort((x,y) => sortDates(x.date, y.date));
     },
+    finalBookSize() {
+      if (this.bookSize !== undefined) {
+        if (this.bookSize === 0) {
+          var parsedSize = parseInt(this.customBookSize);
+          if (parsedSize && !isNaN(parsedSize)) {
+            return parsedSize;
+          }
+        } else {
+          return this.bookSize;
+        }
+      }
+
+      return undefined;
+    },
     canAdd() {
-      return this.bookSize && this.paymentDate;
+      return this.finalBookSize && this.paymentDate;
     },
     tripsBought() {
       return getTotalTripsBought(this.purchases);
@@ -160,16 +202,19 @@ export default {
     hideAndResetDialog() {
       this.showDialog = false;
       this.bookSize = undefined;
-      this.paymentDate = undefined;
+      this.customBookSize = undefined;
+      this.paymentDate = new Date();
     },
     addPurchase() {
-      this.purchases.push({
-        id: uuidv4(),
-        size: this.bookSize,
-        date: this.paymentDate
-      });
+      if (this.canAdd) {
+        this.purchases.push({
+          id: uuidv4(),
+          size: this.finalBookSize,
+          date: this.paymentDate
+        });
 
-      this.hideAndResetDialog();
+        this.hideAndResetDialog();
+      }
     },
     deletePurchase(id) {
       this.$emit('update:purchases', this.purchases.filter(p => p.id !== id));
