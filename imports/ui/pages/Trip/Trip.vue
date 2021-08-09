@@ -145,7 +145,7 @@
           @close="editCrew = false"
         />
 
-        <template v-if="mandatoryDataFilled">
+        <template v-if="mandatoryDataFilled && hasApplicants">
           <h3>Email</h3>
 
           <v-btn
@@ -280,6 +280,9 @@ export default {
     hasCrew() {
       return this.crew && this.crew.length > 0;
     },
+    hasApplicants() {
+      return this.trip?.applicants && this.trip.applicants.length > 0;
+    },
     refusedApplicants() {
       return this.trip?.applicants?.filter(a => !a.assignedRole);
     },
@@ -300,8 +303,7 @@ export default {
         !!this.trip.captain &&
         !!this.trip.type &&
         !!this.trip.port &&
-        !!this.trip.renter &&
-        this.crew?.length > 0;
+        !!this.trip.renter;
     },
     canSave() {
       return this.hasUnsavedChanges && this.mandatoryDataFilled;
