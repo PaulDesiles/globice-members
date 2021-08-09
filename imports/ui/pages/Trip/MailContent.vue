@@ -6,6 +6,7 @@
 
     <v-card-text>
       <p>Recopiez ces informations dans votre messagerie pour contacter votre équipage</p>
+      
       <h3>
         <v-icon color="green darken-2" class="mb-1">mdi-checkbox-marked-circle</v-icon>
         Candidats Acceptés
@@ -18,6 +19,7 @@
             outlined
             hide-details="auto"
             readonly
+            :class="acceptedAreasClass"
           />
         </v-col>
       </v-row>
@@ -29,6 +31,7 @@
             outlined
             hide-details="auto"
             readonly
+            :class="acceptedAreasClass"
           />
         </v-col>
       </v-row>
@@ -45,6 +48,7 @@
             outlined
             hide-details="auto"
             readonly
+            :class="refusedAreasClass"
           />
         </v-col>
       </v-row>
@@ -56,6 +60,7 @@
             outlined
             hide-details="auto"
             readonly
+            :class="refusedAreasClass"
           />
         </v-col>
       </v-row>
@@ -109,12 +114,26 @@ export default ({
     mailBody() {
       return formatMail(this.parameters?.trip?.mailBody, this.port, this.date);
     },
+    acceptedAreasClass() {
+      return this.acceptedApplicants.length > 0 ? '' : 'disabledField';
+    },
+
     refusedMailRecipients() {
       return getRecipients(this.refusedApplicants);
     },
     refusedMailBody() {
       return formatMail(this.parameters?.trip?.refusedMailBody, this.port, this.date);
+    },
+    refusedAreasClass() {
+      return this.refusedApplicants.length > 0 ? '' : 'disabledField';
     }
   }
 });
 </script>
+
+<style scoped>
+.disabledField {
+  opacity: 0.5;
+  pointer-events: none;
+}
+</style>
