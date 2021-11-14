@@ -52,6 +52,12 @@ MembersCollection.schema = new SimpleSchema({
   // "trips.legacyData.purchases": Number,
   "trips.legacyData.confirmedTrips": Number,
   "trips.legacyData.refusedTrips": Number,
+
+  // computed properties for fast case and diacritics insensitive search
+  search: Object,
+  "search.firstname": {type: String, optional: true},
+  "search.lastname": {type: String, optional: true},
+  "search.email": {type: String, optional: true},
 });
 
 MembersCollection.attachSchema(MembersCollection.schema);

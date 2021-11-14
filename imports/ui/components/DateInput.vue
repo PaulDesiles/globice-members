@@ -41,7 +41,7 @@ export default {
     allowFuturDates: Boolean,
   },
   data() {
-    var max = new Date();
+    let max = new Date();
     if (this.allowFuturDates)
       max.setFullYear(max.getFullYear() + 2);
     

@@ -28,7 +28,7 @@ export function seedAccounts() {
         if (!Accounts.findUserByUsername(account.username)) {
           Accounts.createUser(account);
       
-          var user = Accounts.findUserByUsername(account.username);
+          let user = Accounts.findUserByUsername(account.username);
           if (user) {
             Roles.addUsersToRoles(user._id, account.role, Roles.GLOBAL_GROUP);
           }

@@ -4,15 +4,27 @@
     backLabel="retour à l'accueil"
     backTarget="/">
     <template v-slot:header-right>
-      <v-btn
-        color="primary"
-        elevation="5"
-        rounded
-        @click="createMember"
-      >
-        <v-icon left>mdi-account-plus</v-icon>
-        ajouter un bénévole
-      </v-btn>
+      <div>
+        <v-btn
+          color="primary"
+          elevation="5"
+          rounded
+          @click="createMember"
+        >
+          <v-icon left>mdi-account-plus</v-icon>
+          ajouter un bénévole
+        </v-btn>
+        <v-btn
+          color="primary"
+          elevation="5"
+          rounded
+          @click="goToApiDashboard"
+          class="ml-2"
+        >
+          <v-icon left>mdi-share-variant</v-icon>
+          données HelloAsso
+        </v-btn>
+      </div>
     </template>
 
     <v-row>
@@ -96,7 +108,7 @@ import ExpandingButton from '../../components/ExpandingButton.vue';
 import { Meteor } from 'meteor/meteor';
 import { MembersCollection } from "../../../db/MembersCollection";
 import { sortDates, formatDate } from '../../helpers/dateHelper';
-import { getMemberSearchQuery } from '../../helpers/mongoHelper';
+import { getMemberSearchQuery } from '../../../commonHelpers/searchHelper';
 import { isMembershipUpToDate } from '../../helpers/memberHelper';
 import { exportMembers } from '../../helpers/exportHelper';
 
@@ -127,6 +139,9 @@ export default {
     },
     createMember() {
       this.$router.push({ path: `/member/new` });
+    },
+    goToApiDashboard() {
+      this.$router.push({ path: `/apidashboard` });
     },
     download() {
       if (this.members) {

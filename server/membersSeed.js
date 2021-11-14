@@ -1,5 +1,6 @@
 import fs from 'fs';
 import { rawMemberFieldsConverters } from '/imports/api/memberCreationHelper';
+import { normalizeTerm } from '/imports/commonHelpers/searchHelper';
 
 let membersSeed = [];
 
@@ -97,9 +98,9 @@ export default membersSeed;
 
 export function correctMembers() {
   MembersCollection.find({}).forEach(member => {
-    var diff = member.trips.confirmedTrips.filter(t => t.legacy).length;
+    let diff = member.trips.confirmedTrips.filter(t => t.legacy).length;
     if (diff > 0) {
-      // var legacyPurchase = member.trips.purchases.filter(p => p.id === "legacy")[0];
+      // let legacyPurchase = member.trips.purchases.filter(p => p.id === "legacy")[0];
       // if (legacyPurchase) {
       // }
 
@@ -115,4 +116,28 @@ export function correctMembers() {
 
     throw Error("let's stop there");
   });
+}
+
+export function addSearchValues() {
+  MembersCollection.find({})
+    .fetch()
+    .forEach(member => {
+      if (!member.search.firstname) {
+        console.log(member._id);
+        var changes = {
+          "search.firstname": normalizeTerm(member.infos.firstname),
+          "search.lastname": normalizeTerm(member.infos.lastname),
+          "search.email": normalizeTerm(member.infos.email)
+        };
+        console.log(changes);
+        MembersCollection.update(member._id, 
+        {
+          $set: changes,
+        }, {
+          bypassCollection2: true
+        });
+      }
+    });
+    
+    console.log("done!");
 }

@@ -4,5 +4,5 @@ import { ensureCanViewData } from './commonMethods';
 
 Meteor.publish('members', function publishMembers() {
   ensureCanViewData(this.userId);
-  return MembersCollection.find({ }, { sort: { 'infos.lastname': 1 }});
+  return MembersCollection.find({ }, { sort: { 'search.lastname': 1 }});
 });

@@ -175,7 +175,7 @@ export default {
     finalBookSize() {
       if (this.bookSize !== undefined) {
         if (this.bookSize === 0) {
-          var parsedSize = parseInt(this.customBookSize);
+          let parsedSize = parseInt(this.customBookSize);
           if (parsedSize && !isNaN(parsedSize)) {
             return parsedSize;
           }

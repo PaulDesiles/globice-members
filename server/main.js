@@ -13,6 +13,7 @@ import '/imports/api/parametersMethods';
 import { PublicParametersCollection } from '../imports/db/PublicParametersCollection.js';
 import '/imports/api/publicParametersPublications';
 import { HelloAssoCollection } from '../imports/db/HelloAssoCollection.js';
+import '/imports/api/helloAssoPublications';
 
 // import membersSeed from './membersSeed.js';
 import { seedAccounts } from './accountsSeed.js';

@@ -90,8 +90,8 @@
         return true;
       },
       onSaveEnd(error, creation) {
-        var isError = !!error;
-        var message = "Modification enregistrées !";
+        let isError = !!error;
+        let message = "Modification enregistrées !";
 
         if (error) {
           if (error.error === "Not authorized")

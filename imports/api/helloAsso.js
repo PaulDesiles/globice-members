@@ -56,8 +56,7 @@ function createMember(formData, parameters) {
 
 export function setApiListeners() {
   Picker.middleware(bodyParser.json());
-
-  var postRoutes = Picker.filter(function(req, res) {
+let postRoutes = Picker.filter(function(req, res) {
     return req.method == "POST";
   });
 
