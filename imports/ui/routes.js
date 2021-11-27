@@ -26,7 +26,10 @@ const routes = [
     path: "/member/:id",
     name: 'Member',
     component: Member,
-    props: true
+    props: (route) => ({
+      id: route.params.id,
+      editData: route.query
+    })
   },
   {
     path: "/apidashboard",

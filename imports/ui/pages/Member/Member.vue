@@ -21,77 +21,79 @@
 
         <v-row>
           <v-col>
-            <v-text-field 
+            <ComparableTextField 
               label="Nom"
-              v-model="member.infos.lastname" 
-              outlined
-              hide-details="auto"
+              :model.sync="member.infos.lastname"
+              :initialValue="initialValues['infos.lastname']"
+              :showInitialValue="!!editData"
             />
           </v-col>
           
           <v-col>
-            <v-text-field 
+            <ComparableTextField 
               label="Prénom"
-              v-model="member.infos.firstname" 
-              outlined
-              hide-details="auto"
+              :model.sync="member.infos.firstname"
+              :initialValue="initialValues['infos.firstname']"
+              :showInitialValue="!!editData"
             />
           </v-col>
           
           <v-col>
-            <DateInput 
+            <DateInput
               label="Date de naisance"
               :date.sync="member.infos.birthdate"
               :startWithYear="true"
+              :initialValue="initialValues['infos.birthdate']"
+              :showInitialValue="!!editData"
               />
           </v-col>
         </v-row>
 
         <v-row>
           <v-col :cols="8">
-            <v-text-field 
+            <ComparableTextField 
               label="Email"
-              v-model="member.infos.email"
-              outlined
-              hide-details="auto"
+              :model.sync="member.infos.email"
+              :initialValue="initialValues['infos.email']"
+              :showInitialValue="!!editData"
             />
           </v-col>
           
           <v-col :cols="4">
-            <v-text-field 
+            <ComparableTextField 
               label="Téléphone"
-              v-model="member.infos.phone" 
-              outlined
-              hide-details="auto"
+              :model.sync="member.infos.phone"
+              :initialValue="initialValues['infos.phone']"
+              :showInitialValue="!!editData"
             />
           </v-col>
         </v-row>
 
         <v-row>
           <v-col :cols="6">
-            <v-text-field 
+            <ComparableTextField 
               label="Adresse"
-              v-model="member.infos.address" 
-              outlined
-              hide-details="auto"
+              :model.sync="member.infos.address"
+              :initialValue="initialValues['infos.address']"
+              :showInitialValue="!!editData"
             />
           </v-col>
           
           <v-col :cols="2">
-            <v-text-field 
+            <ComparableTextField 
               label="Code postal"
-              v-model="member.infos.postCode" 
-              outlined
-              hide-details="auto"
+              :model.sync="member.infos.postCode"
+              :initialValue="initialValues['infos.postCode']"
+              :showInitialValue="!!editData"
             />
           </v-col>
           
           <v-col :cols="4">
-            <v-text-field 
+            <ComparableTextField 
               label="Ville"
-              v-model="member.infos.city" 
-              outlined
-              hide-details="auto"
+              :model.sync="member.infos.city"
+              :initialValue="initialValues['infos.city']"
+              :showInitialValue="!!editData"
             />
           </v-col>
         </v-row>
@@ -150,10 +152,12 @@
         <h3>Adhésion</h3>
         <v-row>
           <v-col :cols="3">
-            <DateInput 
+            <DateInput
               label="Date d'adhésion"
               :date.sync="member.membership.date"
-            />
+              :initialValue="initialValues['membership.date']"
+              :showInitialValue="!!editData"
+              />
           </v-col>
 
           <v-col :cols="3">
@@ -214,12 +218,14 @@ import DateInput from '../../components/DateInput.vue';
 import DeleteButton from '../../components/DeleteButton.vue';
 import TripBooks from './TripBooks.vue';
 import TripList from './TripList.vue';
+import ComparableTextField from './ComparableTextField.vue';
 
 import { Meteor } from 'meteor/meteor';
 import { MembersCollection } from "../../../db/MembersCollection";
 import { TripsCollection } from "../../../db/TripsCollection";
 import { ParametersCollection } from "../../../db/ParametersCollection";
 import { getAllProperties, getDelta } from '../../helpers/objectHelper';
+import { v4 as uuidv4 } from 'uuid';
 
 function fullfillTrips(summaryTrips, collection) {
   let fullTrips = [];
@@ -240,6 +246,25 @@ function fullfillTrips(summaryTrips, collection) {
   ];
 }
 
+function applyEditData(source, editData) {
+  var output = {...source};
+  var propNames = ['lastname', 'firstname', 'email', 'phone', 'address', 'postCode', 'city'];
+  propNames.forEach(prop => {
+    var value = editData[prop];
+    if (value)
+      output[prop] = value;
+  });
+
+  if (editData.birthdate) {
+    var d = new Date(editData.birthdate);
+    if (!isNaN(d.valueOf())) {
+      output.birthdate = d;
+    }
+  }
+
+  return output;
+}
+
 
 export default {
   components: {
@@ -248,9 +273,11 @@ export default {
     DeleteButton,
     TripBooks,
     TripList,
+    ComparableTextField,
   },
   props: {
-    id: String
+    id: String,
+    editData: Object
   },
   data: () => ({
     newMember: undefined,
@@ -357,8 +384,31 @@ export default {
       else {
         let foundMember = MembersCollection.findOne(this.id);
 
-        if (foundMember && !this.initialValues) {
-          this.initialValues = this.getAllFilteredProperties(foundMember);
+        if (foundMember) {
+          if (!this.initialValues) {
+            this.initialValues = this.getAllFilteredProperties(foundMember);
+          }
+
+          if (this.editData) {
+            foundMember.infos = applyEditData(foundMember.infos, this.editData);
+
+            var date = new Date(this.editData.date);
+            if (isNaN(date.valueOf()))
+              date = new Date();
+            
+            if (this.editData.renewMembership) {
+              foundMember.membership.date = date;
+              foundMember.membership.isNewMember = false;
+            }
+            
+            if (this.editData.tripBooks) {
+              foundMember.trips.purchases.push({
+                id: uuidv4(),
+                size: this.editData.tripBooks,
+                date: date
+              });
+            }
+          }
         }
 
         return foundMember;

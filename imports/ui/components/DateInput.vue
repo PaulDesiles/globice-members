@@ -16,6 +16,8 @@
         readonly
         v-bind="attrs"
         v-on="on"
+        :class="className"
+        :messages="messages"
       ></v-text-field>
     </template>
     <v-date-picker
@@ -39,6 +41,8 @@ export default {
     date: Date,
     startWithYear: Boolean,
     allowFuturDates: Boolean,
+    initialValue: Date,
+    showInitialValue: Boolean
   },
   data() {
     let max = new Date();
@@ -60,6 +64,15 @@ export default {
   computed: {
     formatedDate() {
       return formatDate(this.date) || '';
+    },
+    isDifferent() {
+      return this.showInitialValue && this.initialValue !== this.date;
+    },
+    className() {
+      return this.isDifferent ? 'modified-field' : undefined;
+    },
+    messages() {
+      return this.isDifferent ? 'ancienne valeur: ' + formatDate(this.initialValue) : undefined;
     }
   },
   methods: {
@@ -72,5 +85,7 @@ export default {
 </script>
 
 <style scoped>
-
+.modified-field {
+  background: #ff91001c;
+}
 </style>

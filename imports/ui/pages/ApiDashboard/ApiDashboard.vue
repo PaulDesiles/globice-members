@@ -125,6 +125,10 @@ export default {
       return entry.computed.hasIgnoredState || entry.computed.isDuplicate; 
     },
     handleEntry(entry) {
+
+      return;
+    },
+    resolveEntry(entry) {
       return;
     }
   },
@@ -146,13 +150,20 @@ export default {
           let actionLabel = '';
           let errorLabel;
           if (computed.renewMembership) {
-            if (member)
+            if (member) {
               actionLabel = `renouveler l'adhésion de ${member.infos.firstname} ${member.infos.lastname}`;
+              if (computed.tripBooks)
+                actionLabel += ` + ${computed.tripBooks} sorties`;
+            }
             else
               actionLabel = `ajouter le membre ${e.data.payer.firstName} ${e.data.payer.lastName}`;
           } else {
-            if (member)
-              actionLabel = `ajouter ${computed.tripBooks} sorties à ${member.infos.firstname} ${member.infos.lastname}`;
+            if (member) {
+              if (computed.tripBooks)
+                actionLabel = `ajouter ${computed.tripBooks} sorties à ${member.infos.firstname} ${member.infos.lastname}`;
+              else
+                errorLabel = `impossible de trouver une action à effectuer`;  
+            }
             else
               errorLabel = `impossible de trouver le membre ${e.data.payer.firstName} ${e.data.payer.lastName}`;
           }
