@@ -6,7 +6,8 @@ export const HelloAssoCollection = new Mongo.Collection('helloasso');
 HelloAssoCollection.schema = new SimpleSchema({
   _id: String,
   eventType: String,
-  data: Object
+  data: Object,
+  resolved: {type: Boolean, optional: true}
 });
 
 HelloAssoCollection.attachSchema(HelloAssoCollection.schema);

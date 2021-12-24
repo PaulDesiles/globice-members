@@ -66,7 +66,7 @@ export default {
       return formatDate(this.date) || '';
     },
     isDifferent() {
-      return this.showInitialValue && this.initialValue !== this.date;
+      return this.showInitialValue && this.initialValue && this.initialValue !== this.date;
     },
     className() {
       return this.isDifferent ? 'modified-field' : undefined;

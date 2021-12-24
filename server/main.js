@@ -14,6 +14,7 @@ import { PublicParametersCollection } from '../imports/db/PublicParametersCollec
 import '/imports/api/publicParametersPublications';
 import { HelloAssoCollection } from '../imports/db/HelloAssoCollection.js';
 import '/imports/api/helloAssoPublications';
+import '/imports/api/helloAssoMethods';
 
 // import membersSeed from './membersSeed.js';
 import { seedAccounts } from './accountsSeed.js';

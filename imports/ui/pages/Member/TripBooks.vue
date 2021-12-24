@@ -23,6 +23,7 @@
               <tr
                 v-for="purchase in orderedPurchases"
                 :key="purchase.id"
+                :class="purchase.autoAdded ? 'autoAdded' : ''"
               >
                 <td>{{ purchase.size }} sorties</td>
                 <td>{{ formatDate(purchase.date) }}</td>
@@ -222,3 +223,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.autoAdded {
+  background: #ff91001c;
+}
+</style>

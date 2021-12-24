@@ -80,7 +80,10 @@ import FullPageLayout from '../../components/FullPageLayout.vue';
 import { Meteor } from 'meteor/meteor';
 import { HelloAssoCollection } from "../../../db/HelloAssoCollection";
 import { MembersCollection } from "../../../db/MembersCollection";
+import { ParametersCollection } from "../../../db/ParametersCollection";
 import { getMatchingMemberQuery } from '../../../commonHelpers/searchHelper';
+import { serializeAsQueryParameters } from '../../helpers/uriHelper';
+import { createMemberFromHelloAssoForm } from '../../helpers/memberHelper';
 
 const analyseEntry = (data, encounteredIds) => {
   if (encounteredIds.includes(data.id))
@@ -122,20 +125,57 @@ export default {
   },
   methods: {
     ignoreEntry(entry) {
-      return entry.computed.hasIgnoredState || entry.computed.isDuplicate; 
+      return entry.resolved;// entry.computed.hasIgnoredState || entry.computed.isDuplicate; 
     },
     handleEntry(entry) {
+      let memberId = '';
 
+      let editData = {
+        date: entry.data.date,
+        renewMembership: entry.computed.renewMembership ?? false,
+        tripBooks: entry.computed.tripBooks ?? 0,
+      };
+
+
+      if (entry.computed.renewMembership) { // new or existing member
+          memberId = entry.computed.member ? entry.computed.member._id : 'new';
+          
+          let parsedMember = createMemberFromHelloAssoForm(
+            entry.data.items[0],
+            this.parameters
+          );
+
+          // only transmit abilities section if it's a new member
+          let abilities = entry.computed.member ? {} : parsedMember.abilities;
+          
+          editData = {
+            back:'helloasso',
+            ...editData,
+            ...parsedMember.infos,
+            ...abilities
+          };
+      }
+
+      let queryParameters = serializeAsQueryParameters(editData);
+
+      this.$router.push(`/member/${memberId}?${queryParameters}`);
       return;
     },
     resolveEntry(entry) {
+      Meteor.call('helloasso.resolve', entry._id, () => {
+        console.log("resolve handled");
+      });
       return;
     }
   },
   meteor: {
     $subscribe: {
       'helloasso': [],
-      'members': []
+      'members': [],
+      'parameters': []
+    },
+    parameters() {
+      return ParametersCollection.findOne({});
     },
     entries() {
       let encounteredIds = [];
@@ -143,12 +183,21 @@ export default {
       return HelloAssoCollection.find({ eventType: 'Order' })
         .fetch()
         .map(e => {
+          if (!e.data.items || e.data.items.length != 1) {
+            return {
+              ...e,
+              computed: {
+                errorLabel: "cas non géré actuellement (adhésions multiples) : prévenir Paul ;) !"
+              }
+            }
+          }
+
           let computed = analyseEntry(e.data, encounteredIds);
           let query = getMatchingMemberQuery(e.data.payer.firstName, e.data.payer.lastName);
           let member = MembersCollection.findOne(query);
-
           let actionLabel = '';
           let errorLabel;
+
           if (computed.renewMembership) {
             if (member) {
               actionLabel = `renouveler l'adhésion de ${member.infos.firstname} ${member.infos.lastname}`;

@@ -20,7 +20,7 @@ export default {
   },
   computed: {
     isDifferent() {
-      return this.showInitialValue && this.initialValue !== this.model;
+      return this.showInitialValue && this.initialValue && this.initialValue !== this.model;
     },
     className() {
       return this.isDifferent ? 'modified-field' : undefined;

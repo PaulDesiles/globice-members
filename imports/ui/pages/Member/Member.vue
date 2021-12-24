@@ -2,8 +2,8 @@
   <FullPageLayout 
     ref="layout"
     :title="title"
-    backLabel="retour à la liste des bénévoles"
-    backTarget="/members"
+    :backLabel="backlabel"
+    :backTarget="backtarget"
     :hasUnsavedChanges="hasUnsavedChanges"
     :loading="!$subReady.members || !$subReady.parameters"
   >
@@ -25,7 +25,7 @@
               label="Nom"
               :model.sync="member.infos.lastname"
               :initialValue="initialValues['infos.lastname']"
-              :showInitialValue="!!editData"
+              :showInitialValue="hasEditData"
             />
           </v-col>
           
@@ -34,7 +34,7 @@
               label="Prénom"
               :model.sync="member.infos.firstname"
               :initialValue="initialValues['infos.firstname']"
-              :showInitialValue="!!editData"
+              :showInitialValue="hasEditData"
             />
           </v-col>
           
@@ -44,7 +44,7 @@
               :date.sync="member.infos.birthdate"
               :startWithYear="true"
               :initialValue="initialValues['infos.birthdate']"
-              :showInitialValue="!!editData"
+              :showInitialValue="hasEditData"
               />
           </v-col>
         </v-row>
@@ -55,7 +55,7 @@
               label="Email"
               :model.sync="member.infos.email"
               :initialValue="initialValues['infos.email']"
-              :showInitialValue="!!editData"
+              :showInitialValue="hasEditData"
             />
           </v-col>
           
@@ -64,7 +64,7 @@
               label="Téléphone"
               :model.sync="member.infos.phone"
               :initialValue="initialValues['infos.phone']"
-              :showInitialValue="!!editData"
+              :showInitialValue="hasEditData"
             />
           </v-col>
         </v-row>
@@ -75,7 +75,7 @@
               label="Adresse"
               :model.sync="member.infos.address"
               :initialValue="initialValues['infos.address']"
-              :showInitialValue="!!editData"
+              :showInitialValue="hasEditData"
             />
           </v-col>
           
@@ -84,7 +84,7 @@
               label="Code postal"
               :model.sync="member.infos.postCode"
               :initialValue="initialValues['infos.postCode']"
-              :showInitialValue="!!editData"
+              :showInitialValue="hasEditData"
             />
           </v-col>
           
@@ -93,7 +93,7 @@
               label="Ville"
               :model.sync="member.infos.city"
               :initialValue="initialValues['infos.city']"
-              :showInitialValue="!!editData"
+              :showInitialValue="hasEditData"
             />
           </v-col>
         </v-row>
@@ -156,7 +156,7 @@
               label="Date d'adhésion"
               :date.sync="member.membership.date"
               :initialValue="initialValues['membership.date']"
-              :showInitialValue="!!editData"
+              :showInitialValue="hasEditData"
               />
           </v-col>
 
@@ -225,7 +225,7 @@ import { MembersCollection } from "../../../db/MembersCollection";
 import { TripsCollection } from "../../../db/TripsCollection";
 import { ParametersCollection } from "../../../db/ParametersCollection";
 import { getAllProperties, getDelta } from '../../helpers/objectHelper';
-import { v4 as uuidv4 } from 'uuid';
+import { applyEditData } from '../../helpers/memberHelper';
 
 function fullfillTrips(summaryTrips, collection) {
   let fullTrips = [];
@@ -246,26 +246,6 @@ function fullfillTrips(summaryTrips, collection) {
   ];
 }
 
-function applyEditData(source, editData) {
-  var output = {...source};
-  var propNames = ['lastname', 'firstname', 'email', 'phone', 'address', 'postCode', 'city'];
-  propNames.forEach(prop => {
-    var value = editData[prop];
-    if (value)
-      output[prop] = value;
-  });
-
-  if (editData.birthdate) {
-    var d = new Date(editData.birthdate);
-    if (!isNaN(d.valueOf())) {
-      output.birthdate = d;
-    }
-  }
-
-  return output;
-}
-
-
 export default {
   components: {
     FullPageLayout,
@@ -282,7 +262,8 @@ export default {
   data: () => ({
     newMember: undefined,
     saving: false,
-    initialValues: undefined
+    initialValues: undefined,
+    hasEditData: false
   }),
   computed: {
     title() {
@@ -292,6 +273,15 @@ export default {
         return `Bénévole : ${this.member.infos.firstname} ${this.member.infos.lastname}`;
 
       return "Bénévole";
+    },
+    backToHelloAsso() {
+      return this.hasEditData && this.editData.back == 'helloasso';
+    },
+    backlabel() {
+      return this.backToHelloAsso ? 'retour aux entrées HelloAsso' : 'retour à la liste des bénévoles';
+    },
+    backtarget() {
+      return this.backToHelloAsso ? '/apidashboard' : '/members';
     },
     modifiedProperties() {
       if (!this.member || !this.initialValues)
@@ -360,9 +350,12 @@ export default {
       if (!this.id)
         return undefined;
 
+      this.hasEditData = this.editData && Object.keys(this.editData).length !== 0;
+
       if (this.id === 'new') {
         if (!this.newMember) {
-          this.newMember = {
+
+          this.newMember = applyEditData({
             infos: {
               birthdate: new Date()
             },
@@ -375,7 +368,8 @@ export default {
               confirmedTrips: [],
               refusedTrips: [],
             }
-          };
+          }, this.editData);
+
           this.initialValues = [];
         }
 
@@ -388,27 +382,7 @@ export default {
           if (!this.initialValues) {
             this.initialValues = this.getAllFilteredProperties(foundMember);
           }
-
-          if (this.editData) {
-            foundMember.infos = applyEditData(foundMember.infos, this.editData);
-
-            var date = new Date(this.editData.date);
-            if (isNaN(date.valueOf()))
-              date = new Date();
-            
-            if (this.editData.renewMembership) {
-              foundMember.membership.date = date;
-              foundMember.membership.isNewMember = false;
-            }
-            
-            if (this.editData.tripBooks) {
-              foundMember.trips.purchases.push({
-                id: uuidv4(),
-                size: this.editData.tripBooks,
-                date: date
-              });
-            }
-          }
+          foundMember = applyEditData(foundMember, this.editData);
         }
 
         return foundMember;
