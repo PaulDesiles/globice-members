@@ -76,6 +76,40 @@ export function createMemberFromHelloAssoForm(formData, parameters) {
   return member;
 }
 
+export function analyseEntry(data, encounteredIds) {
+  if (encounteredIds.includes(data.id))
+    return { isDuplicate: true };
+  
+  encounteredIds.push(data.id);
+  
+  if (data.formType === 'PaymentForm') {
+    if (data.formSlug.startsWith('carte-5'))
+      return { tripBooks: 5 };
+
+    if (data.formSlug.startsWith('carte-10'));
+      return { tripBooks: 10 };
+  } 
+  else if (data.formType === 'Membership') {
+    let tripBooks = 0;
+    let options = data.items
+      .map(i => i.options)
+      .flat()
+      .filter(o => o);
+
+    if (options.some(o => o.name.startsWith('Carte de 5')))
+      tripBooks = 5;
+    else if (options.some(o => o.name.startsWith('Carte de 10')))
+      tripBooks = 10;
+
+    return {
+      renewMembership: true,
+      tripBooks
+    };
+  }
+
+  return { unknownType: true };
+};
+
 // ********* member init from query arguments *********//
 
 function mixSourceAndEditData(source, editData, propNames) {

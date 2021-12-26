@@ -1,27 +1,22 @@
 <template>
   <FullPageLayout 
+    ref="layout"
     title="Entrées Hello Asso"
     backLabel="retour à la liste des bénévoles"
     backTarget="/members"
     :loading="!$subReady.helloasso || !$subReady.members">
-
-    <h3>Entrées en attente</h3>
+    
+    <h3><v-icon class="mr-2">mdi-clock-outline</v-icon>Entrées en attente</h3>
     <template v-if="entries && entries.length > 0">
       <v-expansion-panels multiple>
         <v-expansion-panel
           v-for="entry in entries"
           :key="entry.id"
+          :class="entry.resolved ? 'resolveAnim' : ''"
         >
-          <v-expansion-panel-header :class="ignoreEntry(entry) ? 'ignoredEntry' : undefined">
+          <v-expansion-panel-header>
             <span>
-
-              <v-icon v-if="entry.computed.handled" color="green">mdi-check</v-icon>
-              <template v-else>
-                <v-icon v-if="entry.computed.errorLabel" color="red">mdi-alert</v-icon>
-                <v-icon v-else>mdi-clock-outline</v-icon>
-              </template>
-              
-              <span class="ml-2">{{ entry.computed.readableDate }}</span>
+              <span>{{ entry.computed.readableDate }}</span>
               <span> - </span>
 
               <span v-if="entry.computed.renewMembership">
@@ -73,7 +68,7 @@
       </v-expansion-panels>
     </template>
 
-    <h3 class="mt-6">Entrées résolues</h3>
+    <h3 class="mt-6"><v-icon class="mr-2" color="green">mdi-check</v-icon>Entrées résolues</h3>
     <v-simple-table>
     <tr v-for="entry in resolvedEntries" :key="entry._id">
       <td class="pr-4">{{entry.readableDate}}</td>
@@ -102,50 +97,13 @@ import { MembersCollection } from "../../../db/MembersCollection";
 import { ParametersCollection } from "../../../db/ParametersCollection";
 import { getMatchingMemberQuery } from '../../../commonHelpers/searchHelper';
 import { serializeAsQueryParameters } from '../../helpers/uriHelper';
-import { createMemberFromHelloAssoForm } from '../../helpers/memberHelper';
-
-const analyseEntry = (data, encounteredIds) => {
-  if (encounteredIds.includes(data.id))
-    return { isDuplicate: true };
-  
-  encounteredIds.push(data.id);
-  
-  if (data.formType === 'PaymentForm') {
-    if (data.formSlug.startsWith('carte-5'))
-      return { tripBooks: 5 };
-
-    if (data.formSlug.startsWith('carte-10'));
-      return { tripBooks: 10 };
-  } 
-  else if (data.formType === 'Membership') {
-    let tripBooks = 0;
-    let options = data.items
-      .map(i => i.options)
-      .flat()
-      .filter(o => o);
-
-    if (options.some(o => o.name.startsWith('Carte de 5')))
-      tripBooks = 5;
-    else if (options.some(o => o.name.startsWith('Carte de 10')))
-      tripBooks = 10;
-
-    return {
-      renewMembership: true,
-      tripBooks
-    };
-  }
-
-  return { unknownType: true };
-};
+import { analyseEntry, createMemberFromHelloAssoForm } from '../../helpers/memberHelper';
 
 export default {
   components: {
     FullPageLayout
   },
   methods: {
-    ignoreEntry(entry) {
-      return entry.resolved;// entry.computed.hasIgnoredState || entry.computed.isDuplicate; 
-    },
     handleEntry(entry) {
       let memberId = '';
 
@@ -156,7 +114,6 @@ export default {
         renewMembership: entry.computed.renewMembership ?? false,
         tripBooks: entry.computed.tripBooks ?? 0,
       };
-
 
       if (entry.computed.renewMembership) { // new or existing member
           memberId = entry.computed.member ? entry.computed.member._id : 'new';
@@ -182,12 +139,19 @@ export default {
       return;
     },
     resolveEntry(entry) {
-      Meteor.call('helloasso.resolve', entry._id, () => {
-      });
+      entry.resolved = true; // triggers animation
+      const resolveFunction = () => {
+        Meteor.call('helloasso.resolve', entry._id, (error, result) => {
+          if (error) {
+            entry.resolved = false;
+            this.$refs.layout.onSaveEnd(error, false);
+          }
+        });
+      };
+      setTimeout(resolveFunction, 500); // gives time from the animation du be visible
     },
     reopenEntry(entry) {
-      Meteor.call('helloasso.reopen', entry._id, () => {
-      });
+      Meteor.call('helloasso.reopen', entry._id);
     }
   },
   meteor: {
@@ -262,12 +226,18 @@ export default {
 };
 </script>
 
-<style>
-.ignoredEntry {
-  opacity: 0.2;
-}
-
+<style scoped>
 .v-data-table > .v-data-table__wrapper > table {
   width: auto;
+}
+
+.v-expansion-panel {
+  transform-origin: 0, 0;
+  transition: transform .5s, opacity .5s;
+}
+
+.resolveAnim {
+  transform: translateX(100px);
+  opacity: 0;
 }
 </style>
