@@ -6,7 +6,7 @@ Meteor.methods({
   'helloasso.resolve'(id) {
     check(id, String);
     ensureIsAdmin(this.userId);
-console.log("resolve " + id);
+    
     HelloAssoCollection.update(id, {
       $set: { resolved: true }
     });
