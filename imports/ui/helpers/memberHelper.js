@@ -1,6 +1,6 @@
 import { isTripCredited } from './tripsHelper';
 import { ensureIsDate } from './dateHelper';
-import { rawMemberFieldsConverters } from '../../api/memberCreationHelper';
+import { rawMemberFieldsConverters, normalize } from '../../api/memberCreationHelper';
 import { addCreationDate } from '../../api/commonMethods';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -38,7 +38,10 @@ function searchAndAddValueForKey(container, key, formData, parameters) {
   const raw = getRawFormAnswer(formData, parameters.newMemberForm[key]);
   if (raw) {
     const converter = rawMemberFieldsConverters[key];
-    container[key] = converter ? converter(raw) : raw;
+    container[key] = converter ? converter(raw) :
+      typeof raw === "string" ?
+        raw.trim()
+        : raw;
   }
 }
 
@@ -46,8 +49,8 @@ export function createMemberFromHelloAssoForm(formData, parameters) {
   
   const member = {
     infos: {
-      firstname: formData.user.firstName,
-      lastname: formData.user.lastName
+      firstname: normalize(formData.user.firstName),
+      lastname: normalize(formData.user.lastName)
     },
     abilities: {},
     membership: { 
@@ -123,12 +126,15 @@ export function applyEditData(memberSource, editData) {
   }
   
   if (editData.tripBooks) {
-    newPurchases.push({
-      id: uuidv4(),
-      size: editData.tripBooks,
-      date: date,
-      autoAdded: true
-    });
+    var size = parseInt(editData.tripBooks);
+    if (size && !isNaN(size)) {
+      newPurchases.push({
+        id: uuidv4(),
+        size: size,
+        date: date,
+        autoAdded: true
+      });
+    }
   }
 
   return member = {

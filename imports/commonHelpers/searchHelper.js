@@ -29,7 +29,7 @@ export function getMemberSearchQuery(searchTerm) {
   if (!searchTerm)
     return {};
   
-  var term = normalizeTerm(searchTerm);
+  var term = normalizeTermForSearch(searchTerm);
   
   return getSearchQuery(
     term,
@@ -38,16 +38,16 @@ export function getMemberSearchQuery(searchTerm) {
   );
 }
 
-export function normalizeTerm(term) {
+export function normalizeTermForSearch(term) {
   if (!term)
     return term;
 
-  return term.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  return term.trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
 export function getMatchingMemberQuery(firstname, lastname) {
   return {
-    'search.firstname' : normalizeTerm(firstname),
-    'search.lastname' : normalizeTerm(lastname)
+    'search.firstname' : normalizeTermForSearch(firstname),
+    'search.lastname' : normalizeTermForSearch(lastname)
   }
 }

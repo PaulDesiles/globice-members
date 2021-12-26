@@ -317,12 +317,17 @@ export default {
 
       this.saving = true;
 
-      const callback = (error, result) => {
+      let callback = (error, result) => {
         this.$refs.layout.onSaveEnd(error, !!this.newMember);
         setTimeout(() => this.saving = false, 500); // extra delay
         
-        if (!error) {          
+        if (!error) {
           this.initialValues = this.getAllFilteredProperties(this.member);
+          
+          if (this.editData?.helloAssoEntryId) {
+            Meteor.call('helloasso.resolve', this.editData.helloAssoEntryId);
+          }
+          this.editData = {};
         }
       };
 
@@ -332,7 +337,7 @@ export default {
         Meteor.call('members.update', this.member._id, changes, callback);
     },
     deleteMember() {
-      Meteor.call('members.delete', this.member._id, (error, resul) => {
+      Meteor.call('members.delete', this.member._id, (error, result) => {
         this.$refs.layout.onSaveEnd(error, true);
       });
     }

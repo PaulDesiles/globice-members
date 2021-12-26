@@ -2,7 +2,7 @@
   <v-text-field 
     :label="label"
     :value="model"
-    @update:value="onValueChanged"
+    @change="onValueChanged"
     outlined
     hide-details="auto"
     :class="className"

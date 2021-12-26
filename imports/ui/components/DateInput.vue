@@ -66,7 +66,9 @@ export default {
       return formatDate(this.date) || '';
     },
     isDifferent() {
-      return this.showInitialValue && this.initialValue && this.initialValue !== this.date;
+      return this.showInitialValue 
+        && this.initialValue
+        && (!this.date || Math.abs(this.initialValue.getTime() - this.date.getTime()) > 1000 * 3600 * 12); // 12 hours margin
     },
     className() {
       return this.isDifferent ? 'modified-field' : undefined;

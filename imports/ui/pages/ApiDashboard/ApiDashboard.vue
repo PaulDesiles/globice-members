@@ -5,6 +5,7 @@
     backTarget="/members"
     :loading="!$subReady.helloasso || !$subReady.members">
 
+    <h3>Entrées en attente</h3>
     <template v-if="entries && entries.length > 0">
       <v-expansion-panels multiple>
         <v-expansion-panel
@@ -71,6 +72,24 @@
         </v-expansion-panel>
       </v-expansion-panels>
     </template>
+
+    <h3 class="mt-6">Entrées résolues</h3>
+    <v-simple-table>
+    <tr v-for="entry in resolvedEntries" :key="entry._id">
+      <td class="pr-4">{{entry.readableDate}}</td>
+      <td class="pr-4">{{entry._id}}</td>
+      <td>
+        <v-btn
+          color="secondary"
+          elevation="5"
+          rounded
+          @click="reopenEntry(entry)"
+        >
+          marquer comme non résolu
+        </v-btn>
+      </td>
+    </tr>
+    </v-simple-table>
   </FullPageLayout>
 </template>
 
@@ -131,6 +150,8 @@ export default {
       let memberId = '';
 
       let editData = {
+        back:'helloasso',
+        helloAssoEntryId: entry._id,
         date: entry.data.date,
         renewMembership: entry.computed.renewMembership ?? false,
         tripBooks: entry.computed.tripBooks ?? 0,
@@ -149,7 +170,6 @@ export default {
           let abilities = entry.computed.member ? {} : parsedMember.abilities;
           
           editData = {
-            back:'helloasso',
             ...editData,
             ...parsedMember.infos,
             ...abilities
@@ -163,9 +183,11 @@ export default {
     },
     resolveEntry(entry) {
       Meteor.call('helloasso.resolve', entry._id, () => {
-        console.log("resolve handled");
       });
-      return;
+    },
+    reopenEntry(entry) {
+      Meteor.call('helloasso.reopen', entry._id, () => {
+      });
     }
   },
   meteor: {
@@ -180,7 +202,7 @@ export default {
     entries() {
       let encounteredIds = [];
 
-      return HelloAssoCollection.find({ eventType: 'Order' })
+      return HelloAssoCollection.find({ resolved: false })
         .fetch()
         .map(e => {
           if (!e.data.items || e.data.items.length != 1) {
@@ -199,13 +221,13 @@ export default {
           let errorLabel;
 
           if (computed.renewMembership) {
-            if (member) {
+            if (member)
               actionLabel = `renouveler l'adhésion de ${member.infos.firstname} ${member.infos.lastname}`;
-              if (computed.tripBooks)
-                actionLabel += ` + ${computed.tripBooks} sorties`;
-            }
             else
               actionLabel = `ajouter le membre ${e.data.payer.firstName} ${e.data.payer.lastName}`;
+
+            if (computed.tripBooks)
+              actionLabel += ` + ${computed.tripBooks} sorties`;
           } else {
             if (member) {
               if (computed.tripBooks)
@@ -230,6 +252,11 @@ export default {
         })
         .filter(e => !e.computed.isDuplicate);
         // .sort((a,b) => new Date(b.data.date) - new Date(a.data.date)); // last entries first
+    },
+    resolvedEntries() {
+      return HelloAssoCollection.find({ resolved: true })
+        .fetch()
+        .map(e => ({...e, readableDate: (new Date(e.data.date)).toLocaleDateString('fr') }));
     }
   }
 };
@@ -238,5 +265,9 @@ export default {
 <style>
 .ignoredEntry {
   opacity: 0.2;
+}
+
+.v-data-table > .v-data-table__wrapper > table {
+  width: auto;
 }
 </style>

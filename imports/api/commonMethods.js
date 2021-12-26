@@ -1,4 +1,4 @@
-import { normalizeTerm } from '../commonHelpers/searchHelper';
+import { normalizeTermForSearch } from '../commonHelpers/searchHelper';
 
 function ensureUserIsInRoles(userId, roles) {
   if (!userId) {
@@ -86,7 +86,7 @@ export function addSearchChanges(changes) {
   ['firstname', 'lastname', 'email'].forEach(k => {
     const value = getValue(changes, `infos.${k}`);
     if (value) {
-      addKeyValue(changes, `search.${k}`, normalizeTerm(value));
+      addKeyValue(changes, `search.${k}`, normalizeTermForSearch(value));
     }
   });
 }

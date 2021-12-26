@@ -33,8 +33,9 @@ Meteor.methods({
     addModificationDate(data);
     addSearchChanges(data);
 
-    let dataObj = arrayToObject(data);
+    console.log(data);
 
+    let dataObj = arrayToObject(data);
     MembersCollection.update(memberId, {
       $set: dataObj
     });

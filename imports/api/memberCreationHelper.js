@@ -2,8 +2,10 @@
 export const normalize = input => {
   if (!input)
     return undefined;
+
+  let trimmedInput = input.trim();
     
-  return [input[0].toUpperCase(), ...input.toLowerCase().slice(1)].join('');
+  return [trimmedInput[0].toUpperCase(), ...trimmedInput.toLowerCase().slice(1)].join('');
 };
 
 export const getDate = input => {
