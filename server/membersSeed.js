@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { rawMemberFieldsConverters } from '/imports/api/memberCreationHelper';
 import { normalizeTerm } from '/imports/commonHelpers/searchHelper';
+import { MembersCollection } from '/imports/db/MembersCollection';
 
 let membersSeed = [];
 
@@ -122,12 +123,14 @@ export function addSearchValues() {
   MembersCollection.find({})
     .fetch()
     .forEach(member => {
-      if (!member.search.firstname) {
+      if (!member.search) {
         console.log(member._id);
         var changes = {
-          "search.firstname": normalizeTerm(member.infos.firstname),
-          "search.lastname": normalizeTerm(member.infos.lastname),
-          "search.email": normalizeTerm(member.infos.email)
+          search: {
+            firstname: normalizeTerm(member.infos.firstname),
+            lastname: normalizeTerm(member.infos.lastname),
+            email: normalizeTerm(member.infos.email) 
+          }
         };
         console.log(changes);
         MembersCollection.update(member._id, 

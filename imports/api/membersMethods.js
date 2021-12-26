@@ -5,7 +5,8 @@ import {
   ensureIsAdmin,
   addCreationDate,
   addModificationDate,
-  arrayToObject 
+  addSearchChanges,
+  arrayToObject
 } from './commonMethods';
 
 Meteor.methods({
@@ -16,6 +17,7 @@ Meteor.methods({
     ensureContainsUpdates(data);
 
     addCreationDate(data);
+    addSearchChanges(data);
 
     MembersCollection.insert(data);
   },
@@ -29,11 +31,12 @@ Meteor.methods({
     ensureContainsUpdates(data);
 
     addModificationDate(data);
+    addSearchChanges(data);
 
     let dataObj = arrayToObject(data);
 
     MembersCollection.update(memberId, {
-      $set: dataObj,
+      $set: dataObj
     });
   },
 

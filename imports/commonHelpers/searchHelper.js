@@ -8,7 +8,7 @@ function getFullPropertyName(propertyName, prefix) {
 
 function searchFor(propertyName, searchTerm, prefix) {
   return {
-      [getFullPropertyName(propertyName, prefix)] : searchTerm //{ $regex: searchTerm, $options: "i" }  << regex now useless thanks to additional search columns
+      [getFullPropertyName(propertyName, prefix)] : { $regex: searchTerm /*, $options: "i"*/ }
   };
 }
 
@@ -29,9 +29,11 @@ export function getMemberSearchQuery(searchTerm) {
   if (!searchTerm)
     return {};
   
+  var term = normalizeTerm(searchTerm);
+  
   return getSearchQuery(
-    searchTerm,
-    searchTerm.includes('@') ? 'email' : ["lastname", "firstname", "email"],
+    term,
+    term.includes('@') ? ['email'] : ["lastname", "firstname", "email"],
     'search'
   );
 }
@@ -41,17 +43,6 @@ export function normalizeTerm(term) {
     return term;
 
   return term.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-}
-
-export function addSearchChanges(changesObject) {
-  if (changesObject['infos.firstname'])
-    changesObject['search.firstname'] = normalizeTerm(changesObject['infos.firstname']);
-    
-  if (changesObject['infos.lastname'])
-    changesObject['search.lastname'] = normalizeTerm(changesObject['infos.lastname']);
-  
-  if (changesObject['infos.email'])
-    changesObject['search.email'] = normalizeTerm(changesObject['infos.email']);
 }
 
 export function getMatchingMemberQuery(firstname, lastname) {

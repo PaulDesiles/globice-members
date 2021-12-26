@@ -16,7 +16,7 @@ import { HelloAssoCollection } from '../imports/db/HelloAssoCollection.js';
 import '/imports/api/helloAssoPublications';
 import '/imports/api/helloAssoMethods';
 
-// import membersSeed from './membersSeed.js';
+import { addSearchValues } from './membersSeed.js';
 import { seedAccounts } from './accountsSeed.js';
 
 import { setApiListeners } from '/imports/api/helloAsso';
@@ -42,5 +42,8 @@ Meteor.startup(() => {
   //   MembersCollection.remove({});
   //   membersSeed.forEach(m => MembersCollection.insert(m));
   // }
+
+  // --- Ajout des infos de search à tous les membres
+  // addSearchValues();
 
 });

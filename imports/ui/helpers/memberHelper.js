@@ -132,6 +132,7 @@ export function applyEditData(memberSource, editData) {
   }
 
   return member = {
+    _id: memberSource._id,
     infos: getMemberInfos(memberSource.infos, editData),
     abilities: getMemberAbilities(memberSource.abilities, editData),
     membership: newMembership ?? {...memberSource.membership},
