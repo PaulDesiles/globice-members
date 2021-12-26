@@ -42,6 +42,7 @@ MembersCollection.schema = new SimpleSchema({
   membership: Object,
   "membership.date": {type: Date, optional: true},
   "membership.isNewMember": {type: String, optional: true},
+  "membership.previousMemberships": [{ type: Date }],
 
   trips: Object,
   "trips.purchases": [purchaseSchema],

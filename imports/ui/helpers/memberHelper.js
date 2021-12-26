@@ -152,11 +152,18 @@ export function applyEditData(memberSource, editData) {
   if (isNaN(date.valueOf()))
     date = new Date();
   
-  let newMembership = undefined;
+  let membership = undefined;
   let newPurchases = [];
 
   if (editData.renewMembership) {
-    newMembership = { date: date, isNewMember: 'Non' }
+    membership = {
+      date: date,
+      isNewMember: 'Non',
+      previousMemberships: memberSource.membership.previousMemberships || []
+    };
+    membership.previousMemberships.push(memberSource.membership.date);
+  } else {
+    membership = { ...memberSource.membership };
   }
   
   if (editData.tripBooks) {
@@ -175,7 +182,7 @@ export function applyEditData(memberSource, editData) {
     _id: memberSource._id,
     infos: getMemberInfos(memberSource.infos, editData),
     abilities: getMemberAbilities(memberSource.abilities, editData),
-    membership: newMembership ?? {...memberSource.membership},
+    membership: membership,
     trips: {
       purchases: [...memberSource.trips.purchases, ...newPurchases],
       confirmedTrips: [...memberSource.trips.confirmedTrips],

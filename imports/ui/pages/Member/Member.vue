@@ -171,6 +171,13 @@
           </v-col>
         </v-row>
 
+        <template v-if="previousMemberships">
+          <h4>Adhésion passées</h4>
+          <ul>
+            <li v-for="date in previousMemberships" :key="date">{{date}}</li>
+          </ul>
+        </template>
+
 
         <h3>Carnets de sorties</h3>
         <TripBooks 
@@ -226,6 +233,7 @@ import { TripsCollection } from "../../../db/TripsCollection";
 import { ParametersCollection } from "../../../db/ParametersCollection";
 import { getAllProperties, getDelta } from '../../helpers/objectHelper';
 import { applyEditData } from '../../helpers/memberHelper';
+import { formatDate } from '../../helpers/dateHelper';
 
 function fullfillTrips(summaryTrips, collection) {
   let fullTrips = [];
@@ -282,6 +290,9 @@ export default {
     },
     backtarget() {
       return this.backToHelloAsso ? '/apidashboard' : '/members';
+    },
+    previousMemberships() {
+      return member.membership.previousMemberships?.map(d => formatDate(d));
     },
     modifiedProperties() {
       if (!this.member || !this.initialValues)
