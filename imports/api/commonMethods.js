@@ -22,19 +22,20 @@ export function ensureCanViewData(userId) {
   ensureUserIsInRoles(userId, ['admin', 'captain', 'viewer']);
 }
 
-function isArray(x) {
+export function isArray(x) {
   return typeof x.length === 'number';
 }
 
 export function ensureContainsUpdates(changes) {
-  if ((isArray(changes) && changes.length === 0)
+  if (!changes 
+    || (isArray(changes) && changes.length === 0)
     || Object.keys(changes).length === 0)
   {
     throw new Meteor.Error('No values to update');
   }
 }
 
-function addKeyValue(container, key, value) {
+export function addKeyValue(container, key, value) {
   if (isArray(container)) {
     container.push({ key, value });
   } else {
@@ -44,31 +45,37 @@ function addKeyValue(container, key, value) {
 
 function addValueToObjectRecursively(container, keys, value) {
   if (keys.length == 1) {
-    container[key] = value;
+    container[keys[0]] = value;
   } else {
-    return addValueToObjectRecursively(container[keys.shift()], keys, value);
+    var key = keys.shift();
+    var nestedContainer = container[key];
+    if (!nestedContainer) {
+      nestedContainer = {};
+      container[key] = nestedContainer;
+    }
+    return addValueToObjectRecursively(nestedContainer, keys, value);
   }
 }
 
-function getValue(container, key) {
-  if (isArray(container)) {
+export function getValue(container, key) {
+  if (isArray(container))
     return container.filter(x => x.key == key).map(x => x.value)[0];
-  } else {
-    getObjectValueRecursively(container, key.split('.'));
-  }
+
+  return getObjectValueRecursively(container, key.split('.'));
 }
 
 function getObjectValueRecursively(container, keys) {
-  if (keys.length == 1) {
-    return container[key];
-  } else {
-    keys.shift();
-    return getObjectValueRecursively(container[key], keys);
-  }
+  if (!container)
+    return undefined;
+
+  if (keys.length == 1)
+    return container[keys[0]];
+
+  return getObjectValueRecursively(container[keys.shift()], keys);
 }
 
 export function addCreationDate(changes) {
-    addKeyValue(changes, '_creationDate', new Date());
+  addKeyValue(changes, '_creationDate', new Date());
 }
 
 export function addModificationDate(changes) {
@@ -76,17 +83,12 @@ export function addModificationDate(changes) {
 }
 
 export function addSearchChanges(changes) {
-  console.log(changes);
-
   ['firstname', 'lastname', 'email'].forEach(k => {
     const value = getValue(changes, `infos.${k}`);
-    console.log(value);
     if (value) {
       addKeyValue(changes, `search.${k}`, normalizeTerm(value));
     }
   });
-
-  console.log(changes);
 }
 
 export function arrayToObject(arrayChanges) {
