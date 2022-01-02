@@ -265,15 +265,24 @@ export default {
   },
   props: {
     id: String,
-    editData: Object
+    query: Object
   },
   data: () => ({
     newMember: undefined,
     saving: false,
-    initialValues: undefined,
-    hasEditData: false
+    initialValues: undefined
   }),
   computed: {
+    editData() {
+      if (!this.query)
+        return undefined;
+
+      const { back, ...editData } = this.query;
+      return editData;
+    },
+    hasEditData() {
+      return this.query && Object.keys(this.query).length > 1;
+    },
     title() {
       if (this.newMember)
         return "Nouveau bénévole";
@@ -283,7 +292,7 @@ export default {
       return "Bénévole";
     },
     backToHelloAsso() {
-      return this.hasEditData && this.editData.back == 'helloasso';
+      return this.query && this.query.back == 'helloasso';
     },
     backlabel() {
       return this.backToHelloAsso ? 'retour aux entrées HelloAsso' : 'retour à la liste des bénévoles';
@@ -292,7 +301,7 @@ export default {
       return this.backToHelloAsso ? '/apidashboard' : '/members';
     },
     previousMemberships() {
-      return member.membership.previousMemberships?.map(d => formatDate(d));
+      return this.member?.membership.previousMemberships?.map(d => formatDate(d));
     },
     modifiedProperties() {
       if (!this.member || !this.initialValues)
@@ -335,10 +344,11 @@ export default {
         if (!error) {
           this.initialValues = this.getAllFilteredProperties(this.member);
           
-          if (this.editData?.helloAssoEntryId) {
-            Meteor.call('helloasso.resolve', this.editData.helloAssoEntryId);
+          const helloAssoEntryId = this.editData?.helloAssoEntryId;
+          if (helloAssoEntryId && this.query.back) {
+            Meteor.call('helloasso.resolve', helloAssoEntryId);
+            this.$router.push({ query: { back: this.query.back }})
           }
-          this.editData = {};
         }
       };
 
@@ -365,8 +375,6 @@ export default {
     member() {
       if (!this.id)
         return undefined;
-
-      this.hasEditData = this.editData && Object.keys(this.editData).length !== 0;
 
       if (this.id === 'new') {
         if (!this.newMember) {

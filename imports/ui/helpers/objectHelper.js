@@ -3,6 +3,16 @@ function getRelevantKeys(obj) {
     .filter(k => !k.startsWith('_'));
 }
 
+function clone(value) {
+  if (typeof value.getTime === 'function') // Date
+    return new Date(value);
+  else if (typeof value.push === 'function') // Array
+    return [...value];
+  else if (typeof value === 'object') // Object
+    return {...value};
+  else
+    return value;
+}
 
 export function getAllProperties(obj, nested, excludeKeys = []) {
   let properties = {};
@@ -12,12 +22,12 @@ export function getAllProperties(obj, nested, excludeKeys = []) {
       getRelevantKeys(obj).forEach(rootKey => {
         getRelevantKeys(obj[rootKey])
           .filter(key => !excludeKeys.some(e => e === `${rootKey}.${key}`))
-          .forEach(key => properties[`${rootKey}.${key}`] = obj[rootKey][key]);
+          .forEach(key => properties[`${rootKey}.${key}`] = clone(obj[rootKey][key]));
       });
     } else {
       getRelevantKeys(obj)
         .filter(key => !excludeKeys.some(e => e === key))
-        .forEach(key => properties[key] = obj[key]);
+        .forEach(key => properties[key] = clone(obj[key]));
     }
   }
 

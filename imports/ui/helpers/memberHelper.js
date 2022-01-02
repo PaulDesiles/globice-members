@@ -159,7 +159,7 @@ export function applyEditData(memberSource, editData) {
     membership = {
       date: date,
       isNewMember: 'Non',
-      previousMemberships: memberSource.membership.previousMemberships || []
+      previousMemberships: [...memberSource.membership.previousMemberships] || []
     };
     membership.previousMemberships.push(memberSource.membership.date);
   } else {
@@ -178,7 +178,7 @@ export function applyEditData(memberSource, editData) {
     }
   }
 
-  return member = {
+  return {
     _id: memberSource._id,
     infos: getMemberInfos(memberSource.infos, editData),
     abilities: getMemberAbilities(memberSource.abilities, editData),

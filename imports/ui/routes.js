@@ -28,7 +28,7 @@ const routes = [
     component: Member,
     props: (route) => ({
       id: route.params.id,
-      editData: route.query
+      query: route.query
     })
   },
   {
