@@ -10,14 +10,31 @@ let postRoutes = Picker.filter(function(req, res) {
   });
 
   postRoutes.route('/api/helloasso', function(params, req, res, next) {
-    console.log("received post from helloasso");
+    try {
+      console.log("received post from helloasso");
 
-    if (req?.body && process.env.ACTIVATE_HA_RAW_SAVING) {
-      HelloAssoCollection.insert(req.body);
+      if (req?.body && process.env.ACTIVATE_HA_RAW_SAVING) {
+        console.log(req?.headers);
+
+        var insertId= HelloAssoCollection.insert(
+          {
+            data: req.body.data,
+            eventType: req.body.eventType,
+            resolved: false
+          },
+          { bypassCollection2: true }
+        );
+
+        console.log(`inserted helloAsso entry : ${insertId}`);
+      }
+
+      /**** auto import deactivated for a semi-automated import, through app ui ****/
+      
+      res.end("ok");
     }
-
-    /**** auto import deactivated for a semi-automated import, through app ui ****/
-    
-    res.end("ok");
+    catch (error) {
+      console.log(error);
+      res.end("KO");
+    }
   });
 }
