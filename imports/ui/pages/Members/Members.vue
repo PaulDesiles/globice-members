@@ -14,7 +14,9 @@
           <v-icon left>mdi-account-plus</v-icon>
           ajouter un bénévole
         </v-btn>
+
         <v-btn
+          v-if="canAcccessHelloAssoEntries"
           color="primary"
           elevation="5"
           rounded
@@ -149,13 +151,22 @@ export default {
       }
     }
   },
+  computed: {
+    canAcccessHelloAssoEntries() {
+      return this.currentUserRole === "admin";
+    }
+  },
   meteor: {
     $subscribe: {
-      'members': []
+      'members': [],
+      'roles': []
     },
     members() {
       const query = getMemberSearchQuery(this.search);
       return MembersCollection.find(query).fetch();
+    },
+    currentUserRole() {
+      return Meteor.roleAssignment.findOne({})?.role?._id;
     }
   }
 };

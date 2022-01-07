@@ -1,5 +1,11 @@
 import { normalizeTermForSearch } from '../commonHelpers/searchHelper';
 
+export let ROLES = {
+  admin: 'admin',
+  captain: 'captain',
+  viewer: 'viewer'
+};
+
 function ensureUserIsInRoles(userId, roles) {
   if (!userId) {
     throw new Meteor.Error('Not connected');
@@ -11,15 +17,15 @@ function ensureUserIsInRoles(userId, roles) {
 }
 
 export function ensureIsAdmin(userId) {
-  ensureUserIsInRoles(userId, ['admin']);
+  ensureUserIsInRoles(userId, [ ROLES.admin ]);
 }
 
 export function ensureCanEditTrips(userId) {
-  ensureUserIsInRoles(userId, ['admin', 'captain']);
+  ensureUserIsInRoles(userId, [ROLES.admin, ROLES.captain]);
 }
 
 export function ensureCanViewData(userId) {
-  ensureUserIsInRoles(userId, ['admin', 'captain', 'viewer']);
+  ensureUserIsInRoles(userId, [ROLES.admin, ROLES.captain, ROLES.viewer]);
 }
 
 export function isArray(x) {

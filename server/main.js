@@ -15,6 +15,7 @@ import '/imports/api/publicParametersPublications';
 import { HelloAssoCollection } from '../imports/db/HelloAssoCollection.js';
 import '/imports/api/helloAssoPublications';
 import '/imports/api/helloAssoMethods';
+import '/imports/api/rolesAssignmentsPublications';
 
 import { addSearchValues } from './membersSeed.js';
 import { seedAccounts } from './accountsSeed.js';
