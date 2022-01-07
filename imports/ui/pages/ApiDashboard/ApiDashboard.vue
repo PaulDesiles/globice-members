@@ -73,10 +73,10 @@
     <tr v-for="entry in resolvedEntries" :key="entry._id">
       <td class="pr-4">{{entry.readableDate}}</td>
       <td class="pr-4">{{entry._id}}</td>
-      <td>
+      <td class="pa-1">
         <v-btn
           color="secondary"
-          elevation="5"
+          small
           rounded
           @click="reopenEntry(entry)"
         >
@@ -105,7 +105,7 @@ export default {
   },
   methods: {
     handleEntry(entry) {
-      let memberId = '';
+      let memberId = entry.computed.member ? entry.computed.member._id : 'new';
 
       let editData = {
         back:'helloasso',
@@ -116,7 +116,6 @@ export default {
       };
 
       if (entry.computed.renewMembership) { // new or existing member
-          memberId = entry.computed.member ? entry.computed.member._id : 'new';
           
           let parsedMember = createMemberFromHelloAssoForm(
             entry.data.items[0],
@@ -141,7 +140,7 @@ export default {
     resolveEntry(entry) {
       entry.tmp_resolved = true; // triggers animation
       const resolveFunction = () => {
-        Meteor.call('helloasso.resolve', entry._id, (error, result) => {
+        Meteor.call('helloasso.resolve', entry.data.id, (error, result) => {
           if (error) {
             entry.tmp_resolved = false;
             this.$refs.layout.onSaveEnd(error, false);

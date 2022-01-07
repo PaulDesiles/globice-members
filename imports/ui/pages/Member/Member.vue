@@ -171,8 +171,8 @@
           </v-col>
         </v-row>
 
-        <template v-if="previousMemberships">
-          <h4>Adhésion passées</h4>
+        <template v-if="previousMemberships && previousMemberships.length > 0">
+          <h4>Adhésions passées</h4>
           <ul>
             <li v-for="date in previousMemberships" :key="date">{{date}}</li>
           </ul>
@@ -384,9 +384,7 @@ export default {
               birthdate: new Date()
             },
             abilities: {},
-            membership: {
-              date: new Date()
-            },
+            membership: { },
             trips: {
               purchases: [],
               confirmedTrips: [],

@@ -3,13 +3,17 @@ import { HelloAssoCollection } from '../db/HelloAssoCollection';
 import { ensureIsAdmin } from './commonMethods';
 
 Meteor.methods({
-  'helloasso.resolve'(id) {
-    check(id, String);
+  'helloasso.resolve'(helloAssoId) {
+    // ! \\ we need helloAssoId (x.data.id) and not mongoId (x._id) !
+    // it allows to resolve all duplicates
+    check(helloAssoId, Number);
     ensureIsAdmin(this.userId);
-    
-    HelloAssoCollection.update(id, {
-      $set: { resolved: true }
-    });
+
+    HelloAssoCollection.update(
+      { 'data.id': helloAssoId },
+      { $set: { resolved: true } },
+      { multi: true }
+    );
   },
   'helloasso.reopen'(id) {
     check(id, String);

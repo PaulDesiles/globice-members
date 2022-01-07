@@ -144,6 +144,7 @@ function getMemberAbilities(source, editData) {
   return mixSourceAndEditData(source, editData, ['boatLicense', 'captain', 'diving', 'photo']);
 }
 
+// be carefull : booleans are not parsed here
 export function applyEditData(memberSource, editData) {
   if (!editData)
     return memberSource;
@@ -155,7 +156,7 @@ export function applyEditData(memberSource, editData) {
   let membership = undefined;
   let newPurchases = [];
 
-  if (editData.renewMembership) {
+  if (editData.renewMembership === "true") {
     membership = {
       date: date,
       isNewMember: 'Non',
@@ -164,9 +165,15 @@ export function applyEditData(memberSource, editData) {
         : []
     };
 
-    membership.previousMemberships.push(memberSource.membership.date);
+    if (memberSource.membership.date) {
+      membership.previousMemberships.push(memberSource.membership.date);
+    }
   } else {
     membership = { ...memberSource.membership };
+  }
+
+  if (!membership.date) {
+    membership.date = new Date(); // member creation without editdata
   }
   
   if (editData.tripBooks) {
