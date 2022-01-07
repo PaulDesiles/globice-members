@@ -83,10 +83,10 @@ export function analyseEntry(data, encounteredIds) {
   encounteredIds.push(data.id);
   
   if (data.formType === 'PaymentForm') {
-    if (data.formSlug.startsWith('carte-5'))
+    if (data.formSlug.startsWith('carte-de-5'))
       return { tripBooks: 5 };
 
-    if (data.formSlug.startsWith('carte-10'));
+    if (data.formSlug.startsWith('carte-de-10'));
       return { tripBooks: 10 };
   } 
   else if (data.formType === 'Membership') {
@@ -159,8 +159,11 @@ export function applyEditData(memberSource, editData) {
     membership = {
       date: date,
       isNewMember: 'Non',
-      previousMemberships: [...memberSource.membership.previousMemberships] || []
+      previousMemberships: memberSource.membership.previousMemberships ?
+        [...memberSource.membership.previousMemberships]
+        : []
     };
+
     membership.previousMemberships.push(memberSource.membership.date);
   } else {
     membership = { ...memberSource.membership };

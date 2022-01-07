@@ -12,7 +12,7 @@
         <v-expansion-panel
           v-for="entry in entries"
           :key="entry.id"
-          :class="entry.resolved ? 'resolveAnim' : ''"
+          :class="entry.tmp_resolved ? 'resolveAnim' : ''"
         >
           <v-expansion-panel-header>
             <span>
@@ -139,16 +139,16 @@ export default {
       return;
     },
     resolveEntry(entry) {
-      entry.resolved = true; // triggers animation
+      entry.tmp_resolved = true; // triggers animation
       const resolveFunction = () => {
         Meteor.call('helloasso.resolve', entry._id, (error, result) => {
           if (error) {
-            entry.resolved = false;
+            entry.tmp_resolved = false;
             this.$refs.layout.onSaveEnd(error, false);
           }
         });
       };
-      setTimeout(resolveFunction, 500); // gives time from the animation du be visible
+      setTimeout(resolveFunction, 500); // gives time from the animation to be visible
     },
     reopenEntry(entry) {
       Meteor.call('helloasso.reopen', entry._id);
@@ -166,7 +166,7 @@ export default {
     entries() {
       let encounteredIds = [];
 
-      return HelloAssoCollection.find({ resolved: false })
+      return HelloAssoCollection.find({ $or: [{ resolved: false }, { resolved: undefined }] })
         .fetch()
         .map(e => {
           if (!e.data.items || e.data.items.length != 1) {
