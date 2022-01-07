@@ -40,6 +40,7 @@ Meteor.startup(() => {
 
   // if (false) {
   //   MembersCollection.remove({});
+  //   var memberSeed = getMemberSeed();
   //   membersSeed.forEach(m => MembersCollection.insert(m));
   // }
 
