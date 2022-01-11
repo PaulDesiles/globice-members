@@ -109,7 +109,7 @@ export default {
 
       let editData = {
         back:'helloasso',
-        helloAssoEntryId: entry._id,
+        helloAssoEntryId: entry.data.id,
         date: entry.data.date,
         renewMembership: entry.computed.renewMembership ?? false,
         tripBooks: entry.computed.tripBooks ?? 0,
