@@ -326,10 +326,10 @@ export default {
       return this.member?.membership.previousMemberships
         ?.map(d => ensureIsDate(d))
         .sort((a,b) => a.getTime() - b.getTime())
-        .map(d => ({
+        .map((d,i) => ({
           formatedDate: formatDate(d),
           date: d,
-          key: d.getTime()
+          key: `${d.getTime()} ${i}`
         }));
     },
     modifiedProperties() {
