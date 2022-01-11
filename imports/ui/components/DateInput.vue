@@ -60,6 +60,9 @@ export default {
     menu (val) {
       this.startWithYear && val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
     },
+    date (val) {
+      this.pickerDate = this.date.toISOString().substr(0, 10);
+    }
   },
   computed: {
     formatedDate() {

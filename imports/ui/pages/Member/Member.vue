@@ -153,11 +153,22 @@
         <v-row>
           <v-col :cols="3">
             <DateInput
-              label="Date d'adhésion"
+              label="Adhésion en cours"
               :date.sync="member.membership.date"
               :initialValue="initialValues['membership.date']"
               :showInitialValue="hasEditData"
               />
+          </v-col>
+
+          <v-col :cols="2" style="align-self: center">
+            <v-btn
+              color="secondary"
+              elevation="5"
+              title="ajoute cette date à la liste des adhésion passées"
+              @click="archiveMembershipDate"
+            >
+              Archiver
+            </v-btn>
           </v-col>
 
           <v-col :cols="3">
@@ -174,7 +185,18 @@
         <template v-if="previousMemberships && previousMemberships.length > 0">
           <h4>Adhésions passées</h4>
           <ul>
-            <li v-for="date in previousMemberships" :key="date">{{date}}</li>
+            <li v-for="membership in previousMemberships" :key="membership.key">
+              {{membership.formatedDate}}
+              <v-btn
+                icon
+                color="red"
+                @click="removeMembershipDate(membership.date)"
+              >
+                <v-icon>
+                  mdi-delete
+                </v-icon>
+              </v-btn>
+            </li>
           </ul>
         </template>
 
@@ -233,7 +255,7 @@ import { TripsCollection } from "../../../db/TripsCollection";
 import { ParametersCollection } from "../../../db/ParametersCollection";
 import { getAllProperties, getDelta } from '../../helpers/objectHelper';
 import { applyEditData } from '../../helpers/memberHelper';
-import { formatDate } from '../../helpers/dateHelper';
+import { formatDate, ensureIsDate } from '../../helpers/dateHelper';
 
 function fullfillTrips(summaryTrips, collection) {
   let fullTrips = [];
@@ -301,7 +323,14 @@ export default {
       return this.backToHelloAsso ? '/apidashboard' : '/members';
     },
     previousMemberships() {
-      return this.member?.membership.previousMemberships?.map(d => formatDate(d));
+      return this.member?.membership.previousMemberships
+        ?.map(d => ensureIsDate(d))
+        .sort((a,b) => a.getTime() - b.getTime())
+        .map(d => ({
+          formatedDate: formatDate(d),
+          date: d,
+          key: d.getTime()
+        }));
     },
     modifiedProperties() {
       if (!this.member || !this.initialValues)
@@ -329,6 +358,22 @@ export default {
             true,
             ['trips.confirmedTrips', 'trips.refusedTrips']
           );
+    },
+    archiveMembershipDate() {
+      var date = this.member.membership.date;
+      if (date) {
+        this.member.membership = {
+          ...this.member.membership,
+          date: new Date(),
+          previousMemberships: [...(this.member.membership.previousMemberships || []), date]
+        };
+      }
+    },
+    removeMembershipDate(date) {
+      this.member.membership = {
+        ...this.member.membership,
+        previousMemberships : this.member.membership.previousMemberships.filter(x => x !== date)
+      };
     },
     handleSubmit(event) {
       let changes = this.modifiedProperties; // compute it only once
@@ -384,7 +429,9 @@ export default {
               birthdate: new Date()
             },
             abilities: {},
-            membership: { },
+            membership: { 
+              previousMemberships: []
+            },
             trips: {
               purchases: [],
               confirmedTrips: [],
