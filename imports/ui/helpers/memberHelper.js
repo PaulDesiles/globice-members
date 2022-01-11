@@ -159,7 +159,7 @@ export function applyEditData(memberSource, editData) {
   if (editData.renewMembership === "true") {
     membership = {
       date: date,
-      isNewMember: 'Non',
+      isNewMember: memberSource?.membership?.date ? 'Non' : 'Oui',
       previousMemberships: memberSource.membership.previousMemberships ?
         [...memberSource.membership.previousMemberships]
         : []
