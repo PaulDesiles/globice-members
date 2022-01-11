@@ -168,11 +168,11 @@ export default {
       return HelloAssoCollection.find({ $or: [{ resolved: false }, { resolved: undefined }] })
         .fetch()
         .map(e => {
-          if (!e.data.items || e.data.items.length != 1) {
+          if (!e.data.items || e.data.items.filter(i => i.type !== 'Donation').length != 1) {
             return {
               ...e,
               computed: {
-                errorLabel: "cas non géré actuellement (adhésions multiples) : prévenir Paul ;) !"
+                errorLabel: "cas non géré actuellement : prévenir Paul ;) !"
               }
             }
           }
