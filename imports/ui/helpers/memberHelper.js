@@ -26,22 +26,23 @@ export function getTripsLeft(memberId, purchases, confirmedTrips) {
 
 // ********* HelloAsso import member helpers *********//
 
-function getRawFormAnswer(formData, question) {
+export function getRawFormAnswer(formData, question) {
+  if (!question)
+    return undefined;
+
   const lowerQuestion = question.toLocaleLowerCase();
-  return formData.customFields
-    .find(field => field.name.toLocaleLowerCase() === lowerQuestion)
-    ?.answer
-    ?.trim();
+  var answer = formData.customFields
+    .find(field => field.name?.toLocaleLowerCase() === lowerQuestion)
+    ?.answer;
+
+  return typeof answer === "string" ? answer.trim() : answer;
 }
 
-function searchAndAddValueForKey(container, key, formData, parameters) {
-  const raw = getRawFormAnswer(formData, parameters.newMemberForm[key]);
-  if (raw) {
-    const converter = rawMemberFieldsConverters[key];
-    container[key] = converter ? converter(raw) :
-      typeof raw === "string" ?
-        raw.trim()
-        : raw;
+export function searchAndAddValueForKey(container, key, formData, parameters, converters = rawMemberFieldsConverters) {
+  const rawAnswer = getRawFormAnswer(formData, parameters.newMemberForm[key]);
+  if (rawAnswer) {
+    const converter = converters[key];
+    container[key] = converter ? converter(rawAnswer) : rawAnswer;
   }
 }
 
@@ -76,38 +77,62 @@ export function createMemberFromHelloAssoForm(formData, parameters) {
   return member;
 }
 
+// returns one or multiple computed data based on the raw entry's data
 export function analyseEntry(data, encounteredIds) {
   if (encounteredIds.includes(data.id))
-    return { isDuplicate: true };
+    return [{ isDuplicate: true }];
   
   encounteredIds.push(data.id);
   
   if (data.formType === 'PaymentForm') {
-    if (data.formSlug.startsWith('carte-de-5'))
-      return { tripBooks: 5 };
+    let member = {
+      firstName: data.payer.firstName,
+      lastName: data.payer.lastName
+    };
 
-    if (data.formSlug.startsWith('carte-de-10'));
-      return { tripBooks: 10 };
+    if (data.formSlug.startsWith('carte-de-5'))
+      return [{ member, tripBooks: 5 }];
+
+    if (data.formSlug.startsWith('carte-de-10'))
+      return [{ member, tripBooks: 10 }];
   } 
   else if (data.formType === 'Membership') {
-    let tripBooks = 0;
-    let options = data.items
-      .map(i => i.options)
-      .flat()
-      .filter(o => o);
+    return data.items
+      .filter(i => i.type === 'Membership')
+      .map(i => {
+        let tripBooks = 0;
 
-    if (options.some(o => o.name.startsWith('Carte de 5')))
-      tripBooks = 5;
-    else if (options.some(o => o.name.startsWith('Carte de 10')))
-      tripBooks = 10;
+        if (!i.customFields || !i.customFields.length) {
+          return { warning: true };
+        }
 
-    return {
-      renewMembership: true,
-      tripBooks
-    };
+        if (i.options) {
+          if (i.options.some(o => o.name?.startsWith('Carte de 5')))
+            tripBooks = 5;
+          else if (i.options.some(o => o.name?.startsWith('Carte de 10')))
+            tripBooks = 10;
+          else if (i.options.some(o => o.name?.toLocaleLowerCase()?.startsWith('carte de sortie')))
+            tripBooks = 5;
+        }
+
+        return {
+          member: { 
+            firstName: i.user.firstName,
+            lastName: i.user.lastName
+          },
+          renewMembership: true,
+          membershipData: i,
+          tripBooks
+        };
+      });
+    ;
+  }
+  else if (data.formType === 'Donation') {
+    // we don't need donations to be shown
+    return [];
   }
 
-  return { unknownType: true };
+  return [{ warning: true }];
 };
 
 // ********* member init from query arguments *********//

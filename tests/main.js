@@ -12,3 +12,4 @@ describe("Main", function () {
 });
 
 import './commonMethods.js';
+import './memberHelper.js';

@@ -118,7 +118,7 @@ export default {
       if (entry.computed.renewMembership) { // new or existing member
           
           let parsedMember = createMemberFromHelloAssoForm(
-            entry.data.items[0],
+            entry.computed.membershipData,
             this.parameters
           );
 
@@ -168,52 +168,58 @@ export default {
       return HelloAssoCollection.find({ $or: [{ resolved: false }, { resolved: undefined }] })
         .fetch()
         .map(e => {
-          if (!e.data.items || e.data.items.filter(i => i.type !== 'Donation').length != 1) {
-            return {
+          // If multiple membership are in a single entry we split it in multiple elements
+          return analyseEntry(e.data, encounteredIds)
+            .map(computed => ({
               ...e,
-              computed: {
-                errorLabel: "cas non géré actuellement : prévenir Paul ;) !"
-              }
-            }
-          }
-
-          let computed = analyseEntry(e.data, encounteredIds);
-          let query = getMatchingMemberQuery(e.data.payer.firstName, e.data.payer.lastName);
-          let member = MembersCollection.findOne(query);
+              computed
+            }));
+        })
+        .flat()
+        .filter(e => !e.computed.isDuplicate)
+        .map(e => {
           let actionLabel = '';
-          let errorLabel;
+          let errorLabel = '';
+          let member = undefined;
 
-          if (computed.renewMembership) {
-            if (member)
-              actionLabel = `renouveler l'adhésion de ${member.infos.firstname} ${member.infos.lastname}`;
-            else
-              actionLabel = `ajouter le membre ${e.data.payer.firstName} ${e.data.payer.lastName}`;
-
-            if (computed.tripBooks)
-              actionLabel += ` + ${computed.tripBooks} sorties`;
+          if (e.computed.warning) {
+              errorLabel = "les données ne correspondent pas au format attendu";
           } else {
-            if (member) {
-              if (computed.tripBooks)
-                actionLabel = `ajouter ${computed.tripBooks} sorties à ${member.infos.firstname} ${member.infos.lastname}`;
+              let query = getMatchingMemberQuery(e.computed.member.firstName, e.computed.member.lastName);
+              member = MembersCollection.findOne(query);
+
+            if (e.computed.renewMembership) {
+              if (member)
+                actionLabel = `renouveler l'adhésion de ${member.infos.firstname} ${member.infos.lastname}`;
               else
-                errorLabel = `impossible de trouver une action à effectuer`;  
+                actionLabel = `ajouter le membre ${e.computed.member.firstName} ${e.computed.member.lastName}`;
+
+              if (e.computed.tripBooks)
+                actionLabel += ` + ${e.computed.tripBooks} sorties`;
             }
-            else
-              errorLabel = `impossible de trouver le membre ${e.data.payer.firstName} ${e.data.payer.lastName}`;
+            else {
+              if (member) {
+                if (e.computed.tripBooks)
+                  actionLabel = `ajouter ${e.computed.tripBooks} sorties à ${member.infos.firstname} ${member.infos.lastname}`;
+                else
+                  errorLabel = `impossible de trouver une action à effectuer`;  
+              }
+              else
+                errorLabel = `impossible de trouver le membre ${e.computed.member.firstName} ${e.computed.member.lastName}`;
+            }
           }
 
           return { 
             ...e, 
             computed : { 
-              ...computed,
+              ...e.computed,
               member,
               actionLabel,
               errorLabel,
               readableDate: (new Date(e.data.date)).toLocaleDateString('fr')
             }
           };
-        })
-        .filter(e => !e.computed.isDuplicate);
+        });
         // .sort((a,b) => new Date(b.data.date) - new Date(a.data.date)); // last entries first
     },
     resolvedEntries() {
