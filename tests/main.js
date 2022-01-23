@@ -11,5 +11,5 @@ describe("Main", function () {
   });
 });
 
-import './commonMethods.js';
-import './memberHelper.js';
+//import './commonMethods.js';
+import './helloassoHelper.js';

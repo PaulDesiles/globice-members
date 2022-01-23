@@ -1,7 +1,5 @@
 import { isTripCredited } from './tripsHelper';
 import { ensureIsDate } from './dateHelper';
-import { rawMemberFieldsConverters, normalize } from '../../api/memberCreationHelper';
-import { addCreationDate } from '../../api/commonMethods';
 import { v4 as uuidv4 } from 'uuid';
 
 const pivotMembershipDate = Date.UTC(new Date().getUTCFullYear() - 1, 4, 1,0, 0, 0);
@@ -22,118 +20,6 @@ export function getTripsLeft(memberId, purchases, confirmedTrips) {
 
   return Math.max(0, bought - consumed);
 }
-
-
-// ********* HelloAsso import member helpers *********//
-
-export function getRawFormAnswer(formData, question) {
-  if (!question)
-    return undefined;
-
-  const lowerQuestion = question.toLocaleLowerCase();
-  var answer = formData.customFields
-    .find(field => field.name?.toLocaleLowerCase() === lowerQuestion)
-    ?.answer;
-
-  return typeof answer === "string" ? answer.trim() : answer;
-}
-
-export function searchAndAddValueForKey(container, key, formData, parameters, converters = rawMemberFieldsConverters) {
-  const rawAnswer = getRawFormAnswer(formData, parameters.newMemberForm[key]);
-  if (rawAnswer) {
-    const converter = converters[key];
-    container[key] = converter ? converter(rawAnswer) : rawAnswer;
-  }
-}
-
-export function createMemberFromHelloAssoForm(formData, parameters) {
-  
-  const member = {
-    infos: {
-      firstname: normalize(formData.user.firstName),
-      lastname: normalize(formData.user.lastName)
-    },
-    abilities: {},
-    membership: { 
-      date: new Date()
-    },
-    trips: {
-      purchases: [],
-      confirmedTrips: [],
-      refusedTrips: [],
-    }
-  };
-
-  ['birthdate', 'email', 'phone', 'address', 'postCode', 'city']
-    .forEach(k => searchAndAddValueForKey(member.infos, k, formData, parameters));
-
-  ['boatLicense', 'captain', 'diving', 'photo']
-    .forEach(k => searchAndAddValueForKey(member.abilities, k, formData, parameters));
-
-  searchAndAddValueForKey(member.membership, 'isNewMember', formData, parameters);
-
-  addCreationDate(member);
-
-  return member;
-}
-
-// returns one or multiple computed data based on the raw entry's data
-export function analyseEntry(data, encounteredIds) {
-  if (encounteredIds.includes(data.id))
-    return [{ isDuplicate: true }];
-  
-  encounteredIds.push(data.id);
-  
-  if (data.formType === 'PaymentForm') {
-    let member = {
-      firstName: data.payer.firstName,
-      lastName: data.payer.lastName
-    };
-
-    if (data.formSlug.startsWith('carte-de-5'))
-      return [{ member, tripBooks: 5 }];
-
-    if (data.formSlug.startsWith('carte-de-10'))
-      return [{ member, tripBooks: 10 }];
-  } 
-  else if (data.formType === 'Membership') {
-    return data.items
-      .filter(i => i.type === 'Membership')
-      .map(i => {
-        let tripBooks = 0;
-
-        if (!i.customFields || !i.customFields.length) {
-          return { warning: true };
-        }
-
-        if (i.options) {
-          if (i.options.some(o => o.name?.startsWith('Carte de 5')))
-            tripBooks = 5;
-          else if (i.options.some(o => o.name?.startsWith('Carte de 10')))
-            tripBooks = 10;
-          else if (i.options.some(o => o.name?.toLocaleLowerCase()?.startsWith('carte de sortie')))
-            tripBooks = 5;
-        }
-
-        return {
-          member: { 
-            firstName: i.user.firstName,
-            lastName: i.user.lastName
-          },
-          renewMembership: true,
-          membershipData: i,
-          tripBooks
-        };
-      });
-    ;
-  }
-  else if (data.formType === 'Donation') {
-    // we don't need donations to be shown
-    return [];
-  }
-
-  return [{ warning: true }];
-};
 
 // ********* member init from query arguments *********//
 

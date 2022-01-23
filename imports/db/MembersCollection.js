@@ -15,12 +15,33 @@ const tripSchema = new SimpleSchema({
   date: Date,
   credited: {type: Boolean, optional: true},
   legacy:{type: Boolean, optional: true}
-})
+});
+
+export const memberBase = {
+  infos: Object,
+  "infos.firstname": String,
+  "infos.lastname": String,
+  "infos.birthdate": {type: Date, optional: true},
+  "infos.email": {type: String, optional: true},
+  "infos.phone": {type: String, optional: true},
+  "infos.address": {type: String, optional: true},
+  "infos.postCode": {type: String, optional: true},
+  "infos.city": {type: String, optional: true},
+  
+  abilities: Object,
+  "abilities.boatLicense": {type: String, optional: true},
+  "abilities.captain": {type: String, optional: true},
+  "abilities.diving": {type: String, optional: true},
+  "abilities.photo": {type: String, optional: true},
+  "abilities.comment": {type: String, optional: true},
+};
 
 MembersCollection.schema = new SimpleSchema({
   _schemaVersion: { type: Number, defaultValue: 1 },
   _creationDate: Date,
   _modificationDate: {type: Date, optional: true},
+
+  ...memberBase,
 
   infos: Object,
   "infos.firstname": String,
