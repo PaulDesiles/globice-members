@@ -5,7 +5,7 @@ import { ensureIsAdmin } from './commonMethods';
 import { parseHelloAssoEntries } from '../commonHelpers/helloassoHelper';
 
 Meteor.methods({
-  'parsehelloasso.parsenewentries'() {
+  'parsedhelloasso.parsenewentries'() {
     ensureIsAdmin(this.userId);
 
     var rawEntries = HelloAssoCollection.find({ parsed: false })

@@ -4,7 +4,7 @@
     title="Entrées Hello Asso"
     backLabel="retour à la liste des bénévoles"
     backTarget="/members"
-    :loading="!$subReady.helloasso || !$subReady.members">
+    :loading="!$subReady.parsedhelloasso || !$subReady.members">
     
     <h3><v-icon class="mr-2">mdi-clock-outline</v-icon>Entrées en attente</h3>
     <template v-if="entries && entries.length > 0">
@@ -92,12 +92,12 @@
 import FullPageLayout from '../../components/FullPageLayout.vue';
 
 import { Meteor } from 'meteor/meteor';
-import { HelloAssoCollection } from "../../../db/HelloAssoCollection";
+import { ParsedHelloAssoCollection } from "../../../db/ParsedHelloAssoCollection";
 import { MembersCollection } from "../../../db/MembersCollection";
 import { ParametersCollection } from "../../../db/ParametersCollection";
 import { getMatchingMemberQuery } from '../../../commonHelpers/searchHelper';
 import { serializeAsQueryParameters } from '../../helpers/uriHelper';
-import { analyseEntry, createMemberFromHelloAssoForm } from '../../helpers/memberHelper';
+import { createMemberFromHelloAssoForm } from '../../helpers/memberHelper';
 
 export default {
   components: {
@@ -109,16 +109,16 @@ export default {
 
       let editData = {
         back:'helloasso',
-        helloAssoEntryId: entry.data.id,
-        date: entry.data.date,
-        renewMembership: entry.computed.renewMembership ?? false,
-        tripBooks: entry.computed.tripBooks ?? 0,
+        helloAssoEntryId: entry._id,
+        date: entry.sourceData.data.date,
+        renewMembership: entry.parsedData.renewMembership ?? false,
+        tripBooks: entry.parsedData.tripBooks ?? 0,
       };
 
-      if (entry.computed.renewMembership) { // new or existing member
+      if (entry.parsedData.renewMembership) { // new or existing member
           
           let parsedMember = createMemberFromHelloAssoForm(
-            entry.computed.membershipData,
+            entry.parsedData.membershipData,
             this.parameters
           );
 
@@ -140,7 +140,7 @@ export default {
     resolveEntry(entry) {
       entry.tmp_resolved = true; // triggers animation
       const resolveFunction = () => {
-        Meteor.call('helloasso.resolve', entry.data.id, (error, result) => {
+        Meteor.call('parsedhelloasso.resolve', entry.data.id, (error, result) => {
           if (error) {
             entry.tmp_resolved = false;
             this.$refs.layout.onSaveEnd(error, false);
@@ -150,12 +150,15 @@ export default {
       setTimeout(resolveFunction, 500); // gives time from the animation to be visible
     },
     reopenEntry(entry) {
-      Meteor.call('helloasso.reopen', entry._id);
+      Meteor.call('parsedhelloasso.reopen', entry._id);
     }
+  },
+  mounted: function () {
+    Meteor.call('parsedhelloasso.parsenewentries');
   },
   meteor: {
     $subscribe: {
-      'helloasso': [],
+      'parsedhelloasso': [],
       'members': [],
       'parameters': []
     },
@@ -163,56 +166,55 @@ export default {
       return ParametersCollection.findOne({});
     },
     entries() {
-      let encounteredIds = [];
-
-      return HelloAssoCollection.find({ $or: [{ resolved: false }, { resolved: undefined }] })
+      return ParsedHelloAssoCollection.find({ resolved: false })
         .fetch()
-        .map(e => {
-          // If multiple membership are in a single entry we split it in multiple elements
-          return analyseEntry(e.data, encounteredIds)
-            .map(computed => ({
-              ...e,
-              computed
-            }));
-        })
-        .flat()
-        .filter(e => !e.computed.isDuplicate)
         .map(e => {
           let actionLabel = '';
           let errorLabel = '';
           let member = undefined;
 
-          if (e.computed.warning) {
+          if (!e.parsedData) {
               errorLabel = "les données ne correspondent pas au format attendu";
           } else {
-              let query = getMatchingMemberQuery(e.computed.member.firstName, e.computed.member.lastName);
-              member = MembersCollection.findOne(query);
+            let memberInfos = {
+              firstname: e.parsedData.memberInfos.firstName,
+              lastname: e.parsedData.memberInfos.lastName
+            };
 
-            if (e.computed.renewMembership) {
+            let query = getMatchingMemberQuery(memberInfos.firstName, memberInfos.lastName);
+            member = MembersCollection.findOne(query);
+
+            if (member) {
+              memberInfos = {
+                firstname: member.infos.firstname,
+                lastname: member.infos.lastname
+              };
+            }
+
+            if (e.parsedData.renewMembership) {
               if (member)
-                actionLabel = `renouveler l'adhésion de ${member.infos.firstname} ${member.infos.lastname}`;
+                actionLabel = `renouveler l'adhésion de ${memberInfos.firstname} ${memberInfos.lastname}`;
               else
-                actionLabel = `ajouter le membre ${e.computed.member.firstName} ${e.computed.member.lastName}`;
+                actionLabel = `ajouter le membre ${memberInfos.firstname} ${memberInfos.lastname}`;
 
-              if (e.computed.tripBooks)
-                actionLabel += ` + ${e.computed.tripBooks} sorties`;
+              if (e.parsedData.tripBooks)
+                actionLabel += ` + ${e.parsedData.tripBooks} sorties`;
             }
             else {
               if (member) {
-                if (e.computed.tripBooks)
-                  actionLabel = `ajouter ${e.computed.tripBooks} sorties à ${member.infos.firstname} ${member.infos.lastname}`;
+                if (e.parsedData.tripBooks)
+                  actionLabel = `ajouter ${e.parsedData.tripBooks} sorties à ${memberInfos.firstname} ${memberInfos.lastname}`;
                 else
                   errorLabel = `impossible de trouver une action à effectuer`;  
               }
               else
-                errorLabel = `impossible de trouver le membre ${e.computed.member.firstName} ${e.computed.member.lastName}`;
+                errorLabel = `impossible de trouver le membre ${memberInfos.firstname} ${memberInfos.lastname}`;
             }
           }
 
           return { 
             ...e, 
             computed : { 
-              ...e.computed,
               member,
               actionLabel,
               errorLabel,
@@ -220,10 +222,9 @@ export default {
             }
           };
         });
-        // .sort((a,b) => new Date(b.data.date) - new Date(a.data.date)); // last entries first
     },
     resolvedEntries() {
-      return HelloAssoCollection.find({ resolved: true })
+      return ParsedHelloAssoCollection.find({ resolved: true })
         .fetch()
         .map(e => ({...e, readableDate: (new Date(e.data.date)).toLocaleDateString('fr') }));
     }

@@ -12,9 +12,9 @@ import '/imports/api/parametersPublications';
 import '/imports/api/parametersMethods';
 import { PublicParametersCollection } from '../imports/db/PublicParametersCollection.js';
 import '/imports/api/publicParametersPublications';
-import { HelloAssoCollection } from '../imports/db/HelloAssoCollection.js';
-import '/imports/api/helloAssoPublications';
-import '/imports/api/helloAssoMethods';
+import { ParsedHelloAssoCollection } from '../imports/db/ParsedHelloAssoCollection.js';
+import '/imports/api/parsedHelloAssoPublications';
+import '/imports/api/parsedHelloAssoMethods';
 import '/imports/api/rolesAssignmentsPublications';
 
 import { addSearchValues } from './membersSeed.js';

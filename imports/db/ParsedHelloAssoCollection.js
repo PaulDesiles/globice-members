@@ -2,7 +2,7 @@ import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 import { memberBase } from './MembersCollection';
 
-export const ParsedHelloAssoCollection = new Mongo.Collection('helloasso');
+export const ParsedHelloAssoCollection = new Mongo.Collection('parsedhelloasso');
 
 
 const MemberData = new SimpleSchema(memberBase);
@@ -22,4 +22,4 @@ ParsedHelloAssoCollection.schema = new SimpleSchema({
   
 });
 
-ParsedHelloAssoCollection.attachSchema(HelloAssoCollection.schema);
+ParsedHelloAssoCollection.attachSchema(ParsedHelloAssoCollection.schema);
