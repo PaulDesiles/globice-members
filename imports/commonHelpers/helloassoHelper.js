@@ -62,8 +62,8 @@ export function analyseEntry(data, encounteredIds, parameters) {
   
   if (data.formType === 'PaymentForm') {
     let memberInfos = {
-      firstName: data.payer.firstName,
-      lastName: data.payer.lastName
+      firstName: data.payer.firstName.trim(),
+      lastName: data.payer.lastName.trim()
     };
 
     if (data.formSlug.startsWith('carte-de-5'))
@@ -95,8 +95,8 @@ export function analyseEntry(data, encounteredIds, parameters) {
 
         return {
           memberInfos: { 
-            firstName: i.user.firstName,
-            lastName: i.user.lastName
+            firstName: i.user.firstName.trim(),
+            lastName: i.user.lastName.trim()
           },
           renewMembership: true,
           memberData,
@@ -117,15 +117,17 @@ export function parseHelloAssoEntries(rawEntries, parameters) {
   let encounteredIds = [];
 
   return rawEntries
-    .map(e => ({
-        sourceData: e,
-        parsedData : analyseEntry(e, encounteredIds, parameters)
-    }))
+    .map(e => {
+      var parsedEntries = analyseEntry(e.data, encounteredIds, parameters);
+
+      return parsedEntries
+        .map(parsed => ({
+          sourceData: e,
+          parsedData : parsed.warning ? undefined : parsed,
+          date: e.data.date,
+          resolved: false
+        }));
+    })
     .flat()
-    .filter(e => !e.parsedData.isDuplicate)
-    .map(e => ({
-      ...e,
-      parsedData: e.parsedData.warning ? undefined : e.parsedData,
-      resolved: false
-    }));
+    .filter(e => !e.parsedData.isDuplicate);
 }

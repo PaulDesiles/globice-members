@@ -19,14 +19,14 @@
               <span>{{ entry.computed.readableDate }}</span>
               <span> - </span>
 
-              <span v-if="entry.computed.renewMembership">
+              <span v-if="entry.parsedData.renewMembership">
                 Adhésion
               </span>
-              <span v-if="entry.computed.renewMembership && entry.computed.tripBooks">
+              <span v-if="entry.parsedData.renewMembership && entry.parsedData.tripBooks">
                  et 
               </span>
-              <span v-if="entry.computed.tripBooks">
-                {{ entry.computed.tripBooks }} sorties
+              <span v-if="entry.parsedData.tripBooks">
+                {{ entry.parsedData.tripBooks }} sorties
               </span>
             </span>
           </v-expansion-panel-header>
@@ -97,7 +97,6 @@ import { MembersCollection } from "../../../db/MembersCollection";
 import { ParametersCollection } from "../../../db/ParametersCollection";
 import { getMatchingMemberQuery } from '../../../commonHelpers/searchHelper';
 import { serializeAsQueryParameters } from '../../helpers/uriHelper';
-import { createMemberFromHelloAssoForm } from '../../helpers/memberHelper';
 
 export default {
   components: {
@@ -117,17 +116,12 @@ export default {
 
       if (entry.parsedData.renewMembership) { // new or existing member
           
-          let parsedMember = createMemberFromHelloAssoForm(
-            entry.parsedData.membershipData,
-            this.parameters
-          );
-
           // only transmit abilities section if it's a new member
-          let abilities = entry.computed.member ? {} : parsedMember.abilities;
+          let abilities = entry.computed.member ? {} : entry.parsedData.memberData.abilities;
           
           editData = {
             ...editData,
-            ...parsedMember.infos,
+            ...entry.parsedData.memberData.infos,
             ...abilities
           };
       }
@@ -140,7 +134,7 @@ export default {
     resolveEntry(entry) {
       entry.tmp_resolved = true; // triggers animation
       const resolveFunction = () => {
-        Meteor.call('parsedhelloasso.resolve', entry.data.id, (error, result) => {
+        Meteor.call('parsedhelloasso.resolve', entry._id, (error, result) => {
           if (error) {
             entry.tmp_resolved = false;
             this.$refs.layout.onSaveEnd(error, false);
@@ -181,10 +175,11 @@ export default {
               lastname: e.parsedData.memberInfos.lastName
             };
 
-            let query = getMatchingMemberQuery(memberInfos.firstName, memberInfos.lastName);
+            let query = getMatchingMemberQuery(memberInfos.firstname, memberInfos.lastname);
             member = MembersCollection.findOne(query);
 
             if (member) {
+              // update infos with previous names
               memberInfos = {
                 firstname: member.infos.firstname,
                 lastname: member.infos.lastname
@@ -218,7 +213,7 @@ export default {
               member,
               actionLabel,
               errorLabel,
-              readableDate: (new Date(e.data.date)).toLocaleDateString('fr')
+              readableDate: (new Date(e.date)).toLocaleDateString('fr')
             }
           };
         });
@@ -226,7 +221,7 @@ export default {
     resolvedEntries() {
       return ParsedHelloAssoCollection.find({ resolved: true })
         .fetch()
-        .map(e => ({...e, readableDate: (new Date(e.data.date)).toLocaleDateString('fr') }));
+        .map(e => ({...e, readableDate: (new Date(e.date)).toLocaleDateString('fr') }));
     }
   }
 };
