@@ -167,7 +167,7 @@ export default {
           let errorLabel = '';
           let member = undefined;
 
-          if (!e.parsedData) {
+          if (!e.parsedData || e.parsedData.warning) {
               errorLabel = "les données ne correspondent pas au format attendu";
           } else {
             let memberInfos = {

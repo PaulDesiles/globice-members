@@ -116,6 +116,8 @@ export function analyseEntry(data, encounteredIds, parameters) {
 export function parseHelloAssoEntries(rawEntries, parameters) {
   let encounteredIds = [];
 
+  console.log(`${rawEntries.length} raw entries to parse`);
+
   return rawEntries
     .map(e => {
       var parsedEntries = analyseEntry(e.data, encounteredIds, parameters);
@@ -123,11 +125,11 @@ export function parseHelloAssoEntries(rawEntries, parameters) {
       return parsedEntries
         .map(parsed => ({
           sourceData: e,
-          parsedData : parsed.warning ? undefined : parsed,
+          parsedData : parsed,
           date: e.data.date,
           resolved: false
         }));
     })
     .flat()
-    .filter(e => !e.parsedData.isDuplicate);
+    .filter(e => !!e.parsedData && !e.parsedData.isDuplicate);
 }
