@@ -149,6 +149,7 @@ export default {
   },
   mounted: function () {
     Meteor.call('parsedhelloasso.parsenewentries');
+    Meteor.call('parsedhelloasso.cleanup');
   },
   meteor: {
     $subscribe: {

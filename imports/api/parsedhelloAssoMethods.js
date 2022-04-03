@@ -56,4 +56,25 @@ Meteor.methods({
       $set: { resolved: false }
     });
   },
+
+  'parsedhelloasso.cleanup'() {
+    ensureIsAdmin(this.userId);
+
+    var d = new Date();
+    d.setFullYear(d.getFullYear() - 1);
+    var maxDate = d.toISOString();
+
+    console.log(`clean HelloAsso and resolved ParsedHelloAsso entries older than ${maxDate}`);
+
+    HelloAssoCollection.remove({
+      'data.date': { $lt: maxDate }
+    });
+
+    ParsedHelloAssoCollection.remove({
+      $and: [
+        { resolved: true },
+        { date: { $lt: maxDate } }
+      ]
+    });
+  },
 });

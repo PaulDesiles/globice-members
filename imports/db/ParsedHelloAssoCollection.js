@@ -10,6 +10,7 @@ const MemberData = new SimpleSchema(memberBase);
 ParsedHelloAssoCollection.schema = new SimpleSchema({
   _id: String,
   sourceData: Object,
+  date: Date,
   resolved: Boolean,
 
   parsedData: { type: Object, optional: true },
