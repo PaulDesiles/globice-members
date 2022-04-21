@@ -1,5 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
+// import fs from 'fs';
 
 import { MembersCollection } from '/imports/db/MembersCollection';
 import '/imports/api/membersPublications';
@@ -12,15 +13,16 @@ import '/imports/api/parametersPublications';
 import '/imports/api/parametersMethods';
 import { PublicParametersCollection } from '../imports/db/PublicParametersCollection.js';
 import '/imports/api/publicParametersPublications';
-import { HelloAssoCollection } from '../imports/db/HelloAssoCollection.js';
-import '/imports/api/helloAssoPublications';
-import '/imports/api/helloAssoMethods';
+import { ParsedHelloAssoCollection } from '../imports/db/ParsedHelloAssoCollection.js';
+import '/imports/api/parsedHelloAssoPublications';
+import '/imports/api/parsedHelloAssoMethods';
 import '/imports/api/rolesAssignmentsPublications';
 
 import { addSearchValues } from './membersSeed.js';
 import { seedAccounts } from './accountsSeed.js';
 
 import { setApiListeners } from '/imports/api/helloAsso';
+import { HelloAssoCollection } from '../imports/db/HelloAssoCollection.js';
 
 Meteor.startup(() => {
   setApiListeners();
@@ -32,6 +34,24 @@ Meteor.startup(() => {
   if (!ParametersCollection.findOne({})) {
     initParametersCollection();
   }
+
+  // HelloAssoCollection.remove({});
+  // const lines = fs.readFileSync('D:\\Docs_Globice\\helloAssoTestData.json', 'utf8').split('\n');
+  
+  // lines.forEach((line, index) => {
+  //     console.log(`${index + 1} / ${lines.length}`);
+  //     line = line.trim();
+  //     if (line) {
+  //       var obj = JSON.parse(line);
+  //       if (obj) {
+  //         HelloAssoCollection.insert(
+  //           obj,
+  //           { bypassCollection2: true }
+  //         );
+  //       }
+  //     }
+  //   });
+  
 
   // if (!PublicParametersCollection.findOne({})) {
   //   PublicParametersCollection.insert({

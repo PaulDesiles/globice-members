@@ -1,7 +1,7 @@
 import assert from "assert";
-import * as helper from '../imports/ui/helpers/memberHelper';
+import * as helper from '../imports/commonHelpers/helloassoHelper';
 
-var sampleFormData = {
+let sampleFormData = {
   customFields: [
     { name: 'Field 1', answer: ' answer 1  ' },
     { name: 'field 2', answer: 'Answer 2' },
@@ -11,7 +11,7 @@ var sampleFormData = {
   ]
 };
 
-describe("MemberHelper.getRawFormAnswer", function () {
+describe("helloasoHelper.getRawFormAnswer", function () {
   it("finds existing answer", function () {
     assert.strictEqual(helper.getRawFormAnswer(sampleFormData, 'field 2'), 'Answer 2');
   });
@@ -38,7 +38,7 @@ describe("MemberHelper.getRawFormAnswer", function () {
 });
 
 
-describe("MemberHelper.searchAndAddValueForKey", function () {
+describe("helloasoHelper.searchAndAddValueForKey", function () {
   it("finds existing answer", function () {
     let container = {};
     helper.searchAndAddValueForKey(
@@ -105,120 +105,156 @@ describe("MemberHelper.searchAndAddValueForKey", function () {
   });
 });
 
-// describe("memberHelper.createMemberFromHelloAssoForm", function () {
-//   it("", function () {
 
-//   });
-// });
+let parameters = {
+  newMemberForm: {
+    email: 'someKeyMeaningEmail'
+  }
+};
 
-describe("memberHelper.analyseEntry - edgeCases", function () {
+describe("helloasoHelper.analyseEntry - edgeCases", function () {
   it("finds duplicates", function () {
-    let computed = helper.analyseEntry({ id: '123'}, [ '123' ]);
+    let computed = helper.analyseEntry({ id: '123'}, [ '123' ], parameters);
     assert.equal(computed.length, 1);
     assert.equal(computed[0].isDuplicate, true);
   });
 
   it("exclude donations", function () {
-    let computed = helper.analyseEntry({ id: '123', formType: 'Donation' }, []);
+    let computed = helper.analyseEntry({ id: '123', formType: 'Donation' }, [], parameters);
     assert.deepEqual(computed, []);
   });
 
   it("alert when type is unknown", function () {
-    let computed = helper.analyseEntry({ id: '123', formType: 'SomeUnkwonType' }, []);
+    let computed = helper.analyseEntry({ id: '123', formType: 'SomeUnkwonType' }, [], parameters);
     assert.equal(computed.length, 1);
     assert.equal(computed[0].warning, true);
   });
 });
 
-describe("memberHelper.analyseEntry - tripbooks", function () {
-  it("recognizes tripbooks of 5", function () {
-    let computed = helper.analyseEntry({ 
-      id: '123', 
-      formType: 'PaymentForm' ,
-      payer: {
-        firstName: 'first',
-        lastName: 'last'
+
+describe("helloassoHelper.createMemberFromHelloAssoForm", function () {
+  it("finds answer inside customFields", function () {
+    let member = helper.createMemberFromHelloAssoForm(
+      { 
+        user: { firstName: 'first', lastName: 'last' },
+        customFields: [
+          { name: 'someKeyMeaningEmail', answer: 'email-value' }
+        ]
       },
-      formSlug: 'carte-de-5'
-    }, []);
+      parameters
+    );
+
+    assert.equal(member.infos.email, 'email-value');
+  });
+});
+
+describe("helloasoHelper.analyseEntry - tripbooks", function () {
+  it("recognizes tripbooks of 5", function () {
+    let computed = helper.analyseEntry(
+      { 
+        id: '123', 
+        formType: 'PaymentForm' ,
+        payer: {
+          firstName: 'first',
+          lastName: 'last'
+        },
+        formSlug: 'carte-de-5'
+      },
+      [],
+      parameters
+    );
 
     assert.equal(computed.length, 1);
-    assert.deepEqual(computed[0].member, { firstName: 'first', lastName: 'last' });
+    assert.deepEqual(computed[0].memberInfos, { firstName: 'first', lastName: 'last' });
     assert.equal(computed[0].tripBooks, 5);
   });
   
   it("recognizes tripbooks of 10", function () {
-    let computed = helper.analyseEntry({ 
-      id: '123', 
-      formType: 'PaymentForm' ,
-      payer: {
-        firstName: 'first',
-        lastName: 'last'
+    let computed = helper.analyseEntry(
+      { 
+        id: '123', 
+        formType: 'PaymentForm' ,
+        payer: {
+          firstName: 'first',
+          lastName: 'last'
+        },
+        formSlug: 'carte-de-10'
       },
-      formSlug: 'carte-de-10'
-    }, []);
+      [],
+      parameters
+    );
 
     assert.equal(computed.length, 1);
-    assert.deepEqual(computed[0].member, { firstName: 'first', lastName: 'last' });
+    assert.deepEqual(computed[0].memberInfos, { firstName: 'first', lastName: 'last' });
     assert.equal(computed[0].tripBooks, 10);
   });
 
   it("rejects tripbooks of unknown size", function () {
-    let computed = helper.analyseEntry({ 
-      id: '123', 
-      formType: 'PaymentForm' ,
-      payer: {
-        firstName: 'first',
-        lastName: 'last'
+    let computed = helper.analyseEntry(
+      { 
+        id: '123', 
+        formType: 'PaymentForm' ,
+        payer: {
+          firstName: 'first',
+          lastName: 'last'
+        },
+        formSlug: 'carte-unknown'
       },
-      formSlug: 'carte-unknown'
-    }, []);
+      [],
+      parameters
+    );
 
     assert.equal(computed.length, 1);
     assert.equal(computed[0].warning, true);
   });
 });
 
-var sampleItem1 = {
+let sampleItem1 = {
   type: 'Membership',
   user: {
-    firstName: 'first',
-    lastName: 'last'
+    firstName: 'first1',
+    lastName: 'last1'
   },
-  customFields: [ { someData: 'data' }]
+  customFields: [ { name: 'someKeyMeaningEmail', answer: 'email-value1' } ]
 };
 
-var sampleItem2 = {
+let sampleItem2 = {
   type: 'Membership',
   user: {
     firstName: 'first2',
     lastName: 'last2'
   },
-  customFields: [ { someData: 'data' }]
+  customFields: [ { name: 'someKeyMeaningEmail', answer: 'email-value2' } ]
 };
 
-var sampleItem3 = {
+let sampleItem3 = {
   type: 'Membership',
   user: {
     firstName: 'first3',
     lastName: 'last3'
   },
-  customFields: [ { someData: 'data' }]
+  customFields: [ { name: 'someKeyMeaningEmail', answer: 'email-value3' } ]
 };
 
-describe("memberHelper.analyseEntry - membership", function () {
+describe("helloasoHelper.analyseEntry - membership", function () {
   it("recognizes membership", function () {
-    let computed = helper.analyseEntry({ 
-      id: '123', 
-      formType: 'Membership',
-      items: [ sampleItem1 ]
-    }, []);
+    let computed = helper.analyseEntry(
+      { 
+        id: '123', 
+        formType: 'Membership',
+        items: [ sampleItem1 ]
+      },
+      [],
+      parameters
+    );
 
     assert.equal(computed.length, 1);
-    assert.deepEqual(computed[0].member, { firstName: 'first', lastName: 'last' });
+    assert.deepEqual(computed[0].memberInfos, { firstName: 'first1', lastName: 'last1' });
     assert.equal(computed[0].renewMembership, true);
     assert.equal(computed[0].tripBooks, 0);
-    assert.equal(computed[0].membershipData, sampleItem1);
+    assert.equal(computed[0].memberData.infos.firstname, 'First1');
+    assert.equal(computed[0].memberData.infos.lastname, 'Last1');
+    assert.equal(computed[0].memberData.infos.email, 'email-value1');
   });
 
   it("recognizes multiple memberships", function () {
@@ -227,16 +263,17 @@ describe("memberHelper.analyseEntry - membership", function () {
       formType: 'Membership',
       items: [ sampleItem1, sampleItem2, sampleItem3 ]
     };
-    let computed = helper.analyseEntry(data, []);
+    let computed = helper.analyseEntry(data, [], parameters);
 
     assert.equal(computed.length, 3);
-    assert.deepEqual(computed[0].member, { firstName: 'first', lastName: 'last' });
-    assert.deepEqual(computed[1].member, { firstName: 'first2', lastName: 'last2' });
-    assert.deepEqual(computed[2].member, { firstName: 'first3', lastName: 'last3' });
     computed.forEach((x, i) => {
+      var n = i + 1;
+      assert.deepEqual(x.memberInfos, { firstName: 'first' + n, lastName: 'last' + n });
       assert.equal(x.renewMembership, true);
       assert.equal(x.tripBooks, 0);
-      assert.equal(x.membershipData, data.items[i]);
+      assert.equal(x.memberData.infos.firstname, 'First' + n);
+      assert.equal(x.memberData.infos.lastname, 'Last' + n);
+      assert.equal(x.memberData.infos.email, 'email-value' + n);
     });
   });
 
@@ -246,15 +283,18 @@ describe("memberHelper.analyseEntry - membership", function () {
       formType: 'Membership',
       items: [ sampleItem1, sampleItem2, { type: 'Something' } ]
     };
-    let computed = helper.analyseEntry(data, []);
+    let computed = helper.analyseEntry(data, [], parameters);
 
     assert.equal(computed.length, 2);
-    assert.deepEqual(computed[0].member, { firstName: 'first', lastName: 'last' });
-    assert.deepEqual(computed[1].member, { firstName: 'first2', lastName: 'last2' });
+    assert.deepEqual(computed[0].memberInfos, { firstName: 'first1', lastName: 'last1' });
+    assert.deepEqual(computed[1].memberInfos, { firstName: 'first2', lastName: 'last2' });
     computed.forEach((x, i) => {
+      var n = i + 1;
       assert.equal(x.renewMembership, true);
       assert.equal(x.tripBooks, 0);
-      assert.equal(x.membershipData, data.items[i]);
+      assert.equal(x.memberData.infos.firstname, 'First' + n);
+      assert.equal(x.memberData.infos.lastname, 'Last' + n);
+      assert.equal(x.memberData.infos.email, 'email-value' + n);
     });
   });
   
@@ -264,7 +304,7 @@ describe("memberHelper.analyseEntry - membership", function () {
       formType: 'Membership',
       items: [ {...sampleItem1, customFields: undefined }, {...sampleItem2, customFields: [] } ]
     };
-    let computed = helper.analyseEntry(data, []);
+    let computed = helper.analyseEntry(data, [], parameters);
 
     assert.equal(computed.length, 2);
     assert.equal(computed[0].warning, true);
@@ -281,18 +321,26 @@ describe("memberHelper.analyseEntry - membership", function () {
         {...sampleItem3, options: [ { name: 'Carte de 10' }] },
       ]
     };
-    let computed = helper.analyseEntry(data, []);
+    let computed = helper.analyseEntry(data, [], parameters);
 
     assert.equal(computed.length, 3);
-    assert.deepEqual(computed[0].member, { firstName: 'first', lastName: 'last' });
-    assert.deepEqual(computed[1].member, { firstName: 'first2', lastName: 'last2' });
-    assert.deepEqual(computed[2].member, { firstName: 'first3', lastName: 'last3' });
     computed.forEach((x, i) => {
+      var n = i + 1;
+      assert.deepEqual(x.memberInfos, { firstName: 'first' + n, lastName: 'last' + n });
       assert.equal(x.renewMembership, true);
-      assert.equal(x.membershipData, data.items[i]);
+      assert.equal(x.memberData.infos.firstname, 'First' + n);
+      assert.equal(x.memberData.infos.lastname, 'Last' + n);
+      assert.equal(x.memberData.infos.email, 'email-value' + n);
     });
     assert.equal(computed[0].tripBooks, 0);
     assert.equal(computed[1].tripBooks, 5);
     assert.equal(computed[2].tripBooks, 10);
   });
+  
 });
+
+
+
+// describe("helloassoHelper.parseHelloAssoEntries", function () {
+//   it("")
+// });

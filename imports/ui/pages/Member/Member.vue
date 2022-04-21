@@ -391,7 +391,7 @@ export default {
           
           const helloAssoEntryId = this.editData?.helloAssoEntryId;
           if (helloAssoEntryId && this.query.back) {
-            Meteor.call('helloasso.resolve', helloAssoEntryId);
+            Meteor.call('parsedhelloasso.resolve', helloAssoEntryId);
             this.$router.push({ query: { back: this.query.back }})
           }
         }
