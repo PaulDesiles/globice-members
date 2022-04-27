@@ -6,16 +6,6 @@
     <template v-slot:header-right>
       <div>
         <v-btn
-          color="primary"
-          elevation="5"
-          rounded
-          @click="createMember"
-        >
-          <v-icon left>mdi-account-plus</v-icon>
-          ajouter un bénévole
-        </v-btn>
-
-        <v-btn
           v-if="canAcccessHelloAssoEntries"
           color="primary"
           elevation="5"
@@ -25,6 +15,16 @@
         >
           <v-icon left>mdi-share-variant</v-icon>
           données HelloAsso
+        </v-btn>
+
+        <v-btn
+          color="primary"
+          elevation="5"
+          rounded
+          @click="createMember"
+        >
+          <v-icon left>mdi-account-plus</v-icon>
+          ajouter un bénévole
         </v-btn>
       </div>
     </template>
