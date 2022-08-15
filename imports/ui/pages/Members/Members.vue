@@ -11,7 +11,7 @@
           elevation="5"
           rounded
           @click="goToApiDashboard"
-          class="ml-2"
+          class="mr-2"
         >
           <v-icon left>mdi-share-variant</v-icon>
           données HelloAsso
