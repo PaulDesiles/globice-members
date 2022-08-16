@@ -2,6 +2,7 @@ import { Mongo } from 'meteor/mongo';
 import SimpleSchema from 'simpl-schema';
 
 export const TripsCollection = new Mongo.Collection('trips');
+export const maxApplicantNote = 5;
 
 const applicantSchema = new SimpleSchema({
   memberId: { type: String, regEx: SimpleSchema.RegEx.Id },
@@ -10,11 +11,12 @@ const applicantSchema = new SimpleSchema({
   assignedRole: { type: String, optional: true },
   onboard: { type: Boolean, optional: true },
   credited: { type: Boolean, optional: true },
-  comment: { type: String, optional: true }
+  comment: { type: String, optional: true },
+  note: { type: Number, optional: true },
 });
 
 TripsCollection.schema = new SimpleSchema({
-  _schemaVersion: { type: Number, defaultValue: 1 },
+  _schemaVersion: { type: Number, defaultValue: 1.1 },
   _creationDate: Date,
   _modificationDate: {type: Date, optional: true},
 

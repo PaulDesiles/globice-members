@@ -83,12 +83,13 @@
             >
               <thead>
                 <tr>
-                  <th class="text-left" :style="{ width: '25%' }">Nom</th>
-                  <th class="text-left" :style="{ width: '15%' }">Rôle</th>
+                  <th class="text-left" :style="{ width: '22%' }">Nom</th>
+                  <th class="text-left" :style="{ width: '10%' }">Rôle</th>
 
                   <template v-if="!newTrip">
-                    <th class="text-left" :style="{ width: '10%' }">Présent</th>
-                    <th class="text-left" :style="{ width: '10%' }">Créditer la sortie</th>
+                    <th class="text-left" :style="{ width: '6%' }">Présent</th>
+                    <th class="text-left" :style="{ width: '11%' }">Débiter la sortie</th>
+                    <th class="text-left" :style="{ width: '15%' }">Notation</th>
                     <th class="text-left">Commentaire</th>
                   </template>
                 </tr>
@@ -107,6 +108,16 @@
                     </td>
                     <td>
                       <v-switch v-model="applicant.credited" inset />
+                    </td>
+                    <td>
+                      <v-select
+                        label=""
+                        v-model="applicant.note" 
+                        :items="availableNotes"
+                        outlined
+                        dense
+                        hide-details="auto"
+                      />
                     </td>
                     <td>
                       <v-text-field
@@ -241,11 +252,17 @@ import CrewEditor from './CrewEditor.vue';
 import MailContent from './MailContent.vue';
 
 import { Meteor } from 'meteor/meteor';
-import { TripsCollection } from "../../../db/TripsCollection";
+import { TripsCollection, maxApplicantNote } from "../../../db/TripsCollection";
 import { ParametersCollection } from "../../../db/ParametersCollection";
 import { MembersCollection } from "../../../db/MembersCollection";
 import { formatDate } from '../../helpers/dateHelper';
 import { getAllProperties, getDelta } from '../../helpers/objectHelper';
+
+const availableNotes = Array(maxApplicantNote + 1).fill().map((_, i) => 
+  !!i ?
+    { text: `${i} ⭐`, value: i }
+    : { text: "?", value: undefined }
+);
 
 export default {
   components: {
@@ -308,6 +325,9 @@ export default {
     canSave() {
       return this.hasUnsavedChanges && this.mandatoryDataFilled;
     },
+    availableNotes() {
+      return availableNotes;
+    }
   },
   methods: {
     handleSubmit(event) {

@@ -15,11 +15,12 @@
     >
       <thead>
         <tr>
-          <th class="text-left" :style="{ width: '20%' }">Date</th>
+          <th class="text-left" :style="{ width: '10%' }">Date</th>
           <th class="text-left" :style="{ width: '20%' }">Port</th>
           <template v-if="isConfirmedList">
             <th class="text-left" :style="{ width: '10%' }">Présent</th>
             <th class="text-left" :style="{ width: '10%' }">Crédité</th>
+            <th class="text-left" :style="{ width: '10%' }">Notation</th>
             <th class="text-left">Commentaire sur le bénévole</th>
           </template>
           <th class="text-left" :style="{ width: '10%' }">Lien</th>
@@ -49,6 +50,7 @@
               <td>
                 <v-checkbox :input-value="getApplicant(trip).credited" value disabled />
               </td>
+              <td class="note">{{ formatNote(getApplicant(trip).note) }}</td>
               <td>{{ getApplicant(trip).comment }}</td>
             </template>
             <td>
@@ -77,6 +79,7 @@
 <script>
 import { formatDate } from '../../helpers/dateHelper';
 import { getLastXMonthsCount } from '../../helpers/tripsHelper';
+import { maxApplicantNote } from "../../../db/TripsCollection";
 
 export default {
   props: {
@@ -105,6 +108,20 @@ export default {
       const adjectiveSingular = this.isConfirmedList ? "effectuée" : "refusée";
       return `${count} sortie${suffix} ${adjectiveSingular}${suffix}`;
     },
+    formatNote(x) {
+      if (!x) return '-';
+
+      return Array(x).fill('★')
+        .concat(Array(Math.max(0, maxApplicantNote - x)).fill('☆'))
+        .join('');
+    }
   }
 }
 </script>
+
+<style scoped>
+.v-data-table > .v-data-table__wrapper > table > tbody > tr > td.note {
+  color: #e0ab0f;
+  font-size: 1.4rem;
+}
+</style>
