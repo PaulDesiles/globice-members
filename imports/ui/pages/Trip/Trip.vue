@@ -261,7 +261,7 @@ import { getAllProperties, getDelta } from '../../helpers/objectHelper';
 const availableNotes = Array(maxApplicantNote + 1).fill().map((_, i) => 
   !!i ?
     { text: `${i} ⭐`, value: i }
-    : { text: "?", value: undefined }
+    : { text: "?", value: 0 }
 );
 
 export default {
