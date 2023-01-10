@@ -215,7 +215,7 @@
           <v-row>
             <v-col>
               <v-textarea
-                label="Alertes éventuelles Globice"
+                label="Matériel Globice utilisé (avec numéro d'identification si possible)"
                 v-model="trip.alerts" 
                 outlined
                 hide-details="auto"
