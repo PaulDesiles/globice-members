@@ -89,8 +89,8 @@
                   <template v-if="!newTrip">
                     <th class="text-left" :style="{ width: '6%' }">Présent</th>
                     <th class="text-left" :style="{ width: '11%' }">Débiter la sortie</th>
-                    <th class="text-left" :style="{ width: '15%' }">Notation</th>
-                    <th class="text-left">Commentaire</th>
+                    <th class="text-left" :style="{ width: '15%' }">Adéquation compétence/mission</th>
+                    <!-- <th class="text-left">Commentaire</th> -->
                   </template>
                 </tr>
               </thead>
@@ -119,7 +119,7 @@
                         hide-details="auto"
                       />
                     </td>
-                    <td>
+                    <!-- <td>
                       <v-text-field
                         v-model="applicant.comment"
                         solo
@@ -128,7 +128,7 @@
                         outlined
                         hide-details="auto"
                       />
-                    </td>
+                    </td> -->
                   </template>
                 </tr>
               </tbody>
