@@ -20,8 +20,8 @@
           <template v-if="isConfirmedList">
             <th class="text-left" :style="{ width: '10%' }">Présent</th>
             <th class="text-left" :style="{ width: '10%' }">Crédité</th>
-            <th class="text-left" :style="{ width: '10%' }">Notation</th>
-            <th class="text-left">Commentaire sur le bénévole</th>
+            <th class="text-left" :style="{ width: '10%' }">Adéquation compétence/mission</th>
+            <!-- <th class="text-left">Commentaire sur le bénévole</th> -->
           </template>
           <th class="text-left" :style="{ width: '10%' }">Lien</th>
         </tr>
@@ -51,7 +51,7 @@
                 <v-checkbox :input-value="getApplicant(trip).credited" value disabled />
               </td>
               <td class="note">{{ formatNote(getApplicant(trip).note) }}</td>
-              <td>{{ getApplicant(trip).comment }}</td>
+              <!-- <td>{{ getApplicant(trip).comment }}</td> -->
             </template>
             <td>
               <v-tooltip bottom>
