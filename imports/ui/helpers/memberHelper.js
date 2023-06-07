@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 const pivotMembershipDate = Date.UTC(new Date().getUTCFullYear() - 1, 4, 1,0, 0, 0);
 
 export function isMembershipUpToDate(date) {
-  return ensureIsDate(date) > pivotMembershipDate;
+  return ensureIsDate(date).getTime() > pivotMembershipDate;
 }
 
 export function getTotalTripsBought(purchases) {
