@@ -71,6 +71,12 @@ export function analyseEntry(data, encounteredIds, parameters) {
 
     if (data.formSlug.startsWith('carte-de-10'))
       return [{ memberInfos, tripBooks: 10 }];
+
+    if (data.formSlug.startsWith('carte'))
+      return [{ warning: true }] // we don't know this kind of trip card
+
+    // must be another buyable item (eg. t-shirt)
+    return [];
   } 
   else if (data.formType === 'Membership') {
     return data.items
