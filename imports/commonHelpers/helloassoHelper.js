@@ -115,6 +115,10 @@ export function analyseEntry(data, encounteredIds, parameters) {
     // we don't need donations to be shown
     return [];
   }
+  else if (data.formType === 'Shop') {
+    // we don't need shop items to be shown
+    return [];
+  }
 
   return [{ warning: true }];
 };
