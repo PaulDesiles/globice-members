@@ -29,5 +29,8 @@
   },
   "devDependencies": {
     "chai": "^4.3.4"
+  },
+  "volta": {
+    "node": "14.21.3"
   }
 }
