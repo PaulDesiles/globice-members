@@ -23,12 +23,18 @@ import { seedAccounts } from './accountsSeed.js';
 
 import { setApiListeners } from '/imports/api/helloAsso';
 import { HelloAssoCollection } from '../imports/db/HelloAssoCollection.js';
+import * as Sentry from "@sentry/node";
 
 Meteor.startup(() => {
-  setApiListeners();
+  // -- Log reporting
+  if (process.env.SENTRY_DSN) {
+    Sentry.init({
+      dsn: process.env.SENTRY_DSN,
+      tracesSampleRate: 1.0,
+    });
+  }
 
   // --- Helpers for seeding from a local instance ---
-
   seedAccounts();
 
   if (!ParametersCollection.findOne({})) {
@@ -68,4 +74,14 @@ Meteor.startup(() => {
   // --- Ajout des infos de search à tous les membres
   // addSearchValues();
 
+  Sentry.captureMessage("meteor startup init ended");
 });
+
+// log all non-catched errors
+const originalMeteorDebug = Meteor._debug;
+Meteor._debug = (message, stack) => {
+  const error = new Error(message);
+  error.stack = stack;
+  Sentry.captureException(error);
+  return originalMeteorDebug.bind(this).call(message, stack);
+};

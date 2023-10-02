@@ -4,6 +4,7 @@ import { ParsedHelloAssoCollection } from '../db/ParsedHelloAssoCollection';
 import { ParametersCollection } from '../db/ParametersCollection';
 import { ensureIsAdmin } from './commonMethods';
 import { parseHelloAssoEntries } from '../commonHelpers/helloassoHelper';
+import { logMessage } from '../commonHelpers/logHelper';
 
 Meteor.methods({
   'parsedhelloasso.parsenewentries'() {
@@ -20,7 +21,7 @@ Meteor.methods({
     var parameters = ParametersCollection.findOne({});
     var newEntries = parseHelloAssoEntries(rawEntries, parameters);
 
-    console.log(`${newEntries.length} new entries found`);
+    logMessage(`${newEntries.length} new entries found`);
 
     if (newEntries.length > 0) {
       newEntries.forEach(e => {
@@ -42,6 +43,8 @@ Meteor.methods({
     check(id, String);
     ensureIsAdmin(this.userId);
 
+    logMessage(`resolve id ${id}`);
+
     ParsedHelloAssoCollection.update(
       { _id: id },
       { $set: { resolved: true } }
@@ -51,6 +54,8 @@ Meteor.methods({
   'parsedhelloasso.reopen'(id) {
     check(id, String);
     ensureIsAdmin(this.userId);
+
+    logMessage(`reopen id ${id}`);
 
     ParsedHelloAssoCollection.update(id, {
       $set: { resolved: false }
@@ -64,7 +69,7 @@ Meteor.methods({
     d.setFullYear(d.getFullYear() - 1);
     var maxDate = d.toISOString();
 
-    console.log(`clean HelloAsso and resolved ParsedHelloAsso entries older than ${maxDate}`);
+    logMessage(`clean HelloAsso and resolved ParsedHelloAsso entries older than ${maxDate}`);
 
     HelloAssoCollection.remove({
       'data.date': { $lt: maxDate }

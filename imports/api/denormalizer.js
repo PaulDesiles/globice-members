@@ -1,4 +1,5 @@
 import { MembersCollection } from '../db/MembersCollection';
+import { logMessage } from '../commonHelpers/logHelper';
 
 function segregate(applicants) {
   return {
@@ -16,7 +17,7 @@ function getDelta(cur, prev) {
 
 function updateMembers(list, action, options = undefined) {
   list.forEach(memberId => {
-    // console.log(`updating ${memberId}`);
+    logMessage(`updating ${memberId}`);
     MembersCollection.update(memberId, action, options);
   });
 }
@@ -62,7 +63,7 @@ export function onApplicantsListChanged(
 
 export function onTripDateChanged(id, date, applicants) {
   const ids = applicants.map(a => a.memberId);
-  // console.log(`update date for trip ${id} on the applicants ${ids.join(',')}`);
+  logMessage(`update date for trip ${id} on the applicants ${ids.join(',')}`);
 
   updateMembers(ids, 
     { $set: {

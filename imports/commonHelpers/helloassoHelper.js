@@ -1,5 +1,6 @@
 import { rawMemberFieldsConverters, normalize } from '../api/memberCreationHelper';
 import { addCreationDate } from '../api/commonMethods';
+import { logMessage } from './logHelper';
 
 export function getRawFormAnswer(formData, question) {
   if (!question)
@@ -126,7 +127,7 @@ export function analyseEntry(data, encounteredIds, parameters) {
 export function parseHelloAssoEntries(rawEntries, parameters) {
   let encounteredIds = [];
 
-  console.log(`${rawEntries.length} raw entries to parse`);
+  logMessage(`${rawEntries.length} raw entries to parse`);
 
   return rawEntries
     .map(e => {

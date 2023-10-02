@@ -2,7 +2,7 @@ import fs from 'fs';
 import { rawMemberFieldsConverters } from '/imports/api/memberCreationHelper';
 import { normalizeTerm } from '/imports/commonHelpers/searchHelper';
 import { MembersCollection } from '/imports/db/MembersCollection';
-
+import { logError } from '../imports/commonHelpers/logHelper';
 
 export function getMemberSeed() {
   let membersSeed = [];
@@ -92,8 +92,8 @@ export function getMemberSeed() {
         };
       });
 
-  } catch (err) {
-    console.error(err);
+  } catch (e) {
+    logError(e);
   }
 
   return membersSeed;
