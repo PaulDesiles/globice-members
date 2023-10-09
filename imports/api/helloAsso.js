@@ -30,6 +30,8 @@ export function setApiListeners() {
         );
 
         logMessage(`inserted helloAsso entry : ${insertId}`);
+      } else {
+        logMessage("ignored helloAsso post");
       }
       
       res.end("ok");
