@@ -26,6 +26,8 @@ import { HelloAssoCollection } from '../imports/db/HelloAssoCollection.js';
 import * as Sentry from "@sentry/node";
 
 Meteor.startup(() => {
+  setApiListeners();
+  
   // -- Log reporting
   if (process.env.SENTRY_DSN) {
     Sentry.init({
