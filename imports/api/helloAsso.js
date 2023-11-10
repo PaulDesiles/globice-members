@@ -16,7 +16,7 @@ export function setApiListeners() {
     try {
       if (process.env.ACTIVATE_HA_RAW_SAVING
         && req?.body?.data && req?.body?.eventType
-        && (!process.env.HA_MEMBERS_IMPORT_KEY || params?.key === process.env.HA_MEMBERS_IMPORT_KEY))
+        && (!process.env.HA_MEMBERS_IMPORT_KEY || params?.query?.key === process.env.HA_MEMBERS_IMPORT_KEY))
       {
         logMessage("received post from helloasso from " + req.headers.host);
 
