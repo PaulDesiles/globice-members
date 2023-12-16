@@ -26,6 +26,7 @@ ParametersCollection.schema = new SimpleSchema({
   'member.boatLicense': [choiceSchema],
   'member.captain': [choiceSchema],
   'member.diving': [choiceSchema],
+  'member.nemmo': [choiceSchema],
   'member.photo': [choiceSchema],
   'member.photoColors': [choiceSchema],
   'member.newMember': [choiceSchema],
@@ -79,13 +80,14 @@ J'ai le regret de vous annoncer que votre candidature n'a pas été retenue pour
       boatLicense: [ "Non", "Côtier", "Hauturier" ].map(labelAsValue),
       captain: [ "Non", "Oui" ].map(labelAsValue),
       diving: [ "Aucun", ...[1,2,3,4,5].map(x => `Niveau ${x}`) ].map(labelAsValue),
+      nemmo: [ "Apprenti", "Aspirant", "Confirmé" ],
       photo: [ "Amateur", "Amateur ++", "Professionnel" ].map(labelAsValue),
       photoColors: [ "red", "green", "blue" ].map(labelAsValue),
       newMember: [ "Non", "Oui" ].map(labelAsValue),
       bookSizeChoices: [
         { text:'5 sorties', value: 5 }, 
         { text:'10 sorties', value: 10 }, 
-      ]
+      ],
     },
     newMemberForm: {
       birthdate: 'Date de naissance',

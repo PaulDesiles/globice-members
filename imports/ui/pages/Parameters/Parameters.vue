@@ -46,6 +46,7 @@
           <ChoicesEditor title="Permis bateau" v-model="parameters.member.boatLicense" />
           <ChoicesEditor title="Volonté d'être capitaine" v-model="parameters.member.captain" />
           <ChoicesEditor title="Compétences plongée" v-model="parameters.member.diving" />
+          <ChoicesEditor title="Réserve NeMMO" v-model="parameters.member.nemmo" />
           <ChoicesEditor title="Compétences photo" v-model="parameters.member.photo" />
           <ChoicesEditor title="Couleurs des compétences photo" v-model="parameters.member.photoColors" />
           <ChoicesEditor title="Primo-adhérent" v-model="parameters.member.newMember" />
@@ -104,6 +105,11 @@
           outlined
           label="Plongée"
           v-model="parameters.newMemberForm.diving"
+        />
+        <v-text-field 
+          outlined
+          label="NeMMO"
+          v-model="parameters.newMemberForm.nemmo"
         />
         <v-text-field 
           outlined

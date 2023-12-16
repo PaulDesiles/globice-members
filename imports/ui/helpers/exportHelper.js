@@ -65,6 +65,7 @@ export function exportMembers(members) {
       + (m.abilities.boatLicense || '') + separator
       + (m.abilities.captain || '') + separator
       + (m.abilities.diving || '') + separator
+      + (m.abilities.nemmo || '') + separator
       + (m.abilities.photo || '') + separator
       + (m.abilities.comment || '') + separator
       + (formatDate(m.membership.date) || '') + separator

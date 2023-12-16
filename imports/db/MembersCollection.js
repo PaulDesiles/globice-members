@@ -32,6 +32,7 @@ export const memberBase = {
   "abilities.boatLicense": {type: String, optional: true},
   "abilities.captain": {type: String, optional: true},
   "abilities.diving": {type: String, optional: true},
+  "abilities.nemmo": {type: String, optional: true},
   "abilities.photo": {type: String, optional: true},
   "abilities.comment": {type: String, optional: true},
 };
@@ -57,6 +58,7 @@ MembersCollection.schema = new SimpleSchema({
   "abilities.boatLicense": {type: String, optional: true},
   "abilities.captain": {type: String, optional: true},
   "abilities.diving": {type: String, optional: true},
+  "abilities.nemmo": {type: String, optional: true},
   "abilities.photo": {type: String, optional: true},
   "abilities.comment": {type: String, optional: true},
 

@@ -121,9 +121,9 @@
           </v-col>
           <v-col>
             <v-select
-              label="Plongée"
-              v-model="member.abilities.diving" 
-              :items="parameters.member.diving"
+              label="Réserve NeMMO"
+              v-model="member.abilities.nemmo" 
+              :items="parameters.member.nemmo"
               outlined
               hide-details="auto"
             />
