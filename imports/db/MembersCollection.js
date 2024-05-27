@@ -29,12 +29,14 @@ export const memberBase = {
   "infos.city": {type: String, optional: true},
   
   abilities: Object,
-  "abilities.boatLicense": {type: String, optional: true},
-  "abilities.captain": {type: String, optional: true},
-  "abilities.diving": {type: String, optional: true},
-  "abilities.nemmo": {type: String, optional: true},
+  "abilities.boatLicense": {type: String, optional: true}, // replaced by omega
+  "abilities.captain": {type: String, optional: true}, // replaced by dataManager
+  "abilities.diving": {type: String, optional: true}, // replaced by nemmo
   "abilities.photo": {type: String, optional: true},
   "abilities.comment": {type: String, optional: true},
+  "abilities.nemmo": {type: String, optional: true},
+  "abilities.omega": {type: String, optional: true},
+  "abilities.dataManager": {type: String, optional: true},
 };
 
 MembersCollection.schema = new SimpleSchema({

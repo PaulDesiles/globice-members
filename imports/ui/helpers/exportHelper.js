@@ -62,10 +62,12 @@ export function exportMembers(members) {
       + (m.infos.address || '') + separator
       + (m.infos.postCode || '') + separator
       + (m.infos.city || '') + separator
-      + (m.abilities.boatLicense || '') + separator
-      + (m.abilities.captain || '') + separator
-      + (m.abilities.diving || '') + separator
+      // + (m.abilities.boatLicense || '') + separator
+      // + (m.abilities.captain || '') + separator
+      // + (m.abilities.diving || '') + separator
       + (m.abilities.nemmo || '') + separator
+      + (m.abilities.omega || '') + separator
+      + (m.abilities.dataManager || '') + separator
       + (m.abilities.photo || '') + separator
       + (m.abilities.comment || '') + separator
       + (formatDate(m.membership.date) || '') + separator
@@ -77,7 +79,7 @@ export function exportMembers(members) {
 
 
   launchDownload(
-    'prenom;nom;anniversaire;email;telephone;adresse;code postal;ville;permis bateau;capitaine;plongée;photo;commentaire;adhésion;primo-adhésion;carnets;sorties;refus',
+    'prenom;nom;anniversaire;email;telephone;adresse;code postal;ville;réserve NeMMO;formation omega;responsable données;photo;commentaire;adhésion;primo-adhésion;carnets;sorties;refus',
     lines, 
     'benevoles.csv'
   );

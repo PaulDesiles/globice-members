@@ -52,7 +52,7 @@ function getMemberInfos(source, editData) {
 }
 
 function getMemberAbilities(source, editData) {
-  return mixSourceAndEditData(source, editData, ['boatLicense', 'captain', 'diving', 'nemmo', 'photo']);
+  return mixSourceAndEditData(source, editData, [ 'nemmo', 'omega', 'dataManager', 'photo']);
 }
 
 // be carefull : booleans are not parsed here

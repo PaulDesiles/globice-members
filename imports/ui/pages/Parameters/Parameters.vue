@@ -43,9 +43,11 @@
 
         <h3>Bénévoles</h3>
         <div class="d-flex flex-wrap">
-          <ChoicesEditor title="Permis bateau" v-model="parameters.member.boatLicense" />
-          <ChoicesEditor title="Volonté d'être capitaine" v-model="parameters.member.captain" />
-          <ChoicesEditor title="Compétences plongée" v-model="parameters.member.diving" />
+          <!-- <ChoicesEditor title="Permis bateau" v-model="parameters.member.boatLicense" /> -->
+          <!-- <ChoicesEditor title="Volonté d'être capitaine" v-model="parameters.member.captain" /> -->
+          <!-- <ChoicesEditor title="Compétences plongée" v-model="parameters.member.diving" /> -->
+          <ChoicesEditor title="Formation Omega" v-model="parameters.member.omega" />
+          <ChoicesEditor title="Responsable Données" v-model="parameters.member.dataManager" />
           <ChoicesEditor title="Réserve NeMMO" v-model="parameters.member.nemmo" />
           <ChoicesEditor title="Compétences photo" v-model="parameters.member.photo" />
           <ChoicesEditor title="Couleurs des compétences photo" v-model="parameters.member.photoColors" />

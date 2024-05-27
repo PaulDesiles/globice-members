@@ -103,18 +103,18 @@
         <v-row>
           <v-col>
             <v-select
-              label="Permis Bateau"
-              v-model="member.abilities.boatLicense" 
-              :items="parameters.member.boatLicense"
+              label="Formation Omega"
+              v-model="member.abilities.omega" 
+              :items="parameters.member.omega"
               outlined
               hide-details="auto"
             />
           </v-col>
           <v-col>
             <v-select
-              label="Capitaine"
-              v-model="member.abilities.captain" 
-              :items="parameters.member.captain"
+              label="Responsable Données"
+              v-model="member.abilities.dataManager" 
+              :items="parameters.member.dataManager"
               outlined
               hide-details="auto"
             />
