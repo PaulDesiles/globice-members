@@ -136,7 +136,10 @@
           </v-col>
         </v-row>
 
+        <i v-if="trip._anonymized">l'équipage a été anonymisé</i>
+
         <v-btn
+          v-else
           color="primary"
           elevation="5"
           class="mb-5"

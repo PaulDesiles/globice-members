@@ -8,15 +8,29 @@
     <template slot="below">
       <a id="disconnect-button" @click="disconnect">déconnexion</a>
       
-      <div class="d-flex justify-end">
-          <v-btn
-            plain
-            @click="$router.push('/parameters')"
-          >
-            <v-icon left>mdi-wrench-outline</v-icon>
-            Paramètres
-          </v-btn>
+      <div class="d-flex justify-space-between">
+        <v-btn
+          plain
+          @click="$router.push('/cleaning')"
+        >
+          <v-icon left>mdi-broom</v-icon>
+          Nettoyage
+        </v-btn>
+        <v-btn
+          plain
+          @click="$router.push('/parameters')"
+        >
+          <v-icon left>mdi-wrench-outline</v-icon>
+          Paramètres
+        </v-btn>
       </div>
+
+      <span v-if="!$subReady.members || !$subReady.trips" class="cleaning-info">chargement...</span>
+      <ul v-else class="cleaning-info">
+        <li>Date pivot pour les adhésions : {{ pivotDate }}</li>
+        <li>Membres en attente de suppression : {{ membersToClean.length }}</li>
+        <li>Sorties en attente d'anonymisation : {{ tripsToClean.length }}</li>
+      </ul>
     </template>
   </CardLayout>
 </template>
@@ -27,6 +41,9 @@ import MainButton from './MainButton.vue';
 
 import { Meteor } from 'meteor/meteor';
 import { ParametersCollection } from "../../../db/ParametersCollection";
+import { MembersCollection } from "../../../db/MembersCollection";
+import { TripsCollection } from "../../../db/TripsCollection";
+import { getLastMembershipCampaignEndDate } from "../../../commonHelpers/cleaningHelper";
 
 export default {
   components: {
@@ -40,6 +57,9 @@ export default {
       }
 
       return '/';
+    },
+    pivotDate() {
+      return getLastMembershipCampaignEndDate().toLocaleDateString();
     }
   },
   methods: {
@@ -47,12 +67,32 @@ export default {
       Meteor.logout();
     }
   },
+  // mounted: function () {
+  //   Meteor.call('cleaning.clean');
+  // },
   meteor: {
     $subscribe: {
       'parameters': [],
+      'members': [],
+      'trips': [],
     },
     parameters() {
       return ParametersCollection.findOne({});
+    },
+    membersToClean() {
+      const maxDate = getLastMembershipCampaignEndDate();
+      return MembersCollection.find({ 
+        'membership.date': { $lt: maxDate }
+      }).fetch();
+    },
+    tripsToClean() {
+      const maxDate = getLastMembershipCampaignEndDate();
+      return TripsCollection.find({
+        $and: [
+          { _anonymized: null },
+          { date: { $lt: maxDate } }
+        ]
+      }).fetch();
     },
   }
 }
@@ -72,5 +112,9 @@ export default {
     bottom: 10px;
     left: 10px;
     color: var(--dark-blue);
+  }
+
+  .cleaning-info {
+    color: black;
   }
 </style>

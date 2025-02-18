@@ -1,8 +1,9 @@
 import { isTripCredited } from './tripsHelper';
 import { ensureIsDate } from './dateHelper';
 import { v4 as uuidv4 } from 'uuid';
+import { getMembershipLimitForYear } from '../../commonHelpers/membershipHelper';
 
-const pivotMembershipDate = Date.UTC(new Date().getUTCFullYear() - 1, 4, 1,0, 0, 0);
+const pivotMembershipDate = getMembershipLimitForYear(new Date().getUTCFullYear() - 1);
 
 export function isMembershipUpToDate(date) {
   return ensureIsDate(date).getTime() > pivotMembershipDate;

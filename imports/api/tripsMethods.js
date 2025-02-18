@@ -3,10 +3,12 @@ import { TripsCollection } from '../db/TripsCollection';
 import { 
   ensureContainsUpdates, 
   ensureCanEditTrips,
+  ensureIsAdmin,
   addCreationDate,
   addModificationDate,
   arrayToObject 
 } from './commonMethods';
+import { logMessage } from '../commonHelpers/logHelper';
 
 import * as denormalizer from './denormalizer';
 
@@ -79,6 +81,44 @@ Meteor.methods({
     TripsCollection.remove(tripId);
 
     denormalizer.onApplicantsListChanged({ id: tripId }, [], previousApplicantsData);
-  }
+  },
 
+  'trips.cleanApplicants'(maxDate) {
+    check(maxDate, Date);
+    ensureIsAdmin(this.userId);
+    logMessage(`clean trips' applicants older than ${maxDate.toISOString()}`);
+
+    TripsCollection.update(
+      {
+        $and: [
+          { _anonymized: null },
+          { date: { $lt: maxDate } }
+        ]
+      },
+      { $set: { 
+        applicants: [],
+        _anonymized: true
+      }}
+    );
+
+    // const target = TripsCollection.find({
+    //   $and: [
+    //     { _anonymized: null },
+    //     { date: { $lt: maxDate } }
+    //   ]
+    // }).fetch();
+    // const totalCount = TripsCollection.find().count();
+
+    // logMessage(`trips: ${target.length} / ${totalCount}. eg: ${target.splice(0, 5).map(x => x._id).join(',')}`);
+
+  },
+
+  // 'trips.cleanup'(maxDate) {
+  //   ensureIsAdmin(this.userId);
+  //   logMessage(`clean trips older than ${maxDate.toISOString()}`);
+    
+  //   TripsCollection.remove({
+  //     date: { $lt: maxDate }
+  //   });
+  // }
 });

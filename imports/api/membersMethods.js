@@ -8,6 +8,7 @@ import {
   addSearchChanges,
   arrayToObject
 } from './commonMethods';
+import { logMessage } from '../commonHelpers/logHelper';
 
 Meteor.methods({
   'members.create'(data) {
@@ -43,5 +44,23 @@ Meteor.methods({
     check(memberId, String);
     ensureIsAdmin(this.userId);
     MembersCollection.remove(memberId);
-  }
+  },
+
+  'members.oldMembership.cleanup'(maxDate) {
+    check(maxDate, Date);
+    ensureIsAdmin(this.userId);
+    logMessage(`clean members with membership older than ${maxDate.toISOString()}`);
+
+    MembersCollection.remove({
+      'membership.date': { $lt: maxDate }
+    });
+
+    // const target = MembersCollection.find({
+    //   'membership.date': { $lt: maxDate }
+    // }).fetch();
+    // const totalCount = MembersCollection.find().count();
+
+    // logMessage(`members: ${target.length} / ${totalCount}. eg: ${target.splice(0, 5).map(x => x._id).join(',')}`);
+
+  },
 });

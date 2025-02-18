@@ -19,6 +19,7 @@ TripsCollection.schema = new SimpleSchema({
   _schemaVersion: { type: Number, defaultValue: 1.1 },
   _creationDate: Date,
   _modificationDate: {type: Date, optional: true},
+  _anonymized:{ type: Boolean, optional: true },
 
   date: Date,
   captain: String,
