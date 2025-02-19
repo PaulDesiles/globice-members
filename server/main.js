@@ -48,6 +48,16 @@ Meteor.startup(() => {
     initParametersCollection();
   }
 
+  // var members = MembersCollection.find({ 'abilities.nemmo': 'Apprenti' })
+  // .fetch();
+
+  // console.log(members.length);
+
+  // members.forEach(m => MembersCollection.update(
+  //   m._id,
+  //   { $set: { 'abilities.nemmo': '_' } }
+  // ));
+
   // HelloAssoCollection.remove({});
   // const lines = fs.readFileSync('D:\\Docs_Globice\\helloAssoTestData.json', 'utf8').split('\n');
   
