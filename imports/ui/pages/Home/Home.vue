@@ -10,6 +10,7 @@
       
       <div class="d-flex justify-space-between">
         <v-btn
+          v-if="canAcccessCleaningPage"
           plain
           @click="$router.push('/cleaning')"
         >
