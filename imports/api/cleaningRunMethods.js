@@ -20,7 +20,6 @@ Meteor.methods({
       logMessage('clean old data');
       
       const oneMonthAgo = getHelloAssoCleanDate();
-      Meteor.call('helloasso.cleanup', oneMonthAgo);
       Meteor.call('parsedhelloasso.cleanup', oneMonthAgo);
   
       const lastMembershipCampaignEndDate = getLastMembershipCampaignEndDate();

@@ -10,6 +10,7 @@ import ApiDashboard from './pages/ApiDashboard/ApiDashboard.vue';
 import Trips from './pages/Trips/Trips.vue';
 import Trip from './pages/Trip/Trip.vue';
 import Parameters from './pages/Parameters/Parameters.vue';
+import Cleaning from './pages/Cleaning/Cleaning.vue';
 
 const routes = [
   {
@@ -51,7 +52,12 @@ const routes = [
     path: "/parameters",
     name: 'Parameters',
     component: Parameters
-  }
+  },
+  {
+    path: "/cleaning",
+    name: 'Cleaning',
+    component: Cleaning
+  },
 ];
 
 const router = new VueRouter({

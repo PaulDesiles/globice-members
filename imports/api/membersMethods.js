@@ -54,13 +54,5 @@ Meteor.methods({
     MembersCollection.remove({
       'membership.date': { $lt: maxDate }
     });
-
-    // const target = MembersCollection.find({
-    //   'membership.date': { $lt: maxDate }
-    // }).fetch();
-    // const totalCount = MembersCollection.find().count();
-
-    // logMessage(`members: ${target.length} / ${totalCount}. eg: ${target.splice(0, 5).map(x => x._id).join(',')}`);
-
   },
 });

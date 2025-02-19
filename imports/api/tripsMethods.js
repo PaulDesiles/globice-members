@@ -100,17 +100,6 @@ Meteor.methods({
         _anonymized: true
       }}
     );
-
-    // const target = TripsCollection.find({
-    //   $and: [
-    //     { _anonymized: null },
-    //     { date: { $lt: maxDate } }
-    //   ]
-    // }).fetch();
-    // const totalCount = TripsCollection.find().count();
-
-    // logMessage(`trips: ${target.length} / ${totalCount}. eg: ${target.splice(0, 5).map(x => x._id).join(',')}`);
-
   },
 
   // 'trips.cleanup'(maxDate) {

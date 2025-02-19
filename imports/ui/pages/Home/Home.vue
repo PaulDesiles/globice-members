@@ -25,12 +25,6 @@
         </v-btn>
       </div>
 
-      <span v-if="!$subReady.members || !$subReady.trips" class="cleaning-info">chargement...</span>
-      <ul v-else class="cleaning-info">
-        <li>Date pivot pour les adhésions : {{ pivotDate }}</li>
-        <li>Membres en attente de suppression : {{ membersToClean.length }}</li>
-        <li>Sorties en attente d'anonymisation : {{ tripsToClean.length }}</li>
-      </ul>
     </template>
   </CardLayout>
 </template>
@@ -41,15 +35,15 @@ import MainButton from './MainButton.vue';
 
 import { Meteor } from 'meteor/meteor';
 import { ParametersCollection } from "../../../db/ParametersCollection";
-import { MembersCollection } from "../../../db/MembersCollection";
-import { TripsCollection } from "../../../db/TripsCollection";
-import { getLastMembershipCampaignEndDate } from "../../../commonHelpers/cleaningHelper";
 
 export default {
   components: {
     CardLayout,
     MainButton
   },
+  data: () => ({
+    showCleaningPanel: false,
+  }),
   computed: {
     resourcesTarget() {
       if (this.$subReady.parameters) {
@@ -58,8 +52,8 @@ export default {
 
       return '/';
     },
-    pivotDate() {
-      return getLastMembershipCampaignEndDate().toLocaleDateString();
+    canAcccessCleaningPage() {
+      return this.currentUserRole === "admin";
     }
   },
   methods: {
@@ -73,27 +67,14 @@ export default {
   meteor: {
     $subscribe: {
       'parameters': [],
-      'members': [],
-      'trips': [],
+      'roles': [],
     },
     parameters() {
       return ParametersCollection.findOne({});
     },
-    membersToClean() {
-      const maxDate = getLastMembershipCampaignEndDate();
-      return MembersCollection.find({ 
-        'membership.date': { $lt: maxDate }
-      }).fetch();
-    },
-    tripsToClean() {
-      const maxDate = getLastMembershipCampaignEndDate();
-      return TripsCollection.find({
-        $and: [
-          { _anonymized: null },
-          { date: { $lt: maxDate } }
-        ]
-      }).fetch();
-    },
+    currentUserRole() {
+      return Meteor.roleAssignment.findOne({})?.role?._id;
+    }
   }
 }
 </script>
@@ -112,9 +93,5 @@ export default {
     bottom: 10px;
     left: 10px;
     color: var(--dark-blue);
-  }
-
-  .cleaning-info {
-    color: black;
   }
 </style>

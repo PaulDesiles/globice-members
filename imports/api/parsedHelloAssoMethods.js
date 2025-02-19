@@ -74,34 +74,9 @@ Meteor.methods({
         { date: { $lt: maxDateString } }
       ]
     });
-
-    // const target = ParsedHelloAssoCollection.find({
-    //   $and: [
-    //     { resolved: true },
-    //     { date: { $lt: maxDateString } }
-    //   ]
-    // }).fetch();
-    // const totalCount = ParsedHelloAssoCollection.find().count();
-
-    // logMessage(`parsedHelloAsso: ${target.length} / ${totalCount}. eg: ${target.splice(0, 5).map(x => x._id).join(',')}`);
-  },
-
-  'helloasso.cleanup'(maxDate) {
-    check(maxDate, Date);
-    ensureIsAdmin(this.userId);
-    const maxDateString = maxDate.toISOString();
-    logMessage(`clean HelloAsso entries older than ${maxDateString}`);
-
+    
     HelloAssoCollection.remove({
       'data.date': { $lt: maxDateString }
     });
-
-    // const target = HelloAssoCollection.find({
-    //   'data.date': { $lt: maxDateString }
-    // }).fetch();
-    // const totalCount = HelloAssoCollection.find().count();
-
-    // logMessage(`helloAsso: ${target.length} / ${totalCount}. eg: ${target.splice(900, 5).map(x => x._id).join(',')}`);
   },
-
 });
