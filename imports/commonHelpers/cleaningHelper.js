@@ -18,12 +18,10 @@ export function getHelloAssoCleanDate() {
 export function getLastMembershipCampaignEndDate() {
   const now = new Date();
   const currentYear = now.getFullYear();
-  // const thisYearLimit = getMembershipLimitForYear(currentYear);
-  // const referenceYear = now.getTime() > thisYearLimit
-  //   ? currentYear - 1
-  //   : currentYear - 2;
-
-  const referenceYear = currentYear - 1;
+  const thisYearLimit = getMembershipLimitForYear(currentYear);
+  const referenceYear = now.getTime() > thisYearLimit
+    ? currentYear - 1
+    : currentYear - 2;
 
   return lastMembershipCampaignEndDate = new Date(getMembershipLimitForYear(referenceYear));
 }
