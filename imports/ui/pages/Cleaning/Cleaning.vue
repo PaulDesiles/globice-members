@@ -150,7 +150,7 @@ export default {
       const clean = () => {
         Meteor.call(
           'members.oldMembership.cleanup',
-          getHelloAssoCleanDate(),
+          getLastMembershipCampaignEndDate(),
           (error, result) => {
             this.cleaningMembers = false;
 
@@ -167,7 +167,7 @@ export default {
       const clean = () => {
         Meteor.call(
           'trips.cleanApplicants',
-          getHelloAssoCleanDate(),
+          getLastMembershipCampaignEndDate(),
           (error, result) => {
             this.cleaningTrips = false;
 
