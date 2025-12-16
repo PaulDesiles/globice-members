@@ -31,7 +31,10 @@
         <v-btn @click="showMembersList = true">
           Afficher la liste
         </v-btn>
-        <v-btn @click="cleanMembers()">
+        <v-btn
+          :loading="cleaningMembers"
+          @click="cleanMembers()"
+        >
           Supprimer ces anciens membres
         </v-btn>
 
@@ -42,7 +45,10 @@
           Sorties en attente d'anonymisation : <b>{{ tripsToClean.length }}</b>
           <span class="total"> / {{  allTripsCount }}</span>
         </p>
-        <v-btn @click="cleanTrips()">
+        <v-btn
+          :loading="cleaningTrips"
+          @click="cleanTrips()"
+        >
           Anonymiser ces anciennes sorties
         </v-btn>
 
@@ -143,7 +149,7 @@ export default {
       this.cleaningMembers = true;
       const clean = () => {
         Meteor.call(
-          'members.cleanup',
+          'members.oldMembership.cleanup',
           getHelloAssoCleanDate(),
           (error, result) => {
             this.cleaningMembers = false;
