@@ -18,7 +18,11 @@ import '/imports/api/parsedHelloAssoPublications';
 import '/imports/api/parsedHelloAssoMethods';
 import '/imports/api/rolesAssignmentsPublications';
 
-import { addSearchValues } from './membersSeed.js';
+import { addSearchValues, getMemberSeed, linkOldTripsToRecreatedMembers, 
+  nameComparer, getInitCounts, addTripBooksToMatchingMembers,
+  addOldTripBooks, getOldTripsBooks,
+  getForgottenTripBooks
+} from './membersSeed.js';
 import { seedAccounts } from './accountsSeed.js';
 
 import { setApiListeners } from '/imports/api/helloAsso';
@@ -29,6 +33,7 @@ import { CleaningRunsCollection } from '../imports/db/CleaningRunsCollection.js'
 import '/imports/api/cleaningRunMethods';
 
 import { getLastMembershipCampaignEndDate } from "../imports/commonHelpers/cleaningHelper";
+import { get2025TripsLeft } from "../imports/ui/helpers/memberHelper.js";
 
 Meteor.startup(() => {
   setApiListeners();
@@ -82,12 +87,119 @@ Meteor.startup(() => {
   //   });
   // }
 
-  // if (false) {
-  //   MembersCollection.remove({});
-  //   var memberSeed = getMemberSeed();
-  //   membersSeed.forEach(m => MembersCollection.insert(m));
-  // }
+  if (0) {
+    // MembersCollection.remove({});
+    var membersSeed = getMemberSeed();
+    // console.log(membersSeed);
+    membersSeed.forEach(m => MembersCollection.insert(m));
+  }
 
+  if (0) {
+    linkOldTripsToRecreatedMembers();
+  }
+
+  // set initial trip counts
+  if (0) {
+    const members = MembersCollection.find({})
+      .fetch();
+    
+    const counts = getInitCounts();
+
+    addTripBooksToMatchingMembers(members, counts);
+  }
+
+  // add old trip books
+  if (0) {
+    const members = MembersCollection.find({})
+      .fetch();
+    
+    const counts = getOldTripsBooks();
+
+    addOldTripBooks(members, counts);
+  }
+
+// tripbooks bought in 24 disappeared if membership renewed in 25
+  if (0) {
+    //getForgottenTripBooks();
+  }
+
+  if (1) {
+    console.log('--- check 2025 negative trip counts members using same email');
+    MembersCollection.find({})
+      .fetch()
+      .forEach(member => {
+        let solde = get2025TripsLeft(member._id, member.trips.purchases, member.trips.confirmedTrips);
+        
+        if (solde < 0) {
+          console.log(`${member._id} _ ${member.infos.firstname} ${member.infos.lastname}  ${member.infos.email} _ ${solde}` );
+        }
+      });
+  }
+  
+  if (1) {
+    console.log('--- finding members using same email');
+
+    let membersByEmail = new Map();
+    MembersCollection.find({})
+      .fetch()
+      .forEach(member => {
+        membersByEmail.set(member.infos.email, 
+          [
+          ...membersByEmail.get(member.infos.email) ?? [],
+          `${member._id} _ ${member.infos.firstname} ${member.infos.lastname}`
+        ]);
+      });
+
+      membersByEmail.forEach(element => {
+        if (element.length > 1) {
+          console.log(element);
+        }
+      });
+  }
+
+  if (1) {
+    console.log('--- finding members with duplicate memberships or tripbooks');
+
+    MembersCollection.find({})
+      .fetch()
+      .forEach(member => {
+        let memberships = new Map();
+
+        [member.membership.date, ...member.membership.previousMemberships]
+          .forEach(x => {
+            
+            memberships.set(x.getFullYear(), 
+              [
+              ...memberships.get(x.getFullYear()) ?? [],
+              `${member._id} _ ${member.infos.firstname} ${member.infos.lastname} _ membership ${x.toLocaleDateString()}`
+            ]);
+          });
+
+          memberships.forEach(element => {
+            if (element.length > 1) {
+              console.log(element);
+            }
+          });
+          
+        let tripbooks = new Map();
+
+        member.trips.purchases
+          .forEach(x => {
+            
+            tripbooks.set(x.date.toLocaleDateString(), 
+              [
+              ...tripbooks.get(x.date.toLocaleDateString()) ?? [],
+              `${member._id} _ ${member.infos.firstname} ${member.infos.lastname} _ tripbook ${x.size} - ${x.date.toLocaleDateString()}`
+            ]);
+          });
+
+          tripbooks.forEach(element => {
+            if (element.length > 1) {
+              console.log(element);
+            }
+          });
+      });
+  }
   // --- Ajout des infos de search à tous les membres
   // addSearchValues();
 

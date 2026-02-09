@@ -22,6 +22,18 @@ export function getTripsLeft(memberId, purchases, confirmedTrips) {
   return Math.max(0, bought - consumed);
 }
 
+export function get2025TripsLeft(memberId, purchases, confirmedTrips) {
+  const bought = purchases
+    .filter(p => p.date.getFullYear() <= 2025)
+    .reduce((prev, cur) => prev + cur.size, 0);
+    
+  const consumed = confirmedTrips
+    .filter(t => isTripCredited(t, memberId) && t.date.getFullYear() <= 2025)
+    .length;
+
+  return bought - consumed;
+}
+
 // ********* member init from query arguments *********//
 
 function mixSourceAndEditData(source, editData, propNames) {

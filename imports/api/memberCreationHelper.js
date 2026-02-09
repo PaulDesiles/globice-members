@@ -14,8 +14,10 @@ export const getDate = input => {
     ?.split('/')
     .map(x => parseInt(x));
   
-  if (!dateParts && dateParts.length !== 3)
+  if (!dateParts || dateParts.length !== 3) {
+    console.log("failed to parse date " + input);
     return undefined;
+  }
   
   const d = new Date(Date.UTC(dateParts[2], dateParts[1] - 1, dateParts[0], 0, 0, 0));
   if (isNaN(d))
@@ -27,8 +29,13 @@ export const getDate = input => {
 export const rawMemberFieldsConverters = {
   firstname: normalize,
   lastname: normalize,
+  email: x => x.toLowerCase(),
   birthdate: getDate,
   boatLicense: x => {
+    if (!x) {
+      console.log("failed to parse boat license " + x);
+    }
+
     const low = x.toLowerCase();
     if (low === 'non') return 'Non';
     if (low.includes("hauturier")) return "Hauturier";
