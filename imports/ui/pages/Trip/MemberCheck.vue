@@ -8,7 +8,8 @@
         {{ isValid ? 'oui' : 'non' }}
       </span>
     </template>
-    <span>{{ tripsLeft }} {{ tripsLabel }} sur le carnet</span>
+    <span v-if="tripsLeft >= 0">{{ tripsLeft }} {{ tripsLabel }} sur le carnet</span>
+    <span v-else><strong>{{ -tripsLeft }}</strong> sorties non payées</span>
     <br />
     <span v-if="isMembershipUpToDate">adhésion à jour</span>
     <span v-else>adhésion non renouvellée</span>

@@ -19,7 +19,7 @@ export function getTripsLeft(memberId, purchases, confirmedTrips) {
     .filter(t => isTripCredited(t, memberId))
     .length;
 
-  return Math.max(0, bought - consumed);
+  return bought - consumed;
 }
 
 // ********* member init from query arguments *********//

@@ -7,8 +7,10 @@
 
         <p>
           <strong>{{ tripsBought }}</strong> sorties achetées
-          : <strong>{{ tripsLeft }}</strong> restantes
+          <span v-if="tripsLeft >= 0">: <strong>{{ tripsLeft }}</strong> restantes</span>
         </p>
+          
+        <p v-if="tripsLeft < 0" class="text-warning"><strong>{{ -tripsLeft }}</strong> sorties non payées</p>
 
         <v-simple-table class="elevation-3 mb-5" >
           <template v-slot:default>
@@ -49,7 +51,10 @@
         </v-simple-table>
       </template>
 
-      <p v-else>Aucun carnet acheté</p>
+      <template v-else>
+        <p>Aucun carnet acheté</p>
+        <p v-if="tripsLeft < 0" class="text-warning"><strong>{{ -tripsLeft }}</strong> sorties non payées</p>
+      </template>
 
       <v-btn 
         color="primary"
@@ -227,5 +232,9 @@ export default {
 <style scoped>
 .autoAdded {
   background: #ff91001c;
+}
+
+.text-warning {
+  color:  #C62828;
 }
 </style>
