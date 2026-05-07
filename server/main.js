@@ -1,3 +1,6 @@
+// Must be set before Meteor.startup() so webapp picks it up when binding the HTTP server.
+process.env.BIND_IP = process.env.IP || '::';
+
 import { Meteor } from 'meteor/meteor';
 import { Accounts } from 'meteor/accounts-base';
 // import fs from 'fs';
